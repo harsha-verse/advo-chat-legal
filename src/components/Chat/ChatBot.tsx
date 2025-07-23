@@ -23,7 +23,7 @@ const ChatBot: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
-      message: 'Hello! I\'m your legal assistant. How can I help you today?',
+      message: '🙏 Namaste! I\'m NyayaBot, your comprehensive legal assistant for Indian law. I can help you with Constitutional rights, traffic rules, property law, family matters, consumer rights, criminal law, employment issues, and much more. How can I assist you today?',
       sender: 'bot',
       timestamp: new Date().toISOString()
     }
@@ -40,191 +40,278 @@ const ChatBot: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
+  const legalKnowledge = {
+    // Constitutional Rights & Basic Legal Awareness
+    constitution: {
+      "Article 14": "Right to Equality - All persons are equal before law. The State cannot discriminate between citizens on grounds of religion, race, caste, sex, or place of birth.",
+      "Article 19": "Right to Freedom - Includes freedom of speech, assembly, association, movement, residence, and profession. Can be restricted only for security of State, public order, decency, or morality.",
+      "Article 21": "Right to Life & Personal Liberty - Fundamental right to live with dignity. Includes right to privacy, clean environment, education, and healthcare.",
+      "Article 32": "Right to Constitutional Remedies - Dr. Ambedkar called it 'heart and soul' of Constitution. Right to directly approach Supreme Court for fundamental rights violation.",
+      "Article 39A": "Equal Justice & Free Legal Aid - State must provide free legal aid to poor. Legal Services Authority Act, 1987 implements this.",
+      "Right to Information": "RTI Act, 2005 - Citizens can seek information from public authorities within 30 days. Fee: ₹10 for application.",
+      "Right to Education": "Article 21A - Free and compulsory education for children aged 6-14 years."
+    },
+
+    // Traffic Rules & Motor Vehicle Laws
+    traffic: {
+      "Helmet Laws": "Mandatory for two-wheeler riders & pillion riders. Fine: ₹1,000 + 3 months license suspension. Some states exempt Sikhs wearing turbans.",
+      "Seatbelt Laws": "Mandatory for all car occupants including back seat passengers. Fine: ₹1,000. Driver responsible for all passengers.",
+      "Speed Limits": "City roads: 50 kmph, State highways: 90 kmph, National highways: 100 kmph for cars. School zones: 25 kmph.",
+      "Drunk Driving": "Legal limit: 30mg alcohol per 100ml blood. First offense: ₹10,000 fine + 6 months jail. Repeat offense: ₹15,000 + 2 years jail.",
+      "Mobile Phone Use": "Hands-free devices allowed. Fine for handheld use: ₹1,000-₹5,000. Can lead to license suspension.",
+      "Traffic Challans": "Pay online via Parivahan portal, MParivahan app, or traffic police websites. Challenge in traffic court within 30 days.",
+      "Red Light Violation": "Fine: ₹1,000. Automated cameras increasingly used. Can be challenged with proper evidence."
+    },
+
+    // Property Laws
+    property: {
+      "Land Ownership": "Freehold: Complete ownership. Leasehold: Limited period ownership. Agricultural land: Restrictions on sale to non-farmers in many states.",
+      "Property Title": "Title deed proves ownership. Check for clear title, encumbrance certificate, and property card. Verify through sub-registrar office.",
+      "Property Registration": "Mandatory under Registration Act, 1908. Stamp duty varies by state (3-10% of property value). Registration within 4 months.",
+      "Mutation": "Update revenue records after property purchase. Apply to Village Revenue Officer with sale deed and tax receipts.",
+      "Property Disputes": "File civil suit in appropriate court. Consider mediation/arbitration. Limitation period: 12 years for property recovery.",
+      "Tenant Rights": "Rent Control Acts vary by state. Notice period for eviction. Fair rent determination. Protection against arbitrary eviction.",
+      "Illegal Possession": "File FIR for criminal trespass (IPC 441). Civil suit for recovery of possession. Injunction to prevent further encroachment."
+    },
+
+    // Power of Attorney
+    powerOfAttorney: {
+      "What is POA": "Legal document authorizing another person to act on your behalf. Must be on stamp paper and notarized/registered.",
+      "General POA": "Broad powers for multiple transactions. Useful for NRIs managing property in India. Can include property sale, purchase, rent.",
+      "Special POA": "Limited to specific transaction/purpose. More common and safer. Automatically expires after completion of specified act.",
+      "Registration": "Optional but recommended for property matters. Registration fee: ₹100-₹500. Valid across India once registered.",
+      "Revocation": "Can be revoked anytime by principal. Must inform all relevant parties and register revocation if original POA was registered.",
+      "NRI POA": "Must be attested by Indian Consulate. Valid for 3 years from date of execution. Special provisions under FEMA."
+    },
+
+    // Criminal & Civil Law Basics
+    criminal: {
+      "IPC 420": "Cheating & dishonest inducement. Punishment: Up to 7 years imprisonment + fine. Common in fraud cases.",
+      "IPC 406": "Criminal breach of trust. When someone entrusted with property dishonestly uses it. Punishment: Up to 3 years + fine.",
+      "IPC 498A": "Cruelty to married woman by husband/relatives. Cognizable & non-bailable. Punishment: Up to 3 years imprisonment.",
+      "IPC 354": "Assault/criminal force on woman with intent to outrage modesty. Punishment: 1-5 years imprisonment + fine.",
+      "IPC 506": "Criminal intimidation. Threatening someone with injury to person/reputation/property. Punishment: Up to 2 years imprisonment.",
+      "Defamation": "IPC 499-500. Harming reputation by words/signs. Both civil remedy (damages) and criminal offense (up to 2 years imprisonment).",
+      "Theft vs Robbery": "Theft (IPC 378): Taking without consent. Robbery (IPC 390): Theft with violence/threat. Punishment varies accordingly.",
+      "Bail Rights": "Bailable vs non-bailable offenses. Right to bail under Article 21. Apply in magistrate court or higher courts."
+    },
+
+    // Family & Marriage Laws
+    family: {
+      "Hindu Marriage": "Hindu Marriage Act, 1955. Divorce grounds: cruelty, desertion, conversion, mental disorder, communicable disease.",
+      "Muslim Marriage": "Governed by Muslim Personal Law. Talaq, Khula, Mubarat forms of divorce. Triple Talaq now illegal.",
+      "Christian Marriage": "Indian Christian Marriage Act, 1872. Divorce under Indian Divorce Act, 1869. Grounds similar to Hindu law.",
+      "Maintenance": "Wife entitled to maintenance under Section 125 CrPC. Amount based on husband's income and wife's needs.",
+      "Child Custody": "Best interest of child paramount. Mother preferred for children under 5. Joint custody increasingly recognized.",
+      "Adoption": "Hindu Adoption & Maintenance Act for Hindus. Juvenile Justice Act for others. Court permission required.",
+      "Domestic Violence": "Protection of Women from Domestic Violence Act, 2005. Includes physical, emotional, economic abuse."
+    },
+
+    // Legal Documentation
+    documentation: {
+      "Affidavit": "Sworn statement of facts. On stamp paper (₹10-₹100). Must be notarized. Used for name change, address proof, etc.",
+      "Notarization": "Authentication by notary public. Required for certain documents. Fee: ₹10-₹50 per document.",
+      "Rent Agreement": "11-month agreement avoids registration. Include rent, deposit, terms. Stamp duty as per state rates.",
+      "Sale Agreement": "Agreement to sell property. Different from sale deed. Should include price, possession date, terms.",
+      "Employment Contract": "Include salary, designation, notice period, confidentiality. Should comply with labour laws.",
+      "Stamp Duty": "Varies by state and document type. E-stamping available in most states. Physical stamps also valid."
+    },
+
+    // Cyber & IT Laws
+    cyber: {
+      "IT Act 2000": "Covers cyber crimes, digital signatures, data protection. Amended in 2008 to include more offenses.",
+      "Section 66A": "Struck down by Supreme Court in 2015. Was about offensive messages. No longer applicable.",
+      "Section 67": "Publishing obscene material online. Punishment: 3-5 years imprisonment + fine up to ₹10 lakh.",
+      "Online Fraud": "Use of IT devices for cheating. File complaint with cyber cell. Also covered under IPC 420.",
+      "Data Protection": "Personal Data Protection Act pending. Currently governed by IT Rules 2011 and IT Act.",
+      "Social Media": "Posts can attract defamation, hate speech charges. Be cautious about fake news sharing.",
+      "Cybercrime Helpline": "National helpline: 1930. Report online fraud, cyber threats immediately."
+    },
+
+    // Labour & Employment Rights
+    labour: {
+      "Minimum Wages": "Varies by state and skill level. Currently ₹178-₹350 per day in most states. Revised periodically.",
+      "Working Hours": "Maximum 8 hours per day, 48 hours per week. Overtime payment for extra hours.",
+      "Maternity Leave": "26 weeks paid leave for women employees. Applicable to establishments with 10+ employees.",
+      "Provident Fund": "12% of basic salary contributed by employee and employer. Withdrawal allowed after 2 months of unemployment.",
+      "ESI Benefits": "Medical care for employees earning up to ₹25,000. Contribution: 0.75% employee + 3.25% employer.",
+      "Termination": "30 days notice or pay in lieu. Retrenchment compensation for employees with 1+ year service.",
+      "Gratuity": "Payable after 5 years of service. Amount: 15 days salary for each year of service."
+    },
+
+    // Consumer Protection
+    consumer: {
+      "Consumer Rights": "Right to safety, information, choice, representation, redressal, consumer education.",
+      "Defective Products": "Manufacturer liable for defects. Consumer can claim replacement, refund, or compensation.",
+      "Service Deficiency": "Poor service quality, delays, overcharging covered. File complaint in consumer court.",
+      "Online Shopping": "E-commerce rules 2020. Return/refund policies mandatory. Grievance officer contact required.",
+      "Consumer Courts": "District: up to ₹1 crore, State: ₹1-10 crore, National: above ₹10 crore. No court fee up to ₹5 lakh.",
+      "Complaint Process": "File within 2 years of cause of action. Include purchase proof, correspondence.",
+      "Unfair Trade Practices": "False advertisements, misleading claims, defective goods covered under Consumer Protection Act."
+    },
+
+    // Recent Legal Developments
+    recent: {
+      "Bharatiya Nyaya Sanhita 2023": "Replaces IPC 1860. Focus on justice over punishment. Death penalty for mob lynching.",
+      "Bharatiya Nagarik Suraksha Sanhita 2023": "Replaces CrPC. Videography of search, seizure mandatory. Time limits for investigations.",
+      "Bharatiya Sakshya Adhiniyam 2023": "Replaces Evidence Act. Digital evidence given priority. Secondary evidence rules relaxed.",
+      "New Labour Codes": "4 codes replace 29 laws. Simplified compliance, universal social security, flexible working hours.",
+      "Data Protection Bill": "Pending legislation for digital privacy. Will regulate data collection, processing, storage.",
+      "Cryptocurrency": "Not legal tender but not banned. Taxed at 30%. RBI developing digital rupee (CBDC)."
+    },
+
+    // Emergency & Important Contacts
+    emergency: {
+      "Women Helpline": "181 - 24/7 helpline for women in distress. Also WhatsApp: +91-8652-HELPLINE",
+      "Cyber Crime": "1930 - National helpline for cyber crimes. Also file complaint at cybercrime.gov.in",
+      "Police": "100 - Emergency police helpline. Also 112 for integrated emergency services",
+      "Legal Aid": "15100 - National Legal Services Authority helpline for free legal aid",
+      "Child Helpline": "1098 - For child protection and rights related issues",
+      "Senior Citizens": "14567 - Helpline for elderly abuse and support",
+      "Anti-Corruption": "1031 - CBI helpline for reporting corruption"
+    },
+
+    // Legal Templates Available
+    templates: {
+      "Rent Agreement": "11-month rental agreement template with standard clauses",
+      "Power of Attorney": "General and Special POA formats for various purposes",
+      "Affidavit": "Self-declaration format for various legal purposes",
+      "Legal Notice": "Formal notice template for legal demands",
+      "Complaint Format": "Consumer court and police complaint formats",
+      "Employment Contract": "Standard employment agreement template",
+      "Partnership Deed": "Business partnership agreement format"
+    }
+  };
+
   const getLegalResponse = (message: string): string => {
     const lowercaseMessage = message.toLowerCase();
     
-    // Constitutional Articles (Comprehensive coverage)
-    if (lowercaseMessage.includes('article 21') || lowercaseMessage.includes('right to life')) {
-      return 'Article 21 guarantees the Right to Life and Personal Liberty. Recent interpretations include right to privacy, clean environment, speedy trial, free legal aid, dignity, livelihood, education, and healthcare. Supreme Court has expanded its scope significantly through landmark cases like Maneka Gandhi v. Union of India.';
+    // Traffic Rules & Driving Laws
+    if (lowercaseMessage.includes('helmet') || lowercaseMessage.includes('seatbelt') || lowercaseMessage.includes('traffic')) {
+      if (lowercaseMessage.includes('helmet')) {
+        return `🏍️ **Helmet Laws in India:**\n${legalKnowledge.traffic["Helmet Laws"]}\n\n**Additional Info:** States like Punjab exempt Sikh community wearing turbans. Always carry valid license and registration documents.`;
+      }
+      if (lowercaseMessage.includes('seatbelt')) {
+        return `🚗 **Seatbelt Laws:**\n${legalKnowledge.traffic["Seatbelt Laws"]}\n\n**Tip:** This applies to all passengers including children. Use appropriate child restraints for kids under 12.`;
+      }
+      if (lowercaseMessage.includes('speed') || lowercaseMessage.includes('challan')) {
+        return `🚓 **Speed Limits & Challans:**\n${legalKnowledge.traffic["Speed Limits"]}\n\n**Challan Payment:** ${legalKnowledge.traffic["Traffic Challans"]}`;
+      }
+      if (lowercaseMessage.includes('drunk') || lowercaseMessage.includes('alcohol')) {
+        return `🍺 **Drunk Driving Laws:**\n${legalKnowledge.traffic["Drunk Driving"]}\n\n**Important:** License suspension and vehicle impounding possible. Use cab services if you've consumed alcohol.`;
+      }
+      return `🚦 **Traffic Rules Overview:**\n• ${legalKnowledge.traffic["Helmet Laws"]}\n• ${legalKnowledge.traffic["Seatbelt Laws"]}\n• ${legalKnowledge.traffic["Speed Limits"]}\n\nNeed specific traffic rule information? Ask me about helmets, seatbelts, speed limits, or drunk driving!`;
     }
-    
-    if (lowercaseMessage.includes('article 19') || lowercaseMessage.includes('freedom of speech')) {
-      return 'Article 19(1)(a) guarantees six freedoms: speech/expression, assembly, association, movement, residence, and profession. Restrictions under 19(2) include sovereignty, security, public order, decency, morality, contempt of court, defamation, and incitement to offense. Internet shutdowns, sedition laws are current debates.';
+
+    // Property Law
+    if (lowercaseMessage.includes('property') || lowercaseMessage.includes('land') || lowercaseMessage.includes('rent') || lowercaseMessage.includes('tenant')) {
+      if (lowercaseMessage.includes('rent') || lowercaseMessage.includes('tenant')) {
+        return `🏠 **Rental Laws:**\n${legalKnowledge.property["Tenant Rights"]}\n\n**Rent Agreement:** ${legalKnowledge.documentation["Rent Agreement"]}\n\n**Template Available:** I can provide a standard rent agreement template. Would you like me to share it?`;
+      }
+      if (lowercaseMessage.includes('title') || lowercaseMessage.includes('deed')) {
+        return `📋 **Property Title & Registration:**\n${legalKnowledge.property["Property Title"]}\n\n**Registration Process:** ${legalKnowledge.property["Property Registration"]}`;
+      }
+      if (lowercaseMessage.includes('dispute') || lowercaseMessage.includes('illegal')) {
+        return `⚖️ **Property Disputes:**\n${legalKnowledge.property["Property Disputes"]}\n\n**Illegal Possession:** ${legalKnowledge.property["Illegal Possession"]}`;
+      }
+      return `🏘️ **Property Law Overview:**\n• Ownership types: ${legalKnowledge.property["Land Ownership"]}\n• Registration: ${legalKnowledge.property["Property Registration"]}\n• Disputes: File civil suit or consider mediation\n\nNeed specific help with rent agreements, property disputes, or ownership verification?`;
     }
-    
-    if (lowercaseMessage.includes('article 14') || lowercaseMessage.includes('equality')) {
-      return 'Article 14 ensures equality before law and equal protection. It prohibits arbitrary state action and class legislation. Includes concepts of reasonable classification, positive discrimination for SCs/STs/OBCs, and gender equality. Recent cases have strengthened LGBTQ+ rights under this article.';
+
+    // Power of Attorney
+    if (lowercaseMessage.includes('power of attorney') || lowercaseMessage.includes('poa')) {
+      return `📝 **Power of Attorney Guide:**\n\n**What is POA:** ${legalKnowledge.powerOfAttorney["What is POA"]}\n\n**Types:**\n• **General POA:** ${legalKnowledge.powerOfAttorney["General POA"]}\n• **Special POA:** ${legalKnowledge.powerOfAttorney["Special POA"]}\n\n**Registration:** ${legalKnowledge.powerOfAttorney["Registration"]}\n\n**For NRIs:** ${legalKnowledge.powerOfAttorney["NRI POA"]}\n\n📄 **Template Available:** Would you like me to provide a POA template?`;
     }
-    
-    if (lowercaseMessage.includes('article 15') || lowercaseMessage.includes('discrimination')) {
-      return 'Article 15 prohibits discrimination on grounds of religion, race, caste, sex, or place of birth. Allows positive discrimination for women, children, SCs/STs/OBCs. Recent amendments include reservation for economically weaker sections (Article 15(6)) and various state-specific reservations.';
+
+    // Criminal Law
+    if (lowercaseMessage.includes('criminal') || lowercaseMessage.includes('ipc') || lowercaseMessage.includes('theft') || lowercaseMessage.includes('fraud') || lowercaseMessage.includes('420')) {
+      if (lowercaseMessage.includes('420') || lowercaseMessage.includes('fraud') || lowercaseMessage.includes('cheating')) {
+        return `🚨 **IPC 420 - Cheating:**\n${legalKnowledge.criminal["IPC 420"]}\n\n**Related:** ${legalKnowledge.criminal["IPC 406"]}\n\n**Action:** File FIR immediately, collect evidence, approach cyber cell for online fraud.`;
+      }
+      if (lowercaseMessage.includes('theft') || lowercaseMessage.includes('robbery')) {
+        return `🔐 **Theft vs Robbery:**\n${legalKnowledge.criminal["Theft vs Robbery"]}\n\n**Action:** File FIR immediately, provide detailed complaint, list stolen items with proof of ownership.`;
+      }
+      if (lowercaseMessage.includes('bail')) {
+        return `⚖️ **Bail Rights:**\n${legalKnowledge.criminal["Bail Rights"]}\n\n**Process:** Apply in magistrate court, provide surety, comply with conditions. Legal aid available for poor.`;
+      }
+      return `⚔️ **Criminal Law Basics:**\n• Fraud/Cheating: ${legalKnowledge.criminal["IPC 420"]}\n• Breach of Trust: ${legalKnowledge.criminal["IPC 406"]}\n• Defamation: ${legalKnowledge.criminal["Defamation"]}\n\n**Emergency:** Call 100 (Police) or 112 (Integrated Emergency)`;
     }
-    
-    if (lowercaseMessage.includes('article 16') || lowercaseMessage.includes('public employment')) {
-      return 'Article 16 ensures equality of opportunity in public employment. Allows reservations for SCs/STs/OBCs and now EWS (10% reservation). Includes provisions for reservation in promotions, Creamy Layer concept, and 50% ceiling on reservations as per Indra Sawhney case.';
+
+    // Family Law
+    if (lowercaseMessage.includes('marriage') || lowercaseMessage.includes('divorce') || lowercaseMessage.includes('custody') || lowercaseMessage.includes('domestic violence')) {
+      if (lowercaseMessage.includes('divorce')) {
+        return `💔 **Divorce Laws in India:**\n• **Hindu Marriage:** ${legalKnowledge.family["Hindu Marriage"]}\n• **Muslim Marriage:** ${legalKnowledge.family["Muslim Marriage"]}\n• **Christian Marriage:** ${legalKnowledge.family["Christian Marriage"]}\n\n**Maintenance:** ${legalKnowledge.family["Maintenance"]}`;
+      }
+      if (lowercaseMessage.includes('custody')) {
+        return `👶 **Child Custody Laws:**\n${legalKnowledge.family["Child Custody"]}\n\n**Adoption:** ${legalKnowledge.family["Adoption"]}`;
+      }
+      if (lowercaseMessage.includes('domestic violence')) {
+        return `🛡️ **Domestic Violence Protection:**\n${legalKnowledge.family["Domestic Violence"]}\n\n**Emergency Helpline:** 181 (Women Helpline) - 24/7 support\n\n**Action:** File complaint, seek protection order, approach women's cell at police station.`;
+      }
+      return `👨‍👩‍👧‍👦 **Family Law Overview:**\nMarriage laws vary by religion. Common grounds for divorce include cruelty, desertion, mental disorder. Child's best interest is paramount in custody matters.\n\n**Need Help?** Women Helpline: 181`;
     }
-    
-    if (lowercaseMessage.includes('article 17') || lowercaseMessage.includes('untouchability')) {
-      return 'Article 17 abolishes untouchability. Enforced through Protection of Civil Rights Act, 1955 and SC/ST (Prevention of Atrocities) Act, 1989. Practice of untouchability is a punishable offense. Manual scavenging is specifically prohibited under recent legislation.';
+
+    // Consumer Rights
+    if (lowercaseMessage.includes('consumer') || lowercaseMessage.includes('refund') || lowercaseMessage.includes('defective') || lowercaseMessage.includes('online shopping')) {
+      return `🛒 **Consumer Protection:**\n\n**Your Rights:** ${legalKnowledge.consumer["Consumer Rights"]}\n\n**Defective Products:** ${legalKnowledge.consumer["Defective Products"]}\n\n**Online Shopping:** ${legalKnowledge.consumer["Online Shopping"]}\n\n**Consumer Courts:** ${legalKnowledge.consumer["Consumer Courts"]}\n\n**Filing Complaint:** ${legalKnowledge.consumer["Complaint Process"]}`;
     }
-    
-    if (lowercaseMessage.includes('article 20') || lowercaseMessage.includes('ex post facto')) {
-      return 'Article 20 provides protection against arbitrary punishment: (1) Ex post facto laws prohibited (2) Double jeopardy protection (3) Self-incrimination protection. These are available to both citizens and non-citizens. Miranda rights in Indian context derive from this article.';
+
+    // Employment Rights
+    if (lowercaseMessage.includes('employment') || lowercaseMessage.includes('salary') || lowercaseMessage.includes('labour') || lowercaseMessage.includes('maternity')) {
+      if (lowercaseMessage.includes('maternity') || lowercaseMessage.includes('leave')) {
+        return `🤱 **Maternity & Employment Benefits:**\n${legalKnowledge.labour["Maternity Leave"]}\n\n**Other Benefits:**\n• PF: ${legalKnowledge.labour["Provident Fund"]}\n• ESI: ${legalKnowledge.labour["ESI Benefits"]}\n• Gratuity: ${legalKnowledge.labour["Gratuity"]}`;
+      }
+      if (lowercaseMessage.includes('minimum wage') || lowercaseMessage.includes('salary')) {
+        return `💰 **Employment Rights:**\n• **Minimum Wages:** ${legalKnowledge.labour["Minimum Wages"]}\n• **Working Hours:** ${legalKnowledge.labour["Working Hours"]}\n• **Termination:** ${legalKnowledge.labour["Termination"]}`;
+      }
+      return `👷 **Labour Law Overview:**\n• Minimum wages vary by state (₹178-₹350/day)\n• 8 hours/day, 48 hours/week maximum\n• 26 weeks maternity leave\n• PF, ESI, gratuity benefits available\n\n**New Labour Codes:** ${legalKnowledge.recent["New Labour Codes"]}`;
     }
-    
-    if (lowercaseMessage.includes('article 22') || lowercaseMessage.includes('arrest')) {
-      return 'Article 22 provides protection against arrest and detention: Right to be informed of grounds, right to legal representation, 24-hour production before magistrate. Preventive detention laws like NSA, UAPA are exceptions. Habeas corpus is the constitutional remedy for illegal detention.';
+
+    // Cyber Crime
+    if (lowercaseMessage.includes('cyber') || lowercaseMessage.includes('online fraud') || lowercaseMessage.includes('hacking') || lowercaseMessage.includes('social media')) {
+      return `💻 **Cyber Crime & IT Laws:**\n\n**IT Act 2000:** ${legalKnowledge.cyber["IT Act 2000"]}\n\n**Online Fraud:** ${legalKnowledge.cyber["Online Fraud"]}\n\n**Social Media:** ${legalKnowledge.cyber["Social Media"]}\n\n**Emergency:** ${legalKnowledge.cyber["Cybercrime Helpline"]}\n\n**Report Online:** Visit cybercrime.gov.in to file complaints`;
     }
-    
-    // Directive Principles and Duties
-    if (lowercaseMessage.includes('dpsp') || lowercaseMessage.includes('directive principles')) {
-      return 'DPSPs (Articles 36-51) are fundamental in governance but not enforceable by courts. Include right to work, education, public assistance, living wage, participatory democracy. Recent judicial interpretation has made them more enforceable through Article 21. Conflict with fundamental rights resolved case-by-case.';
+
+    // Constitutional Rights
+    if (lowercaseMessage.includes('article') || lowercaseMessage.includes('constitution') || lowercaseMessage.includes('fundamental rights')) {
+      if (lowercaseMessage.includes('21')) {
+        return `📜 **Article 21 - Right to Life:**\n${legalKnowledge.constitution["Article 21"]}\n\nThis is the most expansive fundamental right, interpreted by courts to include right to privacy, clean environment, speedy trial, and dignity.`;
+      }
+      if (lowercaseMessage.includes('19')) {
+        return `🗣️ **Article 19 - Freedom Rights:**\n${legalKnowledge.constitution["Article 19"]}\n\nIncludes 6 freedoms with reasonable restrictions. Recent debates on internet shutdowns and free speech online.`;
+      }
+      if (lowercaseMessage.includes('14')) {
+        return `⚖️ **Article 14 - Right to Equality:**\n${legalKnowledge.constitution["Article 14"]}\n\nFundamental principle of Indian democracy. Includes LGBTQ+ rights recognition and prohibition of arbitrary state action.`;
+      }
+      return `📖 **Constitutional Rights:**\n• Article 14: ${legalKnowledge.constitution["Article 14"]}\n• Article 19: Freedom of speech, assembly, movement, profession\n• Article 21: Life and personal liberty\n• Article 32: Constitutional remedies\n\n**RTI:** ${legalKnowledge.constitution["Right to Information"]}`;
     }
-    
-    if (lowercaseMessage.includes('fundamental duties') || lowercaseMessage.includes('article 51a')) {
-      return 'Article 51A lists 11 fundamental duties added by 42nd Amendment (1976). Include respecting Constitution, national flag/anthem, protecting environment, developing scientific temperament, safeguarding public property. Non-justiciable but considered by courts in judicial review.';
+
+    // Legal Templates
+    if (lowercaseMessage.includes('template') || lowercaseMessage.includes('format') || lowercaseMessage.includes('agreement')) {
+      return `📄 **Legal Templates Available:**\n\n${Object.entries(legalKnowledge.templates).map(([key, value]) => `• **${key}:** ${value}`).join('\n')}\n\n**Documentation Help:**\n• Affidavit: ${legalKnowledge.documentation["Affidavit"]}\n• Notarization: ${legalKnowledge.documentation["Notarization"]}\n\nWhich template would you like? I can provide detailed formats with instructions.`;
     }
-    
-    // Specific Laws and Acts
-    if (lowercaseMessage.includes('criminal procedure code') || lowercaseMessage.includes('crpc')) {
-      return 'CrPC 2023 (new law replacing CrPC 1973) governs criminal procedure. Key changes: timeline-bound investigation, victim rights, electronic processes, community service sentences. Covers arrest, bail, trial procedures, appeals. Major reforms in witness protection and e-courts integration.';
+
+    // Recent Legal Updates
+    if (lowercaseMessage.includes('recent') || lowercaseMessage.includes('latest') || lowercaseMessage.includes('new law') || lowercaseMessage.includes('2023')) {
+      return `📰 **Recent Legal Developments (2023-2024):**\n\n**New Criminal Laws:**\n• ${legalKnowledge.recent["Bharatiya Nyaya Sanhita 2023"]}\n• ${legalKnowledge.recent["Bharatiya Nagarik Suraksha Sanhita 2023"]}\n• ${legalKnowledge.recent["Bharatiya Sakshya Adhiniyam 2023"]}\n\n**Other Updates:**\n• ${legalKnowledge.recent["New Labour Codes"]}\n• ${legalKnowledge.recent["Data Protection Bill"]}\n• ${legalKnowledge.recent["Cryptocurrency"]}`;
     }
-    
-    if (lowercaseMessage.includes('indian penal code') || lowercaseMessage.includes('ipc') || lowercaseMessage.includes('bharatiya nyaya sanhita')) {
-      return 'Bharatiya Nyaya Sanhita (BNS) 2023 replaces IPC 1860. Defines crimes and punishments. New provisions for terrorism, organized crime, mob lynching. Enhanced penalties for crimes against women and children. Death penalty retained for heinous crimes. Gender-neutral rape laws debated but not included.';
+
+    // Emergency Contacts
+    if (lowercaseMessage.includes('emergency') || lowercaseMessage.includes('helpline') || lowercaseMessage.includes('contact')) {
+      return `🚨 **Emergency Legal Contacts:**\n\n${Object.entries(legalKnowledge.emergency).map(([key, value]) => `• **${key}:** ${value}`).join('\n')}\n\n**Remember:** Always file FIR for serious crimes, seek legal aid if you cannot afford lawyer, and document everything for evidence.`;
     }
-    
-    if (lowercaseMessage.includes('evidence act') || lowercaseMessage.includes('bharatiya sakshya adhiniyam')) {
-      return 'Bharatiya Sakshya Adhiniyam 2023 replaces Evidence Act 1872. Recognizes electronic evidence, digital signatures, AI-generated evidence. Simplified admissibility rules for electronic records. Provisions for video conferencing, remote testimony. Strengthened protection for vulnerable witnesses.';
+
+    // RTI and Government Services
+    if (lowercaseMessage.includes('rti') || lowercaseMessage.includes('information') || lowercaseMessage.includes('government')) {
+      return `📋 **Right to Information (RTI):**\n${legalKnowledge.constitution["Right to Information"]}\n\n**Process:** File RTI application with concerned public authority, pay ₹10 fee, expect response within 30 days. Appeal to Information Commission if unsatisfied.\n\n**Legal Aid:** ${legalKnowledge.emergency["Legal Aid"]}`;
     }
-    
-    if (lowercaseMessage.includes('information technology act') || lowercaseMessage.includes('it act')) {
-      return 'IT Act 2000 (amended 2008) governs cybercrimes and digital transactions. Covers data protection, cybersecurity, digital signatures, intermediary liability. Section 66A struck down by Supreme Court. Current focus on personal data protection, fake news, digital rights. New Digital India Act proposed.';
+
+    // General legal advice
+    if (lowercaseMessage.includes('lawyer') || lowercaseMessage.includes('legal advice') || lowercaseMessage.includes('court')) {
+      return `👨‍⚖️ **Legal Consultation Guidance:**\n\n**When to Consult a Lawyer:**\n• Complex legal matters\n• Court proceedings\n• Drafting important contracts\n• Criminal charges\n• Property disputes\n\n**Free Legal Aid:** Call 15100 (NALSA Helpline)\n\n**⚠️ Disclaimer:** This chatbot provides general legal information only. For specific legal advice, please consult a qualified lawyer licensed to practice in India.`;
     }
-    
-    if (lowercaseMessage.includes('right to information') || lowercaseMessage.includes('rti')) {
-      return 'RTI Act 2005 ensures transparency and accountability. Citizens can access government information within 30 days (48 hours for life/liberty). Exemptions under Section 8. Information Commissions at central and state levels. Recent amendments regarding tenure and salaries of Information Commissioners controversial.';
-    }
-    
-    if (lowercaseMessage.includes('lokpal') || lowercaseMessage.includes('anti-corruption')) {
-      return 'Lokpal and Lokayuktas Act 2013 establishes anti-corruption ombudsman. Covers PM, Ministers, MPs, government employees. Lokpal has investigative and prosecution powers. State Lokayuktas for state-level corruption. Whistleblower Protection Act 2014 protects those reporting corruption.';
-    }
-    
-    // Employment and Labor Laws
-    if (lowercaseMessage.includes('labour') || lowercaseMessage.includes('employment') || lowercaseMessage.includes('industrial relations')) {
-      return 'New Labour Codes (2020): (1) Wages Code - minimum wages, payment of wages (2) Industrial Relations Code - unions, strikes, layoffs (3) Social Security Code - PF, ESI, gratuity (4) OSH Code - factory safety, working conditions. Subsumed 29 central labor laws. Implementation phased across states.';
-    }
-    
-    if (lowercaseMessage.includes('minimum wages') || lowercaseMessage.includes('payment of wages')) {
-      return 'Wages Code 2019 ensures: National minimum wage floor, timely payment, no discrimination. Covers all employees. Central government sets national floor wage. State governments cannot set wages below this floor. Penalties for delayed payment, deductions regulated. Digital payment systems encouraged.';
-    }
-    
-    if (lowercaseMessage.includes('maternity benefit') || lowercaseMessage.includes('paternity leave')) {
-      return 'Maternity Benefit Act 2017: 26 weeks paid leave (increased from 12 weeks), adoptive mothers get 12 weeks, work from home options, crèche facility for 50+ women employees. Paternity leave varies by state/employer policy. New Social Security Code 2020 may standardize benefits.';
-    }
-    
-    // Family and Personal Laws
-    if (lowercaseMessage.includes('hindu marriage act') || lowercaseMessage.includes('divorce')) {
-      return 'Hindu Marriage Act 1955 governs Hindu marriages. Grounds for divorce: cruelty, desertion, conversion, mental disorder, communicable disease, renunciation. Mutual consent divorce under Section 13B. Maintenance, child custody governed by separate provisions. Recent trends favor shared custody and mediation.';
-    }
-    
-    if (lowercaseMessage.includes('domestic violence') || lowercaseMessage.includes('protection of women')) {
-      return 'Protection of Women from Domestic Violence Act 2005: Broader definition of domestic violence includes physical, sexual, verbal, emotional, economic abuse. Live-in relationships covered. Protection officers, shelter homes, monetary relief. Recent amendments strengthen implementation and increase penalties.';
-    }
-    
-    if (lowercaseMessage.includes('child custody') || lowercaseMessage.includes('guardianship')) {
-      return 'Guardians and Wards Act 1890, Hindu Minority and Guardianship Act 1956 govern custody. Best interest of child is paramount. Courts prefer joint custody, frequent access. Recent trends: shared parenting, involvement of child counselors, mediation preferred over litigation. International child abduction governed by Hague Convention.';
-    }
-    
-    // Consumer and Civil Rights
-    if (lowercaseMessage.includes('consumer rights') || lowercaseMessage.includes('consumer protection')) {
-      return 'Consumer Protection Act 2019: Expanded definition of consumer, e-commerce included, product liability, class action suits, alternative dispute resolution. Central Consumer Protection Authority for policy enforcement. Three-tier system: District, State, National Consumer Commissions. Penalties up to ₹1 lakh for misleading ads.';
-    }
-    
-    if (lowercaseMessage.includes('rent control') || lowercaseMessage.includes('rental agreement')) {
-      return 'Rental agreements governed by: Transfer of Property Act 1882, state rent control laws, Model Tenancy Act 2021. Key elements: parties details, property description, rent amount, security deposit, duration, terms. Registration mandatory for 11+ months. Recent reforms aim to balance landlord-tenant rights, expedite disputes.';
-    }
-    
-    if (lowercaseMessage.includes('property rights') || lowercaseMessage.includes('real estate')) {
-      return 'Real Estate (Regulation and Development) Act 2016: RERA registration mandatory for projects, transparency in project details, completion timelines, penalty for delays, buyers rights protection. State RERA authorities established. Covers residential and commercial projects above specified thresholds. Appellate tribunals for disputes.';
-    }
-    
-    // Corporate and Business Laws
-    if (lowercaseMessage.includes('companies act') || lowercaseMessage.includes('corporate governance')) {
-      return 'Companies Act 2013: Corporate governance reforms, independent directors, audit committees, CSR obligations, class action suits, serious fraud investigation. Recent amendments: producer companies, small companies exemptions, e-voting, decriminalization of technical violations. NCLT/NCLAT for company law disputes.';
-    }
-    
-    if (lowercaseMessage.includes('insolvency') || lowercaseMessage.includes('bankruptcy')) {
-      return 'Insolvency and Bankruptcy Code 2016: Time-bound resolution (180+90 days), creditor-in-control model, NCLT as adjudicating authority, resolution professionals, liquidation as last resort. Covers corporate persons, partnership firms, individuals. Pre-pack insolvency for MSMEs. Significant economic reform for stressed assets.';
-    }
-    
-    if (lowercaseMessage.includes('gst') || lowercaseMessage.includes('goods and services tax')) {
-      return 'GST Act 2017: "One Nation, One Tax" - subsumed multiple indirect taxes. CGST, SGST, IGST, UTGST structure. Input tax credit, reverse charge, composition scheme, e-way bills, GSTIN registration. Anti-profiteering measures, GST tribunals for disputes. Regular rate revisions by GST Council.';
-    }
-    
-    // Recent Legal Developments
-    if (lowercaseMessage.includes('data protection') || lowercaseMessage.includes('privacy')) {
-      return 'Personal Data Protection Bill (withdrawn 2022): Proposed comprehensive data protection framework. Current status: Draft Digital Personal Data Protection Act 2023 under consideration. Covers data fiduciary obligations, consent, data principal rights, cross-border transfers, penalties. Privacy as fundamental right per Puttaswamy judgment.';
-    }
-    
-    if (lowercaseMessage.includes('triple talaq') || lowercaseMessage.includes('muslim personal law')) {
-      return 'Muslim Personal Law (Shariat) Application Act 1937 governs Muslim family matters. Triple Talaq criminalized by Muslim Personal Law (Shariat) Application Act 2019. Instant triple talaq void and illegal. Maintenance, custody rights protected. Ongoing debates on Uniform Civil Code implementation.';
-    }
-    
-    if (lowercaseMessage.includes('cab') || lowercaseMessage.includes('citizenship amendment act')) {
-      return 'Citizenship Amendment Act 2019: Fast-track citizenship for non-Muslim minorities from Afghanistan, Bangladesh, Pakistan who entered India before Dec 2014. Controversial for religion-based criterion. Combined with NRC concerns led to nationwide protests. Various petitions pending in Supreme Court challenging its validity.';
-    }
-    
-    // Court Procedures and Legal Processes
-    if (lowercaseMessage.includes('bail') || lowercaseMessage.includes('anticipatory bail')) {
-      return 'Bail types: Regular bail (post-arrest), anticipatory bail (pre-arrest), interim bail (temporary). Constitutional right to bail for bailable offenses. Non-bailable offenses require court discretion. Factors: gravity of offense, flight risk, tampering evidence, public interest. Recent reforms emphasize personal liberty, undertrial detention concerns.';
-    }
-    
-    if (lowercaseMessage.includes('pil') || lowercaseMessage.includes('public interest litigation')) {
-      return 'PIL democratizes justice by allowing any citizen to approach courts for public issues. Relaxed locus standi, social justice focus. Supreme Court and High Courts have PIL jurisdiction. Covers environmental protection, fundamental rights violations, government accountability. Recent concerns about frivolous PILs led to stricter guidelines.';
-    }
-    
-    if (lowercaseMessage.includes('arbitration') || lowercaseMessage.includes('alternative dispute resolution')) {
-      return 'Arbitration and Conciliation Act 2015 (amended 2019/2021): Institutional arbitration promotion, timelines for awards (12 months), limited court intervention, confidentiality, emergency arbitration. Mediation Act 2023 promotes mediation. Lok Adalats for alternative dispute resolution. Focus on reducing court backlog.';
-    }
-    
-    // Templates and Documents
-    if (lowercaseMessage.includes('template') || lowercaseMessage.includes('document')) {
-      return 'I can provide templates for: Rental Agreements, NDAs, Power of Attorney, Employment Contracts, Partnership Deeds, Property Sale Deeds, Loan Agreements, Wills, Affidavits, Consumer Complaints, Cyber Crime Complaints, and more. Which specific template do you need? I can also explain the legal requirements for each document.';
-    }
-    
-    if (lowercaseMessage.includes('will') || lowercaseMessage.includes('succession')) {
-      return 'Indian Succession Act 1925 governs wills and succession. Valid will requires: sound mind, free consent, signature, two witnesses. Registration not mandatory but advisable. Probate required for certain properties. Hindu Succession Act 2005 provides equal inheritance rights to daughters. Muslim succession governed by personal law.';
-    }
-    
-    if (lowercaseMessage.includes('power of attorney')) {
-      return 'Power of Attorney types: General (all legal acts), Special (specific purpose), Durable (survives incapacity). Must specify: Principal/Agent details, scope of powers, duration, limitations, signatures, notarization. Registration mandatory for immovable property transactions. Can be revoked anytime by principal. Safeguards against misuse essential.';
-    }
-    
-    if (lowercaseMessage.includes('nda') || lowercaseMessage.includes('non-disclosure')) {
-      return 'Non-Disclosure Agreement elements: (1) Parties identification (2) Definition of confidential information (3) Purpose and scope (4) Duration of confidentiality (5) Permitted disclosures (6) Return of information (7) Remedies for breach (8) Jurisdiction. Mutual vs Unilateral NDAs. Digital signatures valid under IT Act.';
-    }
-    
-    // Legal Profession and Services
-    if (lowercaseMessage.includes('lawyer') || lowercaseMessage.includes('advocate') || lowercaseMessage.includes('consultation')) {
-      return 'Advocates Act 1961 governs legal profession. Bar Council of India regulates advocates. Specializations: Criminal Law, Civil Law, Corporate Law, Family Law, Constitutional Law, Tax Law, IP Law, Cyber Law, Environmental Law. Choose lawyers based on: experience, specialization, location, fees, reviews, success rate.';
-    }
-    
-    if (lowercaseMessage.includes('legal aid') || lowercaseMessage.includes('free legal help')) {
-      return 'Legal Services Authorities Act 1987: Free legal aid for eligible persons (women, SCs/STs, children, disabled, victims of trafficking, below poverty line). National Legal Services Authority (NALSA) coordinates. Legal aid clinics, Lok Adalats, para-legal volunteers. Constitutional mandate under Article 39A.';
-    }
-    
-    if (lowercaseMessage.includes('court fees') || lowercaseMessage.includes('filing fees')) {
-      return 'Court fees vary by: case type, claim value, court level. Court Fees Act 1870 and state amendments govern fees. Exemptions for: government cases, pauper suits, certain categories. E-filing systems accept online payments. Additional charges: advocate fees, documentation, travel. Legal aid available for eligible persons.';
-    }
-    
-    // Recent Activities and Legal Updates
-    if (lowercaseMessage.includes('recent') || lowercaseMessage.includes('latest') || lowercaseMessage.includes('news')) {
-      return 'Recent legal developments: (1) New criminal laws implementation (2) Digital Personal Data Protection Act drafting (3) Uniform Civil Code committee reports (4) E-courts expansion (5) AI in judiciary discussions (6) Climate change litigation increase (7) Crypto regulation frameworks (8) Gig economy labor rights (9) POCSO Act amendments (10) Electoral reforms debates.';
-    }
-    
-    // Default comprehensive response
-    return 'I\'m your advanced legal AI assistant with comprehensive knowledge of Indian Constitution, laws, and regulations. I can help with: Constitutional rights interpretation, legal procedure guidance, document templates, case law references, recent legal updates, lawyer recommendations, legal research assistance, and procedural queries. Ask me anything specific about Indian law, and I\'ll provide detailed, accurate information based on current legal framework and recent developments.';
+
+    // Default comprehensive response with context memory
+    return `🤖 **I'm NyayaBot - Your Comprehensive Legal Assistant**\n\nI can help you with:\n\n🚗 **Traffic Laws** - Helmet, seatbelt, speed limits, challans\n🏠 **Property Law** - Rent agreements, title deeds, disputes\n📝 **Documentation** - POA, affidavits, contracts, templates\n⚖️ **Criminal Law** - IPC sections, bail, fraud, theft\n👨‍👩‍👧‍👦 **Family Law** - Marriage, divorce, custody, domestic violence\n🛒 **Consumer Rights** - Refunds, defective products, complaints\n👷 **Employment** - Wages, leave, termination, benefits\n💻 **Cyber Crime** - Online fraud, IT laws, social media\n📜 **Constitutional Rights** - Articles 14, 19, 21, RTI\n🚨 **Emergency Contacts** - Helplines for various issues\n\n**Recent Updates:** New criminal laws (BNS, BNSS, BSA 2023), labour codes, data protection\n\n**Ask me anything!** Example: "What are helmet laws?", "How to file RTI?", "Property dispute help", "Consumer court process"\n\n⚠️ **Legal Disclaimer:** This is for informational purposes only. Consult a qualified lawyer for specific legal advice.`;
   };
 
   const handleSendMessage = async () => {
@@ -298,10 +385,15 @@ const ChatBot: React.FC = () => {
             } bg-card rounded-lg shadow-2xl border flex flex-col`}
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b">
-              <div className="flex items-center space-x-2">
-                <Bot className="h-5 w-5 text-primary" />
-                <h3 className="font-semibold">Legal Assistant</h3>
+            <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-primary/10 to-secondary/10">
+              <div className="flex items-center space-x-3">
+                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Bot className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">NyayaBot</h3>
+                  <p className="text-xs text-muted-foreground">Your Legal Assistant</p>
+                </div>
               </div>
               <div className="flex items-center space-x-1">
                 <Button
@@ -339,7 +431,7 @@ const ChatBot: React.FC = () => {
                       <div className="flex items-start space-x-2">
                         {message.sender === 'bot' && <Bot className="h-4 w-4 mt-0.5 flex-shrink-0" />}
                         {message.sender === 'user' && <User className="h-4 w-4 mt-0.5 flex-shrink-0" />}
-                        <p className="text-sm">{message.message}</p>
+                        <p className="text-sm whitespace-pre-line">{message.message}</p>
                       </div>
                     </div>
                   </div>
@@ -364,18 +456,21 @@ const ChatBot: React.FC = () => {
             </ScrollArea>
 
             {/* Input */}
-            <div className="p-4 border-t">
+            <div className="p-4 border-t bg-muted/30">
               <div className="flex space-x-2">
                 <Input
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask a legal question..."
+                  placeholder="Ask about traffic rules, property law, rights, or any legal query..."
                   className="flex-1"
                 />
-                <Button onClick={handleSendMessage} size="icon">
+                <Button onClick={handleSendMessage} size="icon" className="bg-primary hover:bg-primary/90">
                   <Send className="h-4 w-4" />
                 </Button>
+              </div>
+              <div className="text-xs text-muted-foreground mt-2 text-center">
+                ⚠️ This is for informational purposes only. Consult a qualified lawyer for specific legal advice.
               </div>
             </div>
           </motion.div>
