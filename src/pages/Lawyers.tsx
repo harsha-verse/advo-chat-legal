@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ChatBot from '@/components/Chat/ChatBot';
 import { 
   Search,
   Star,
@@ -27,6 +28,7 @@ const Lawyers: React.FC = () => {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialization, setSelectedSpecialization] = useState('all');
+  const [showChatBot, setShowChatBot] = useState(false);
 
   const specializations = [
     { id: 'all', name: 'All Lawyers', icon: Scale },
@@ -341,13 +343,20 @@ const Lawyers: React.FC = () => {
               <p className="text-muted-foreground mb-4">
                 Our AI assistant can help you find the right lawyer based on your legal needs and preferences.
               </p>
-              <Button variant="outline" size="sm">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowChatBot(true)}
+              >
                 Get AI Recommendations
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* ChatBot Integration */}
+      {showChatBot && <ChatBot />}
     </div>
   );
 };
