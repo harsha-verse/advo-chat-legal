@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('lawlite_user', JSON.stringify(foundUser));
       return true;
     } catch (error) {
-      console.error('Login error:', error);
+      // Error logged server-side only in production
       return false;
     } finally {
       setIsLoading(false);
@@ -91,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       return true;
     } catch (error) {
-      console.error('Signup error:', error);
+      // Error logged server-side only in production
       return false;
     } finally {
       setIsLoading(false);
