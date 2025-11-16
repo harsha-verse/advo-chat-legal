@@ -75,6 +75,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: userData.email,
         type: userData.type,
         name: userData.name,
+        state: userData.state,
+        preferredLanguage: userData.preferredLanguage || 'en',
         licenseNumber: userData.licenseNumber,
         specialization: userData.specialization,
         experience: userData.experience,

@@ -3,6 +3,8 @@ export interface User {
   email: string;
   type: 'user' | 'lawyer';
   name?: string;
+  state?: string;
+  preferredLanguage?: string;
   licenseNumber?: string;
   specialization?: string;
   experience?: number;

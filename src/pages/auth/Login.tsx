@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import logo from '@/assets/logo.png';
 
 const Login: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { login } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -54,6 +54,15 @@ const Login: React.FC = () => {
       const success = await login(formData.email, formData.password, formData.type);
       
       if (success) {
+        // Update language based on user preference
+        const storedUser = localStorage.getItem('lawlite_user');
+        if (storedUser) {
+          const user = JSON.parse(storedUser);
+          if (user.preferredLanguage) {
+            i18n.changeLanguage(user.preferredLanguage);
+          }
+        }
+        
         toast({
           title: "Success",
           description: "Logged in successfully!",

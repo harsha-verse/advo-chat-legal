@@ -24,6 +24,8 @@ const Signup: React.FC = () => {
     password: '',
     confirmPassword: '',
     name: '',
+    state: '',
+    preferredLanguage: 'en',
     type: 'user' as 'user' | 'lawyer',
     licenseNumber: '',
     specialization: '',
@@ -48,6 +50,14 @@ const Signup: React.FC = () => {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
+    
+    if (!formData.name.trim()) {
+      newErrors.name = 'Please enter your name';
+    }
+    
+    if (!formData.state) {
+      newErrors.state = 'Please select your state';
+    }
     
     if (!formData.email) {
       newErrors.email = t('pleaseEnterEmail');
@@ -209,6 +219,85 @@ const Signup: React.FC = () => {
                     <AlertDescription>{errors.name}</AlertDescription>
                   </Alert>
                 )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="state">State</Label>
+                <Select
+                  value={formData.state}
+                  onValueChange={(value) => handleSelectChange('state', value)}
+                >
+                  <SelectTrigger className={errors.state ? 'border-destructive' : ''}>
+                    <SelectValue placeholder="Select your state" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    <SelectItem value="AN">Andaman and Nicobar Islands</SelectItem>
+                    <SelectItem value="AP">Andhra Pradesh</SelectItem>
+                    <SelectItem value="AR">Arunachal Pradesh</SelectItem>
+                    <SelectItem value="AS">Assam</SelectItem>
+                    <SelectItem value="BR">Bihar</SelectItem>
+                    <SelectItem value="CH">Chandigarh</SelectItem>
+                    <SelectItem value="CT">Chhattisgarh</SelectItem>
+                    <SelectItem value="DN">Dadra and Nagar Haveli and Daman and Diu</SelectItem>
+                    <SelectItem value="DL">Delhi</SelectItem>
+                    <SelectItem value="GA">Goa</SelectItem>
+                    <SelectItem value="GJ">Gujarat</SelectItem>
+                    <SelectItem value="HR">Haryana</SelectItem>
+                    <SelectItem value="HP">Himachal Pradesh</SelectItem>
+                    <SelectItem value="JK">Jammu and Kashmir</SelectItem>
+                    <SelectItem value="JH">Jharkhand</SelectItem>
+                    <SelectItem value="KA">Karnataka</SelectItem>
+                    <SelectItem value="KL">Kerala</SelectItem>
+                    <SelectItem value="LA">Ladakh</SelectItem>
+                    <SelectItem value="LD">Lakshadweep</SelectItem>
+                    <SelectItem value="MP">Madhya Pradesh</SelectItem>
+                    <SelectItem value="MH">Maharashtra</SelectItem>
+                    <SelectItem value="MN">Manipur</SelectItem>
+                    <SelectItem value="ML">Meghalaya</SelectItem>
+                    <SelectItem value="MZ">Mizoram</SelectItem>
+                    <SelectItem value="NL">Nagaland</SelectItem>
+                    <SelectItem value="OR">Odisha</SelectItem>
+                    <SelectItem value="PY">Puducherry</SelectItem>
+                    <SelectItem value="PB">Punjab</SelectItem>
+                    <SelectItem value="RJ">Rajasthan</SelectItem>
+                    <SelectItem value="SK">Sikkim</SelectItem>
+                    <SelectItem value="TN">Tamil Nadu</SelectItem>
+                    <SelectItem value="TG">Telangana</SelectItem>
+                    <SelectItem value="TR">Tripura</SelectItem>
+                    <SelectItem value="UP">Uttar Pradesh</SelectItem>
+                    <SelectItem value="UT">Uttarakhand</SelectItem>
+                    <SelectItem value="WB">West Bengal</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.state && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{errors.state}</AlertDescription>
+                  </Alert>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="preferredLanguage">Preferred Language</Label>
+                <Select
+                  value={formData.preferredLanguage}
+                  onValueChange={(value) => handleSelectChange('preferredLanguage', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your language" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    <SelectItem value="en">🇬🇧 English</SelectItem>
+                    <SelectItem value="hi">🇮🇳 हिन्दी (Hindi)</SelectItem>
+                    <SelectItem value="kn">🇮🇳 ಕನ್ನಡ (Kannada)</SelectItem>
+                    <SelectItem value="ta">🇮🇳 தமிழ் (Tamil)</SelectItem>
+                    <SelectItem value="te">🇮🇳 తెలుగు (Telugu)</SelectItem>
+                    <SelectItem value="ml">🇮🇳 മലയാളം (Malayalam)</SelectItem>
+                    <SelectItem value="bn">🇮🇳 বাংলা (Bengali)</SelectItem>
+                    <SelectItem value="mr">🇮🇳 मराठी (Marathi)</SelectItem>
+                    <SelectItem value="gu">🇮🇳 ગુજરાતી (Gujarati)</SelectItem>
+                    <SelectItem value="pa">🇮🇳 ਪੰਜਾਬੀ (Punjabi)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               
               <div className="space-y-2">
