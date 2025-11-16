@@ -17,34 +17,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChatMessage } from '@/types';
 
 const ChatBot: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: '1',
+      message: '🙏 Namaste! I\'m NyayaBot, your comprehensive legal assistant for Indian law. I can help you with Constitutional rights, traffic rules, property law, family matters, consumer rights, criminal law, employment issues, and much more. How can I assist you today?',
+      sender: 'bot',
+      timestamp: new Date().toISOString()
+    }
+  ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Get user's preferred language
-  useEffect(() => {
-    const storedUser = localStorage.getItem('lawlite_user');
-    if (storedUser) {
-      const user = JSON.parse(storedUser);
-      if (user.preferredLanguage) {
-        i18n.changeLanguage(user.preferredLanguage);
-      }
-    }
-    
-    // Set initial greeting in user's language
-    setMessages([
-      {
-        id: '1',
-        message: t('botGreeting'),
-        sender: 'bot',
-        timestamp: new Date().toISOString()
-      }
-    ]);
-  }, [t, i18n]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
