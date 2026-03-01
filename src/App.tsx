@@ -14,6 +14,8 @@ import Lawyers from "./pages/Lawyers";
 import Templates from "./pages/Templates";
 import Documents from "./pages/Documents";
 import Consultants from "./pages/Consultants";
+import StateLegalSupport from "./pages/StateLegalSupport";
+import MSMESupport from "./pages/MSMESupport";
 import NotFound from "./pages/NotFound";
 import "./i18n";
 
@@ -106,6 +108,16 @@ const App = () => (
             <Route path="/consultants" element={
               <ProtectedRoute>
                 <Consultants />
+              </ProtectedRoute>
+            } />
+            <Route path="/state-legal-support" element={
+              <ProtectedRoute>
+                <StateLegalSupport />
+              </ProtectedRoute>
+            } />
+            <Route path="/msme-support" element={
+              <ProtectedRoute>
+                <MSMESupport />
               </ProtectedRoute>
             } />
             <Route path="/chat" element={

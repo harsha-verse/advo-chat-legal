@@ -11,7 +11,9 @@ import {
   MessageCircle, 
   User,
   Briefcase,
-  Scale
+  Scale,
+  MapPin,
+  Building
 } from 'lucide-react';
 
 const Navigation: React.FC = () => {
@@ -25,6 +27,8 @@ const Navigation: React.FC = () => {
     { path: '/documents', icon: FileText, label: t('documents') },
     { path: '/templates', icon: File, label: t('templates') },
     { path: '/consultants', icon: Users, label: t('consultants') },
+    { path: '/state-legal-support', icon: MapPin, label: 'State Legal Support' },
+    { path: '/msme-support', icon: Building, label: 'MSME Support' },
     { path: '/chat', icon: MessageCircle, label: t('chat') },
     { path: '/profile', icon: User, label: t('profile') },
   ];
