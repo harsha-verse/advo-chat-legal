@@ -63,6 +63,35 @@ const Templates: React.FC = () => {
       type: 'Notice'
     },
     
+    // Individual Templates
+    {
+      id: 18,
+      title: 'Rental Agreement (Individual)',
+      description: 'Simple rental agreement template for individuals renting residential property',
+      category: 'property',
+      downloads: 3200,
+      languages: ['English', 'Hindi', 'Kannada', 'Tamil', 'Malayalam'],
+      type: 'Agreement'
+    },
+    {
+      id: 19,
+      title: 'Property NOC',
+      description: 'No Objection Certificate for property transfer, construction, or mortgage clearance',
+      category: 'property',
+      downloads: 1450,
+      languages: ['English', 'Hindi', 'Kannada'],
+      type: 'Certificate'
+    },
+    {
+      id: 20,
+      title: 'Police Verification Form',
+      description: 'Tenant/employee police verification application template with all required fields',
+      category: 'property',
+      downloads: 1820,
+      languages: ['English', 'Hindi'],
+      type: 'Application'
+    },
+
     // Property and Rental Templates
     {
       id: 4,
