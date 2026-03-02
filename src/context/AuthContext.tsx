@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User } from '@/types';
+import { User, UserPreferences } from '@/types';
 
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string, type: 'user' | 'lawyer') => Promise<boolean>;
   signup: (userData: any) => Promise<boolean>;
   logout: () => void;
+  updatePreferences: (prefs: Partial<UserPreferences>) => void;
   isLoading: boolean;
 }
 
@@ -24,7 +25,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored user data on app load
     const storedUser = localStorage.getItem('lawlite_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -34,27 +34,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string, type: 'user' | 'lawyer'): Promise<boolean> => {
     setIsLoading(true);
-    
-    // Simulate API call - In real app, this would be actual authentication
     try {
-      // Check stored users (mock authentication)
       const storedUsers = JSON.parse(localStorage.getItem('lawlite_users') || '[]');
-      const foundUser = storedUsers.find((u: User) => 
-        u.email === email && u.type === type
-      );
-      
-      if (!foundUser) {
-        return false;
-      }
-      
-      // In real app, verify password hash
-      // For demo, we'll assume login is successful if user exists
-      
+      const foundUser = storedUsers.find((u: User) => u.email === email && u.type === type);
+      if (!foundUser) return false;
       setUser(foundUser);
       localStorage.setItem('lawlite_user', JSON.stringify(foundUser));
       return true;
-    } catch (error) {
-      // Error logged server-side only in production
+    } catch {
       return false;
     } finally {
       setIsLoading(false);
@@ -63,13 +50,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signup = async (userData: any): Promise<boolean> => {
     setIsLoading(true);
-    
     try {
-      // Validate lawyer license if signing up as lawyer
-      if (userData.type === 'lawyer' && !userData.licenseNumber) {
-        return false;
-      }
-      
+      if (userData.type === 'lawyer' && !userData.licenseNumber) return false;
+
       const newUser: User = {
         id: Date.now().toString(),
         email: userData.email,
@@ -79,22 +62,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         specialization: userData.specialization,
         experience: userData.experience,
         consultationFee: userData.consultationFee,
-        verified: userData.type === 'lawyer' ? false : true, // Lawyers need manual verification
+        verified: userData.type === 'lawyer' ? false : true,
         rating: 0,
-        reviews: []
+        reviews: [],
+        preferences: {
+          selectedState: userData.selectedState,
+          preferredLanguage: userData.preferredLanguage,
+          legalHelpType: userData.legalHelpType,
+        },
       };
-      
-      // Store user in localStorage (in real app, this would be API call)
+
       const storedUsers = JSON.parse(localStorage.getItem('lawlite_users') || '[]');
       storedUsers.push(newUser);
       localStorage.setItem('lawlite_users', JSON.stringify(storedUsers));
-      
       return true;
-    } catch (error) {
-      // Error logged server-side only in production
+    } catch {
       return false;
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const updatePreferences = (prefs: Partial<UserPreferences>) => {
+    if (!user) return;
+    const updatedUser = {
+      ...user,
+      preferences: { ...user.preferences, ...prefs },
+    };
+    setUser(updatedUser);
+    localStorage.setItem('lawlite_user', JSON.stringify(updatedUser));
+
+    // Also update in users list
+    const storedUsers = JSON.parse(localStorage.getItem('lawlite_users') || '[]');
+    const idx = storedUsers.findIndex((u: User) => u.id === user.id);
+    if (idx !== -1) {
+      storedUsers[idx] = updatedUser;
+      localStorage.setItem('lawlite_users', JSON.stringify(storedUsers));
     }
   };
 
@@ -104,7 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, updatePreferences, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
