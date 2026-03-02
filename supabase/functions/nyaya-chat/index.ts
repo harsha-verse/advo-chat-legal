@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const BASE_SYSTEM_PROMPT = `You are **NyayaBot**, the AI-powered legal awareness assistant on the LawLite platform — India's first legal help system for common citizens.
+const SYSTEM_PROMPT = `You are **NyayaBot**, the AI-powered legal awareness assistant on the LawLite platform — India's first legal help system for common citizens.
 
 ## YOUR IDENTITY
 - You are a friendly, calm, supportive legal guide — NOT a lawyer.
@@ -41,13 +41,20 @@ Structure answers using these sections (use relevant ones):
 - ✅ **What you can do now** — immediate practical steps
 - ✅ **Next practical step** — specific action item
 - 📞 **Helplines** — relevant emergency numbers when applicable
-- 📄 **Templates** — suggest LawLite templates if relevant
+- 📄 **Templates** — suggest LawLite templates if relevant (rental agreement, legal notice, affidavit, POA, complaint format, employment contract, partnership deed)
 
 ## SMART FOLLOW-UP
-If the question is vague and no state is set, ask ONE clarifying question such as:
+If the question is vague, ask ONE clarifying question such as:
 - "Which state are you from? Rules may differ."
 - "Is this a personal or business issue?"
 - "When did this happen?"
+Then refine your answer with state-specific info if possible.
+
+## STATE-WISE SUPPORT
+When the user mentions their state, provide:
+- State-relevant procedures and rules
+- Local authority or department names
+- Specific government portals for that state
 
 ## ESCALATION LOGIC
 If the issue is complex or high-stakes:
@@ -79,34 +86,15 @@ Use this phrase: "For serious legal action, you may consult a verified lawyer th
 ## LANGUAGE
 Respond in the same language the user writes in. If they write in Hindi or Hinglish, respond accordingly. Default to English.`;
 
-function buildSystemPrompt(userState?: string): string {
-  if (!userState) return BASE_SYSTEM_PROMPT;
-
-  return BASE_SYSTEM_PROMPT + `
-
-## STATE CONTEXT — ${userState.toUpperCase()}
-The user is from **${userState}**. You MUST:
-1. **Automatically provide ${userState}-specific** legal procedures, rules, and authorities in ALL answers
-2. Mention relevant ${userState} government portals and departments
-3. Reference ${userState}-specific laws, stamp duty rates, rent control acts, police verification procedures
-4. Include local helplines and complaint portals specific to ${userState}
-5. When discussing property, rental, or police matters, always give ${userState}-specific details first
-6. Do NOT ask "which state are you from?" — you already know it's ${userState}
-
-If the user asks about a different state, provide info for that state but note their home state is ${userState}.`;
-}
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { messages, userState } = await req.json();
+    const { messages } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
-
-    const systemPrompt = buildSystemPrompt(userState);
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
@@ -119,7 +107,7 @@ serve(async (req) => {
         body: JSON.stringify({
           model: "google/gemini-3-flash-preview",
           messages: [
-            { role: "system", content: systemPrompt },
+            { role: "system", content: SYSTEM_PROMPT },
             ...messages,
           ],
           stream: true,

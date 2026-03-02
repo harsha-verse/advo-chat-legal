@@ -1,37 +1,3 @@
-export const INDIAN_STATES = [
-  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
-  'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
-  'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
-  'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
-  'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
-  'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
-  'Delhi', 'Jammu & Kashmir', 'Ladakh', 'Puducherry',
-  'Chandigarh', 'Andaman & Nicobar', 'Dadra & Nagar Haveli', 'Lakshadweep'
-] as const;
-
-export type IndianState = typeof INDIAN_STATES[number];
-
-export const LEGAL_HELP_TYPES = [
-  'Property & Rental',
-  'Family & Domestic',
-  'Criminal & Police',
-  'Consumer Rights',
-  'Employment & Labour',
-  'Business & MSME',
-  'Cyber & Online',
-  'Traffic & Motor Vehicle',
-  'Constitutional Rights',
-  'General Legal Awareness'
-] as const;
-
-export type LegalHelpType = typeof LEGAL_HELP_TYPES[number];
-
-export interface UserPreferences {
-  selectedState?: IndianState;
-  preferredLanguage?: string;
-  legalHelpType?: LegalHelpType;
-}
-
 export interface User {
   id: string;
   email: string;
@@ -45,7 +11,6 @@ export interface User {
   rating?: number;
   reviews?: Review[];
   verified?: boolean;
-  preferences?: UserPreferences;
 }
 
 export interface Review {

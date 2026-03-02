@@ -4,22 +4,17 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bell, Search, Globe, MapPin } from 'lucide-react';
+import { Bell, Search, Menu, Globe } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { INDIAN_STATES } from '@/types';
 import logo from '@/assets/logo.png';
 
 const Header: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { user, logout, updatePreferences } = useAuth();
+  const { user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
 
   const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
-  };
-
-  const handleStateChange = (state: string) => {
-    updatePreferences({ selectedState: state as any });
   };
 
   return (
@@ -45,23 +40,7 @@ const Header: React.FC = () => {
           </div>
 
           {/* Right Section */}
-          <div className="flex items-center space-x-3">
-            {/* State Switcher */}
-            <Select
-              value={user?.preferences?.selectedState || ''}
-              onValueChange={handleStateChange}
-            >
-              <SelectTrigger className="w-[140px]">
-                <MapPin className="h-4 w-4 mr-1 text-primary" />
-                <SelectValue placeholder="State" />
-              </SelectTrigger>
-              <SelectContent>
-                {INDIAN_STATES.map((state) => (
-                  <SelectItem key={state} value={state}>{state}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
+          <div className="flex items-center space-x-4">
             {/* Language Selector */}
             <Select onValueChange={changeLanguage} defaultValue="en">
               <SelectTrigger className="w-20">
