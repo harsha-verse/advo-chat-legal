@@ -55,32 +55,11 @@ const Signup: React.FC = () => {
       newErrors.email = 'Please enter a valid email address';
     }
     
-    // Strengthened password validation
+    // Simple password validation
     if (!formData.password) {
       newErrors.password = t('pleaseEnterPassword');
-    } else {
-      const password = formData.password;
-      const passwordErrors: string[] = [];
-      
-      if (password.length < 12) {
-        passwordErrors.push('at least 12 characters');
-      }
-      if (!/[A-Z]/.test(password)) {
-        passwordErrors.push('one uppercase letter');
-      }
-      if (!/[a-z]/.test(password)) {
-        passwordErrors.push('one lowercase letter');
-      }
-      if (!/[0-9]/.test(password)) {
-        passwordErrors.push('one number');
-      }
-      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-        passwordErrors.push('one special character');
-      }
-      
-      if (passwordErrors.length > 0) {
-        newErrors.password = `Password must contain ${passwordErrors.join(', ')}`;
-      }
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
     }
     
     if (formData.password !== formData.confirmPassword) {
