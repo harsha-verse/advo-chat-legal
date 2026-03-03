@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Scale, User, MapPin } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { INDIAN_STATES, LEGAL_HELP_TYPES } from '@/types';
+import { INDIAN_STATES } from '@/types';
 import logo from '@/assets/logo.png';
 
 const Signup: React.FC = () => {
@@ -185,20 +185,6 @@ const Signup: React.FC = () => {
                 </Select>
               </div>
 
-              {/* Type of Legal Help - Optional */}
-              <div className="space-y-2">
-                <Label>Type of Legal Help (optional)</Label>
-                <Select onValueChange={(value) => handleSelectChange('legalHelpType', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="What do you need help with?" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {LEGAL_HELP_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
               
               {/* Lawyer-specific fields */}
               {formData.type === 'lawyer' && (

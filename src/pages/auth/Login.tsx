@@ -6,25 +6,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Scale, User, MapPin } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { INDIAN_STATES } from '@/types';
 import logo from '@/assets/logo.png';
 
 const Login: React.FC = () => {
   const { t } = useTranslation();
-  const { login, updatePreferences } = useAuth();
+  const { login } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    type: 'user' as 'user' | 'lawyer',
-    selectedState: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -43,14 +37,10 @@ const Login: React.FC = () => {
     if (!validateForm()) return;
     setIsLoading(true);
     try {
-      const success = await login(formData.email, formData.password, formData.type);
+      const success = await login(formData.email, formData.password, 'user');
       if (success) {
-        // Update state preference if selected during login
-        if (formData.selectedState) {
-          updatePreferences({ selectedState: formData.selectedState as any });
-        }
         toast({ title: "Success", description: "Logged in successfully!" });
-        navigate(formData.type === 'lawyer' ? '/lawyer-dashboard' : '/dashboard');
+        navigate('/dashboard');
       } else {
         toast({ title: "Error", description: t('invalidCredentials'), variant: "destructive" });
       }
@@ -79,65 +69,33 @@ const Login: React.FC = () => {
         </CardHeader>
         
         <CardContent>
-          <Tabs value={formData.type} onValueChange={(value) => setFormData(prev => ({ ...prev, type: value as 'user' | 'lawyer' }))}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="user" className="flex items-center space-x-2">
-                <User className="h-4 w-4" />
-                <span>User</span>
-              </TabsTrigger>
-              <TabsTrigger value="lawyer" className="flex items-center space-x-2">
-                <Scale className="h-4 w-4" />
-                <span>Lawyer</span>
-              </TabsTrigger>
-            </TabsList>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">{t('email')}</Label>
+              <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} className={errors.email ? 'border-destructive' : ''} />
+              {errors.email && <Alert variant="destructive"><AlertDescription>{errors.email}</AlertDescription></Alert>}
+            </div>
             
-            <form onSubmit={handleSubmit} className="space-y-4 mt-6">
-              <div className="space-y-2">
-                <Label htmlFor="email">{t('email')}</Label>
-                <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} className={errors.email ? 'border-destructive' : ''} />
-                {errors.email && <Alert variant="destructive"><AlertDescription>{errors.email}</AlertDescription></Alert>}
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="password">{t('password')}</Label>
-                <Input id="password" name="password" type="password" value={formData.password} onChange={handleInputChange} className={errors.password ? 'border-destructive' : ''} />
-                {errors.password && <Alert variant="destructive"><AlertDescription>{errors.password}</AlertDescription></Alert>}
-              </div>
-
-              {/* State Selection - Optional on login */}
-              <div className="space-y-2">
-                <Label className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  Select Your State (optional)
-                </Label>
-                <Select onValueChange={(value) => setFormData(prev => ({ ...prev, selectedState: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose your state" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {INDIAN_STATES.map((state) => (
-                      <SelectItem key={state} value={state}>{state}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">This personalizes your legal content</p>
-              </div>
-              
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Logging in...' : t('login')}
-              </Button>
-              
-              <div className="text-center space-y-2">
-                <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-                  {t('forgotPassword')}
-                </Link>
-                <p className="text-sm text-muted-foreground">
-                  Don't have an account?{' '}
-                  <Link to="/signup" className="text-primary hover:underline">{t('signup')}</Link>
-                </p>
-              </div>
-            </form>
-          </Tabs>
+            <div className="space-y-2">
+              <Label htmlFor="password">{t('password')}</Label>
+              <Input id="password" name="password" type="password" value={formData.password} onChange={handleInputChange} className={errors.password ? 'border-destructive' : ''} />
+              {errors.password && <Alert variant="destructive"><AlertDescription>{errors.password}</AlertDescription></Alert>}
+            </div>
+            
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Logging in...' : t('login')}
+            </Button>
+            
+            <div className="text-center space-y-2">
+              <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+                {t('forgotPassword')}
+              </Link>
+              <p className="text-sm text-muted-foreground">
+                Don't have an account?{' '}
+                <Link to="/signup" className="text-primary hover:underline">{t('signup')}</Link>
+              </p>
+            </div>
+          </form>
         </CardContent>
       </Card>
     </div>
