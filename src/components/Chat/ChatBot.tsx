@@ -189,16 +189,24 @@ const ChatBot: React.FC = () => {
             <ScrollArea className="flex-1 p-4">
               <div className="space-y-4">
                 {messages.map((message) => (
-                  <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] rounded-lg p-3 ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                      <div className="flex items-start space-x-2">
-                        {message.role === 'assistant' && <Bot className="h-4 w-4 mt-0.5 flex-shrink-0" />}
-                        {message.role === 'user' && <User className="h-4 w-4 mt-0.5 flex-shrink-0" />}
-                        <div className="text-sm prose prose-sm dark:prose-invert max-w-none [&>p]:my-1 [&>ul]:my-1 [&>ol]:my-1">
-                          <ReactMarkdown>{message.content}</ReactMarkdown>
+                  <div key={message.id}>
+                    <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`max-w-[85%] rounded-lg p-3 ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                        <div className="flex items-start space-x-2">
+                          {message.role === 'assistant' && <Bot className="h-4 w-4 mt-0.5 flex-shrink-0" />}
+                          {message.role === 'user' && <User className="h-4 w-4 mt-0.5 flex-shrink-0" />}
+                          <div className="text-sm prose prose-sm dark:prose-invert max-w-none [&>p]:my-1 [&>ul]:my-1 [&>ol]:my-1">
+                            <ReactMarkdown>{message.content}</ReactMarkdown>
+                          </div>
                         </div>
                       </div>
                     </div>
+                    {/* Show action cards after completed assistant messages (not streaming, not welcome) */}
+                    {message.role === 'assistant' && message.id !== '1' && message.id !== 'streaming' && (
+                      <div className="mt-2 max-w-[90%]">
+                        <ChatActionCards messageContent={message.content} />
+                      </div>
+                    )}
                   </div>
                 ))}
                 {isTyping && messages[messages.length - 1]?.id !== 'streaming' && (
