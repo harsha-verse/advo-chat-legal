@@ -1,24 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   CheckCircle, MapPin, Clock, Star, Briefcase, GraduationCap, Globe,
   Calendar, Phone, Video, Users, ArrowLeft, Scale, BarChart3, Building
 } from 'lucide-react';
+import TrustBadges from '@/components/Lawyer/TrustBadges';
+import PerformanceStats from '@/components/Lawyer/PerformanceStats';
+import ReviewsList from '@/components/Lawyer/ReviewsList';
+import ReviewForm from '@/components/Lawyer/ReviewForm';
 
 const LawyerPublicProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [lawyer, setLawyer] = useState<any>(null);
   const [profileData, setProfileData] = useState<any>(null);
   const [education, setEducation] = useState<any[]>([]);
   const [caseStats, setCaseStats] = useState<any[]>([]);
+  const [consultationCount, setConsultationCount] = useState(0);
+  const [completedCasesCount, setCompletedCasesCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [showReviewForm, setShowReviewForm] = useState(false);
 
   useEffect(() => {
     if (id) fetchLawyerProfile(id);
@@ -36,6 +46,14 @@ const LawyerPublicProfile: React.FC = () => {
     if (profRes.data) setProfileData(profRes.data);
     if (eduRes.data) setEducation(eduRes.data as any[]);
     if (csRes.data) setCaseStats(csRes.data as any[]);
+
+    // Fetch consultation & completed cases counts
+    const [consRes, casesRes] = await Promise.all([
+      supabase.from('consultations').select('id', { count: 'exact', head: true }).eq('lawyer_id', userId).eq('status', 'completed'),
+      supabase.from('cases').select('id', { count: 'exact', head: true }).eq('lawyer_id', userId).eq('status', 'closed'),
+    ]);
+    setConsultationCount(consRes.count || 0);
+    setCompletedCasesCount(casesRes.count || 0);
     setLoading(false);
   };
 
@@ -46,6 +64,7 @@ const LawyerPublicProfile: React.FC = () => {
   if (!lawyer || !profileData) return <div className="p-6 text-center"><p className="text-muted-foreground">Lawyer profile not found.</p><Button variant="outline" className="mt-4" onClick={() => navigate('/lawyers')}><ArrowLeft className="h-4 w-4 mr-2" />Back to Lawyers</Button></div>;
 
   const isVerified = lawyer.verification_status === 'verified';
+  const isClient = user && user.id !== id;
 
   return (
     <div className="p-6 space-y-6 max-w-4xl mx-auto">
@@ -64,10 +83,13 @@ const LawyerPublicProfile: React.FC = () => {
             <div className="flex-1 space-y-3">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-2xl font-bold text-foreground">{profileData.name}</h1>
-                {isVerified && <Badge className="bg-green-100 text-green-700 border-green-200"><CheckCircle className="h-3 w-3 mr-1" />Verified Lawyer</Badge>}
               </div>
               <p className="text-muted-foreground font-medium">{roleLabel(lawyer.role_type)}</p>
               {lawyer.tagline && <p className="text-foreground italic">"{lawyer.tagline}"</p>}
+
+              {/* Trust Badges */}
+              <TrustBadges isVerified={isVerified} rating={lawyer.rating || 0} totalReviews={lawyer.total_reviews || 0} experience={lawyer.experience || 0} totalCases={totalCases} />
+
               <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                 {profileData.city && <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{profileData.city}, {profileData.state}</span>}
                 <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{lawyer.experience || 0} years experience</span>
@@ -86,75 +108,108 @@ const LawyerPublicProfile: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Bio */}
-          {lawyer.bio && (
-            <Card>
-              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Briefcase className="h-5 w-5" />About</CardTitle></CardHeader>
-              <CardContent><p className="text-foreground leading-relaxed whitespace-pre-wrap">{lawyer.bio}</p></CardContent>
-            </Card>
-          )}
+          <Tabs defaultValue="about">
+            <TabsList>
+              <TabsTrigger value="about">About</TabsTrigger>
+              <TabsTrigger value="reviews">Reviews ({lawyer.total_reviews || 0})</TabsTrigger>
+            </TabsList>
 
-          {/* Practice Areas */}
-          {lawyer.practice_areas?.length > 0 && (
-            <Card>
-              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Scale className="h-5 w-5" />Practice Areas</CardTitle></CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {lawyer.practice_areas.map((a: string) => <Badge key={a} variant="secondary">{a}</Badge>)}
-                </div>
-                {lawyer.specialization && (
-                  <p className="text-sm text-muted-foreground mt-3">Primary Specialization: <span className="font-medium text-foreground">{lawyer.specialization}</span></p>
-                )}
-              </CardContent>
-            </Card>
-          )}
+            <TabsContent value="about" className="space-y-6 mt-4">
+              {/* Bio */}
+              {lawyer.bio && (
+                <Card>
+                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Briefcase className="h-5 w-5" />About</CardTitle></CardHeader>
+                  <CardContent><p className="text-foreground leading-relaxed whitespace-pre-wrap">{lawyer.bio}</p></CardContent>
+                </Card>
+              )}
 
-          {/* Education */}
-          {education.length > 0 && (
-            <Card>
-              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><GraduationCap className="h-5 w-5" />Education & Qualifications</CardTitle></CardHeader>
-              <CardContent className="space-y-3">
-                {education.map((edu, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <GraduationCap className="h-5 w-5 text-primary" />
+              {/* Practice Areas */}
+              {lawyer.practice_areas?.length > 0 && (
+                <Card>
+                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Scale className="h-5 w-5" />Practice Areas</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-2">
+                      {lawyer.practice_areas.map((a: string) => <Badge key={a} variant="secondary">{a}</Badge>)}
                     </div>
-                    <div>
-                      <p className="font-medium">{edu.degree}</p>
-                      <p className="text-sm text-muted-foreground">{edu.university} – {edu.graduation_year}</p>
-                      {edu.certifications && <p className="text-xs text-muted-foreground mt-0.5">{edu.certifications}</p>}
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          )}
+                    {lawyer.specialization && (
+                      <p className="text-sm text-muted-foreground mt-3">Primary Specialization: <span className="font-medium text-foreground">{lawyer.specialization}</span></p>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
 
-          {/* Case Stats */}
-          {caseStats.length > 0 && (
-            <Card>
-              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><BarChart3 className="h-5 w-5" />Cases Handled ({totalCases} total)</CardTitle></CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {caseStats.map((stat, i) => (
-                    <div key={i} className="flex items-center justify-between">
-                      <span className="text-sm font-medium">{stat.case_category}</span>
-                      <div className="flex items-center gap-2">
-                        <div className="w-32 h-2 bg-muted rounded-full overflow-hidden">
-                          <div className="h-full bg-primary rounded-full" style={{ width: `${Math.min((stat.cases_handled / Math.max(totalCases, 1)) * 100, 100)}%` }} />
+              {/* Education */}
+              {education.length > 0 && (
+                <Card>
+                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><GraduationCap className="h-5 w-5" />Education & Qualifications</CardTitle></CardHeader>
+                  <CardContent className="space-y-3">
+                    {education.map((edu, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <GraduationCap className="h-5 w-5 text-primary" />
                         </div>
-                        <span className="text-sm text-muted-foreground w-12 text-right">{stat.cases_handled}</span>
+                        <div>
+                          <p className="font-medium">{edu.degree}</p>
+                          <p className="text-sm text-muted-foreground">{edu.university} – {edu.graduation_year}</p>
+                          {edu.certifications && <p className="text-xs text-muted-foreground mt-0.5">{edu.certifications}</p>}
+                        </div>
                       </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Case Stats */}
+              {caseStats.length > 0 && (
+                <Card>
+                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><BarChart3 className="h-5 w-5" />Cases Handled ({totalCases} total)</CardTitle></CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {caseStats.map((stat, i) => (
+                        <div key={i} className="flex items-center justify-between">
+                          <span className="text-sm font-medium">{stat.case_category}</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-32 h-2 bg-muted rounded-full overflow-hidden">
+                              <div className="h-full bg-primary rounded-full" style={{ width: `${Math.min((stat.cases_handled / Math.max(totalCases, 1)) * 100, 100)}%` }} />
+                            </div>
+                            <span className="text-sm text-muted-foreground w-12 text-right">{stat.cases_handled}</span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
+
+            <TabsContent value="reviews" className="space-y-6 mt-4">
+              {isClient && (
+                <div>
+                  {showReviewForm ? (
+                    <ReviewForm lawyerId={id!} onSubmitted={() => setShowReviewForm(false)} />
+                  ) : (
+                    <Button variant="outline" onClick={() => setShowReviewForm(true)}>
+                      <Star className="h-4 w-4 mr-2" />Write a Review
+                    </Button>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              )}
+              <ReviewsList lawyerId={id!} />
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* Performance Stats */}
+          <PerformanceStats
+            rating={lawyer.rating || 0}
+            totalReviews={lawyer.total_reviews || 0}
+            casesHandled={totalCases}
+            casesCompleted={completedCasesCount}
+            consultationCount={consultationCount}
+          />
+
           {/* Consultation */}
           <Card>
             <CardHeader><CardTitle className="text-lg">Consultation</CardTitle></CardHeader>
