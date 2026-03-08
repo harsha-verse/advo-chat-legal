@@ -168,7 +168,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // If lawyer, create lawyer profile
     if (data.user_type === 'lawyer' && data.bar_council_number) {
-      await supabase.from('lawyer_profiles').insert({
+      await (supabase.from('lawyer_profiles') as any).insert({
         user_id: authData.user.id,
         bar_council_number: data.bar_council_number,
         year_of_practice: data.year_of_practice || 0,
