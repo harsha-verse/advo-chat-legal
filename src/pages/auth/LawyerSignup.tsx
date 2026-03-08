@@ -186,7 +186,7 @@ const LawyerSignup: React.FC = () => {
               {errors.practice_areas && <p className="text-xs text-destructive">{errors.practice_areas}</p>}
             </div>
 
-            <Field name="consultation_fee" label="Consultation Fee (₹/hour)" type="number" placeholder="e.g. 500" />
+            {renderField('consultation_fee', 'Consultation Fee (₹/hour)', 'number', 'e.g. 500')}
 
             <div className="space-y-2">
               <Label>Preferred Language</Label>
