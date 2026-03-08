@@ -161,10 +161,25 @@ const ChatBot: React.FC = () => {
     setIsListening(false);
   };
 
+  // Find best matching voice for a language
+  const findBestVoice = (langCode: string): SpeechSynthesisVoice | null => {
+    const voices = window.speechSynthesis.getVoices();
+    // Prefer exact match (e.g. hi-IN)
+    let match = voices.find(v => v.lang === langCode);
+    if (match) return match;
+    // Try prefix match (e.g. hi)
+    const prefix = langCode.split('-')[0];
+    match = voices.find(v => v.lang.startsWith(prefix));
+    if (match) return match;
+    // Fallback to any Indian English
+    match = voices.find(v => v.lang === 'en-IN');
+    return match || null;
+  };
+
   // Voice Output (Text-to-Speech) using Web Speech Synthesis
   const speakText = (text: string, msgId: string) => {
     if (!('speechSynthesis' in window)) {
-      alert(t('ttsNotSupported'));
+      toast.error(t('ttsNotSupported'));
       return;
     }
     if (speakingMsgId === msgId) {
@@ -174,8 +189,14 @@ const ChatBot: React.FC = () => {
     }
     window.speechSynthesis.cancel();
     const cleanText = text.replace(/[#*_\[\]()>`~|]/g, '').replace(/\n+/g, '. ');
+    const langCode = SPEECH_LANG_MAP[currentLang] || 'en-IN';
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = SPEECH_LANG_MAP[currentLang] || 'en-IN';
+    utterance.lang = langCode;
+    
+    // Dynamically select best voice for the language
+    const bestVoice = findBestVoice(langCode);
+    if (bestVoice) utterance.voice = bestVoice;
+    
     utterance.rate = 0.9;
     utterance.onend = () => setSpeakingMsgId(null);
     utterance.onerror = () => setSpeakingMsgId(null);
