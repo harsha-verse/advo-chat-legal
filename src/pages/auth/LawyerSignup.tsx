@@ -105,8 +105,8 @@ const LawyerSignup: React.FC = () => {
     if (errors.practice_areas) setErrors(prev => ({ ...prev, practice_areas: '' }));
   };
 
-  const Field = ({ name, label, type = 'text', placeholder = '' }: { name: string; label: string; type?: string; placeholder?: string }) => (
-    <div className="space-y-2">
+  const renderField = (name: string, label: string, type = 'text', placeholder = '') => (
+    <div className="space-y-2" key={name}>
       <Label htmlFor={name}>{label} *</Label>
       <Input id={name} name={name} type={type} value={(formData as any)[name]} onChange={handleChange} placeholder={placeholder} className={errors[name] ? 'border-destructive' : ''} />
       {errors[name] && <p className="text-xs text-destructive">{errors[name]}</p>}
