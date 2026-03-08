@@ -16,6 +16,7 @@ import Documents from "./pages/Documents";
 import Consultants from "./pages/Consultants";
 import StateLegalSupport from "./pages/StateLegalSupport";
 import MSMESupport from "./pages/MSMESupport";
+import AuthorityFinder from "./pages/AuthorityFinder";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import "./i18n";
