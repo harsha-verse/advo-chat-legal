@@ -233,6 +233,7 @@ const LawyerDashboard: React.FC = () => {
           <TabsTrigger value="cases">Case Requests ({pendingCases.length})</TabsTrigger>
           <TabsTrigger value="active">Active ({activeCases.length})</TabsTrigger>
           <TabsTrigger value="notifications">Notifications ({notifications.length})</TabsTrigger>
+          <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="profile">Profile</TabsTrigger>
         </TabsList>
 
