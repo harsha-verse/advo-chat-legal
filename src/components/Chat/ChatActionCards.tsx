@@ -27,7 +27,7 @@ const ChatActionCards: React.FC<ChatActionCardsProps> = ({ messageContent }) => 
           <Button size="sm" variant="default" className="text-xs h-7 gap-1" onClick={() => navigate(`/lawyers?category=${ctx.categories[0]}`)}><Scale className="h-3 w-3" /> {t('consultALawyer')}</Button>
           {templates.length > 0 && (<Button size="sm" variant="outline" className="text-xs h-7 gap-1" onClick={() => navigate(`/templates?category=${ctx.categories[0]}`)}><FileText className="h-3 w-3" /> {t('downloadTemplate')}</Button>)}
           <Button size="sm" variant="outline" className="text-xs h-7 gap-1" onClick={() => navigate(guide.path)}><BookOpen className="h-3 w-3" /> {t('viewStepByStepGuide')}</Button>
-        </div>
+          <Button size="sm" variant="outline" className="text-xs h-7 gap-1" onClick={() => navigate(authority.path)}><Landmark className="h-3 w-3" /> {t('findAuthority')}</Button>
       </div>
 
       {ctx.needsLawyer && lawyers.length > 0 && (
