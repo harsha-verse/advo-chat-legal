@@ -14,6 +14,165 @@ export type Database = {
   }
   public: {
     Tables: {
+      case_documents: {
+        Row: {
+          case_id: string
+          created_at: string
+          file_name: string
+          file_type: string | null
+          file_url: string
+          id: string
+          uploaded_by: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          file_name: string
+          file_type?: string | null
+          file_url: string
+          id?: string
+          uploaded_by: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          file_name?: string
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_documents_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_messages: {
+        Row: {
+          case_id: string
+          created_at: string
+          id: string
+          message: string
+          sender_id: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          id?: string
+          message: string
+          sender_id: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_messages_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      case_notes: {
+        Row: {
+          case_id: string
+          content: string
+          created_at: string
+          id: string
+          lawyer_id: string
+          updated_at: string
+        }
+        Insert: {
+          case_id: string
+          content: string
+          created_at?: string
+          id?: string
+          lawyer_id: string
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          lawyer_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_notes_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cases: {
+        Row: {
+          accepted_at: string | null
+          case_type: string
+          client_id: string
+          client_location_city: string | null
+          client_location_state: string | null
+          closed_at: string | null
+          created_at: string
+          description: string
+          id: string
+          lawyer_id: string | null
+          preferred_consultation: string | null
+          priority: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          case_type: string
+          client_id: string
+          client_location_city?: string | null
+          client_location_state?: string | null
+          closed_at?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          lawyer_id?: string | null
+          preferred_consultation?: string | null
+          priority?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          case_type?: string
+          client_id?: string
+          client_location_city?: string | null
+          client_location_state?: string | null
+          closed_at?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          lawyer_id?: string | null
+          preferred_consultation?: string | null
+          priority?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       lawyer_case_stats: {
         Row: {
           case_category: string
@@ -187,6 +346,47 @@ export type Database = {
           year_of_practice?: number
         }
         Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          related_case_id: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          related_case_id?: string | null
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          related_case_id?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_related_case_id_fkey"
+            columns: ["related_case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {

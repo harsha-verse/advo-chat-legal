@@ -23,6 +23,9 @@ import LawyerDashboard from "./pages/LawyerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import LawyerProfileEdit from "./pages/LawyerProfileEdit";
 import LawyerPublicProfile from "./pages/LawyerPublicProfile";
+import MyCases from "./pages/MyCases";
+import CaseDetail from "./pages/CaseDetail";
+import SubmitCase from "./pages/SubmitCase";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import "./i18n";
@@ -156,6 +159,15 @@ const App = () => (
             } />
             <Route path="/lawyer/:id" element={
               <ProtectedRoute><LawyerPublicProfile /></ProtectedRoute>
+            } />
+            <Route path="/my-cases" element={
+              <ProtectedRoute><MyCases /></ProtectedRoute>
+            } />
+            <Route path="/case/:id" element={
+              <ProtectedRoute><CaseDetail /></ProtectedRoute>
+            } />
+            <Route path="/submit-case" element={
+              <ProtectedRoute><SubmitCase /></ProtectedRoute>
             } />
             <Route path="/admin" element={
               <ProtectedRoute><AdminDashboard /></ProtectedRoute>
