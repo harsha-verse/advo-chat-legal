@@ -51,10 +51,10 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 // Public Route component (for auth pages)
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   
   if (user) {
-    const redirectPath = user.type === 'lawyer' ? '/lawyer-dashboard' : '/dashboard';
+    const redirectPath = profile?.user_type === 'lawyer' ? '/lawyer-dashboard' : '/dashboard';
     return <Navigate to={redirectPath} replace />;
   }
   

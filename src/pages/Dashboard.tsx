@@ -31,7 +31,7 @@ const Dashboard: React.FC = () => {
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg p-6">
         <h1 className="text-3xl font-bold text-foreground mb-2">
-          {t('welcomeUser')}, {user?.name || user?.email}!
+          {t('welcomeUser')}, {profile?.name || user?.email}!
         </h1>
         <p className="text-muted-foreground">{t('dashboardSubtitle')}</p>
         {userState && (
