@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from '@/context/AuthContext';
 import {
-  MessageCircle, Send, Minimize2, Maximize2, X, Bot, User, Mic, MicOff, Volume2, VolumeX, Copy, Check,
+  MessageCircle, Send, Minimize2, Maximize2, X, Bot, User, Mic, MicOff, Volume2, VolumeX, Copy, Check, Pause, Square,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
