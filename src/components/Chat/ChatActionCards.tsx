@@ -17,6 +17,7 @@ const ChatActionCards: React.FC<ChatActionCardsProps> = ({ messageContent }) => 
   const lawyers = matchLawyers(ctx.categories, userState);
   const templates = ctx.needsTemplate ? matchTemplates(ctx.categories) : [];
   const guide = getGuideRoute(ctx.categories);
+  const authority = getAuthorityRoute(ctx.categories);
 
   return (
     <div className="space-y-3 mt-3">
