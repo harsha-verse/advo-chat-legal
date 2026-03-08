@@ -386,6 +386,18 @@ const LawyerDashboard: React.FC = () => {
           )}
         </TabsContent>
 
+        {/* Performance Tab */}
+        <TabsContent value="performance" className="space-y-4">
+          <PerformanceStats
+            rating={lawyerProfile?.rating || 0}
+            totalReviews={lawyerProfile?.total_reviews || 0}
+            casesHandled={activeCases.length + completedCases.length}
+            casesCompleted={completedCases.length}
+            consultationCount={0}
+          />
+          <ReviewsList lawyerId={user?.id || ''} />
+        </TabsContent>
+
         {/* Profile Tab */}
         <TabsContent value="profile">
           <Card>
@@ -407,13 +419,6 @@ const LawyerDashboard: React.FC = () => {
                   <div className="flex flex-wrap gap-2 mt-1">
                     {lawyerProfile.practice_areas.map(a => <Badge key={a} variant="outline">{a}</Badge>)}
                   </div>
-                </div>
-              )}
-              {lawyerProfile?.rating !== undefined && lawyerProfile.rating > 0 && (
-                <div className="flex items-center gap-2">
-                  <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                  <span className="font-medium">{lawyerProfile.rating}</span>
-                  <span className="text-sm text-muted-foreground">({lawyerProfile.total_reviews} reviews)</span>
                 </div>
               )}
             </CardContent>
