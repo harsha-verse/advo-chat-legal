@@ -158,11 +158,11 @@ const LawyerSignup: React.FC = () => {
 
             {/* Professional Info */}
             <div className="space-y-1 mt-4 mb-2"><h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Professional Details</h3></div>
-            <Field name="bar_council_number" label="Bar Council Enrollment Number" placeholder="e.g. KAR/1234/2020" />
+            {renderField('bar_council_number', 'Bar Council Enrollment Number', 'text', 'e.g. KAR/1234/2020')}
             
             <div className="grid grid-cols-2 gap-3">
-              <Field name="year_of_practice" label="Year of Practice Start" type="number" placeholder="e.g. 2015" />
-              <Field name="experience" label="Years of Experience" type="number" placeholder="e.g. 8" />
+              {renderField('year_of_practice', 'Year of Practice Start', 'number', 'e.g. 2015')}
+              {renderField('experience', 'Years of Experience', 'number', 'e.g. 8')}
             </div>
 
             <div className="space-y-2">
