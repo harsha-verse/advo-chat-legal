@@ -97,6 +97,7 @@ const resources = {
       noAuthoritiesFound: "No authorities found. Try a different search or state.",
       visitWebsite: "Visit Website",
       fileComplaint: "File Complaint",
+      findAuthority: "Find Authority",
       myClients: "My Clients",
       consultations: "Consultations",
 
