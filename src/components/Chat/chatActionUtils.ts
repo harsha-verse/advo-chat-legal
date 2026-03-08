@@ -9,14 +9,58 @@ export interface DetectedContext {
 }
 
 const CATEGORY_KEYWORDS: Record<string, string[]> = {
-  property: ['property', 'rent', 'rental', 'landlord', 'tenant', 'deposit', 'lease', 'house', 'flat', 'land', 'real estate', 'sale deed', 'noc', 'stamp duty', 'registration', 'eviction', 'possession'],
-  family: ['divorce', 'marriage', 'custody', 'alimony', 'maintenance', 'dowry', 'domestic violence', 'wife', 'husband', 'child', 'matrimonial', 'family', 'women', 'dv act'],
-  criminal: ['fir', 'police', 'arrest', 'bail', 'theft', 'fraud', 'cheating', 'assault', 'murder', 'criminal', 'ipc', 'bns', 'complaint police'],
-  corporate: ['company', 'startup', 'business', 'gst', 'incorporation', 'partnership', 'msme', 'trademark', 'copyright', 'patent', 'contract'],
-  civil: ['civil', 'dispute', 'contract', 'agreement', 'breach', 'damages', 'injunction', 'suit', 'litigation'],
-  cyber: ['cyber', 'online', 'internet', 'hacking', 'data', 'privacy', 'social media', 'it act', 'digital', 'phishing', 'identity theft'],
-  consumer: ['consumer', 'product', 'service', 'refund', 'defective', 'warranty', 'complaint', 'e-commerce', 'shopping'],
-  labour: ['salary', 'wages', 'employer', 'employee', 'termination', 'fired', 'labour', 'labor', 'pf', 'provident fund', 'gratuity', 'workplace', 'harassment work'],
+  property: [
+    'property', 'rent', 'rental', 'landlord', 'tenant', 'deposit', 'lease', 'house', 'flat', 'land',
+    'real estate', 'sale deed', 'noc', 'stamp duty', 'registration', 'eviction', 'possession',
+    // Hinglish & rural
+    'zameen', 'jameen', 'ghar', 'makaan', 'kiraya', 'kirayedar', 'makan malik', 'kabza',
+    'encroachment', 'boundary', 'plot', 'registry', 'mutation', 'land grab', 'bagal wala',
+  ],
+  family: [
+    'divorce', 'marriage', 'custody', 'alimony', 'maintenance', 'dowry', 'domestic violence',
+    'wife', 'husband', 'child', 'matrimonial', 'family', 'women', 'dv act',
+    // Hinglish & rural
+    'talaq', 'shaadi', 'biwi', 'pati', 'baccha', 'dahej', 'maarpeet', 'ghar ka jhagda',
+    'sasural', 'separation', 'nikah',
+  ],
+  criminal: [
+    'fir', 'police', 'arrest', 'bail', 'theft', 'fraud', 'cheating', 'assault', 'murder',
+    'criminal', 'ipc', 'bns', 'complaint police',
+    // Hinglish & rural
+    'chori', 'dhoka', 'maar', 'dhamki', 'threat', 'kidnap', 'agwa', 'loot',
+    'police complaint', 'thana', 'jail', 'giraftari',
+  ],
+  corporate: [
+    'company', 'startup', 'business', 'gst', 'incorporation', 'partnership', 'msme',
+    'trademark', 'copyright', 'patent', 'contract',
+    // Hinglish
+    'dukaan', 'vyapaar', 'karobaar', 'firm',
+  ],
+  civil: [
+    'civil', 'dispute', 'contract', 'agreement', 'breach', 'damages', 'injunction', 'suit',
+    'litigation',
+    // Hinglish
+    'jhagda', 'vivad', 'samjhauta', 'case file',
+  ],
+  cyber: [
+    'cyber', 'online', 'internet', 'hacking', 'data', 'privacy', 'social media', 'it act',
+    'digital', 'phishing', 'identity theft',
+    // Hinglish
+    'online fraud', 'online dhoka', 'upi fraud', 'otp fraud', 'whatsapp fraud',
+  ],
+  consumer: [
+    'consumer', 'product', 'service', 'refund', 'defective', 'warranty', 'complaint',
+    'e-commerce', 'shopping',
+    // Hinglish & rural
+    'saman kharab', 'paisa wapas', 'return nahi', 'nakli product', 'duplicate',
+  ],
+  labour: [
+    'salary', 'wages', 'employer', 'employee', 'termination', 'fired', 'labour', 'labor',
+    'pf', 'provident fund', 'gratuity', 'workplace', 'harassment work',
+    // Hinglish & rural
+    'tankhwah', 'naukri', 'nikala', 'paisa nahi diya', 'malik', 'kaam se nikala',
+    'salary nahi', 'vetan', 'mazdoori', 'unpaid', 'not paid',
+  ],
 };
 
 const TEMPLATE_KEYWORDS: Record<string, number[]> = {
