@@ -33,10 +33,10 @@ const SUGGESTION_KEYS = [
 
 const ChatBot: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { user } = useAuth();
+  const { profile } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const userState = user?.preferences?.selectedState;
+  const userState = profile?.state;
   const currentLang = i18n.language;
 
   const buildWelcome = () =>

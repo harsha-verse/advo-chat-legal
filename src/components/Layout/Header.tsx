@@ -12,16 +12,11 @@ import logo from '@/assets/logo.png';
 
 const Header: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { user, logout, updatePreferences } = useAuth();
+  const { user, profile, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
 
   const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
-    updatePreferences({ preferredLanguage: language });
-  };
-
-  const handleStateChange = (state: string) => {
-    updatePreferences({ selectedState: state as any });
   };
 
   return (
@@ -35,20 +30,11 @@ const Header: React.FC = () => {
 
           <div className="flex-1 max-w-md mx-8 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              type="search"
-              placeholder={t('search')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-background"
-            />
+            <Input type="search" placeholder={t('search')} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 bg-background" />
           </div>
 
           <div className="flex items-center space-x-3">
-            <Select
-              value={user?.preferences?.selectedState || ''}
-              onValueChange={handleStateChange}
-            >
+            <Select value={profile?.state || ''} onValueChange={() => {}}>
               <SelectTrigger className="w-[140px]">
                 <MapPin className="h-4 w-4 mr-1 text-primary" />
                 <SelectValue placeholder={t('state')} />
@@ -61,33 +47,25 @@ const Header: React.FC = () => {
             </Select>
 
             <Select onValueChange={changeLanguage} value={i18n.language}>
-              <SelectTrigger className="w-24">
-                <Globe className="h-4 w-4" />
-              </SelectTrigger>
+              <SelectTrigger className="w-24"><Globe className="h-4 w-4" /></SelectTrigger>
               <SelectContent>
                 {LANGUAGE_OPTIONS.map((lang) => (
-                  <SelectItem key={lang.code} value={lang.code}>
-                    {lang.nativeLabel}
-                  </SelectItem>
+                  <SelectItem key={lang.code} value={lang.code}>{lang.nativeLabel}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
 
-            <Button variant="ghost" size="icon">
-              <Bell className="h-5 w-5" />
-            </Button>
+            <Button variant="ghost" size="icon"><Bell className="h-5 w-5" /></Button>
 
             {user && (
               <div className="flex items-center space-x-2">
                 <Avatar>
-                  <AvatarImage src={user.photo} />
+                  <AvatarImage src={profile?.avatar_url || undefined} />
                   <AvatarFallback>
-                    {user.name?.charAt(0) || user.email.charAt(0).toUpperCase()}
+                    {(profile?.name || user.email || '?').charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <Button variant="ghost" onClick={logout} className="text-sm">
-                  {t('logout')}
-                </Button>
+                <Button variant="ghost" onClick={logout} className="text-sm">{t('logout')}</Button>
               </div>
             )}
           </div>

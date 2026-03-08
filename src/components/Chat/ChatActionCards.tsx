@@ -11,8 +11,8 @@ interface ChatActionCardsProps { messageContent: string; }
 const ChatActionCards: React.FC<ChatActionCardsProps> = ({ messageContent }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const userState = user?.preferences?.selectedState;
+  const { profile } = useAuth();
+  const userState = profile?.state;
   const ctx = detectContext(messageContent);
   const lawyers = matchLawyers(ctx.categories, userState);
   const templates = ctx.needsTemplate ? matchTemplates(ctx.categories) : [];
