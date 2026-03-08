@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { Star, MapPin, Scale, FileText, BookOpen, ChevronRight, Landmark } from 'lucide-react';
+import { Star, MapPin, Scale, FileText, BookOpen, ChevronRight, Landmark, FilePlus } from 'lucide-react';
 import { detectContext, matchLawyers, matchTemplates, getGuideRoute, getAuthorityRoute, type MatchedLawyer, type MatchedTemplate } from './chatActionUtils';
 
 interface ChatActionCardsProps { messageContent: string; }
