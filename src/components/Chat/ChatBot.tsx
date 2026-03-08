@@ -80,32 +80,83 @@ const ChatBot: React.FC = () => {
     setTimeout(() => setCopiedMsgId(null), 2000);
   };
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (listenTimeoutRef.current) clearTimeout(listenTimeoutRef.current);
+      recognitionRef.current?.abort();
+      window.speechSynthesis?.cancel();
+    };
+  }, []);
+
   // Voice Input (Speech-to-Text) using Web Speech API
   const startListening = () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert(t('voiceNotSupported'));
+      toast.error(t('voiceNotSupported'));
       return;
     }
-    const recognition = new SpeechRecognition();
-    recognition.lang = SPEECH_LANG_MAP[currentLang] || 'en-IN';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
 
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setInputMessage(prev => prev + transcript);
-      setIsListening(false);
-    };
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
+    // Request microphone permission explicitly
+    navigator.mediaDevices?.getUserMedia({ audio: true }).then(() => {
+      const recognition = new SpeechRecognition();
+      recognition.lang = SPEECH_LANG_MAP[currentLang] || 'en-IN';
+      recognition.interimResults = true;
+      recognition.continuous = true;
+      recognition.maxAlternatives = 1;
 
-    recognition.start();
-    recognitionRef.current = recognition;
-    setIsListening(true);
+      let finalTranscript = '';
+
+      recognition.onresult = (event: any) => {
+        let interim = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const result = event.results[i];
+          if (result.isFinal) {
+            finalTranscript += result[0].transcript;
+          } else {
+            interim += result[0].transcript;
+          }
+        }
+        setInputMessage(finalTranscript + interim);
+      };
+
+      recognition.onerror = (event: any) => {
+        setIsListening(false);
+        if (listenTimeoutRef.current) clearTimeout(listenTimeoutRef.current);
+        if (event.error === 'not-allowed') {
+          toast.error(t('micPermissionDenied'));
+        } else if (event.error === 'no-speech') {
+          toast.warning(t('noSpeechDetected'));
+        } else {
+          toast.error(t('voiceError'));
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+        if (listenTimeoutRef.current) clearTimeout(listenTimeoutRef.current);
+        if (finalTranscript) {
+          setIsProcessingVoice(true);
+          setTimeout(() => setIsProcessingVoice(false), 600);
+        }
+      };
+
+      recognition.start();
+      recognitionRef.current = recognition;
+      setIsListening(true);
+
+      // Auto-stop after 30 seconds
+      listenTimeoutRef.current = setTimeout(() => {
+        recognition.stop();
+        toast.info(t('voiceAutoStopped'));
+      }, 30000);
+    }).catch(() => {
+      toast.error(t('micPermissionDenied'));
+    });
   };
 
   const stopListening = () => {
+    if (listenTimeoutRef.current) clearTimeout(listenTimeoutRef.current);
     recognitionRef.current?.stop();
     setIsListening(false);
   };
