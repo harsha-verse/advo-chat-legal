@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,10 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { INDIAN_STATES } from '@/types';
 import { toast } from '@/hooks/use-toast';
 import { Pencil, Save, X } from 'lucide-react';
-
-const languages = ['English', 'Hindi', 'Tamil', 'Telugu', 'Kannada', 'Malayalam', 'Bengali', 'Marathi', 'Gujarati', 'Punjabi', 'Odia', 'Urdu'];
+import { LANGUAGE_OPTIONS } from '@/i18n';
 
 const PersonalInfoSection = () => {
+  const { t } = useTranslation();
   const { user, updatePreferences } = useAuth();
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
@@ -31,13 +32,10 @@ const PersonalInfoSection = () => {
   if (!user) return null;
 
   const handleSave = () => {
-    // Update user preferences via context
     updatePreferences({
       selectedState: form.state as any,
       preferredLanguage: form.language,
     });
-
-    // Update name in localStorage
     const storedUsers = JSON.parse(localStorage.getItem('lawlite_users') || '[]');
     const idx = storedUsers.findIndex((u: any) => u.id === user.id);
     if (idx !== -1) {
@@ -46,25 +44,24 @@ const PersonalInfoSection = () => {
     }
     const updatedUser = { ...user, name: form.name };
     localStorage.setItem('lawlite_user', JSON.stringify(updatedUser));
-
     setEditing(false);
-    toast({ title: 'Profile Updated', description: 'Your personal information has been saved.' });
+    toast({ title: t('profileUpdated'), description: t('profileUpdatedDesc') });
   };
+
+  const genderOptions = [
+    { value: 'Male', label: t('male') },
+    { value: 'Female', label: t('female') },
+    { value: 'Other', label: t('other') },
+    { value: 'Prefer not to say', label: t('preferNotToSay') },
+  ];
 
   const Field = ({ label, value, field, type = 'text' }: { label: string; value: string; field: string; type?: string }) => (
     <div className="space-y-1.5">
       <Label className="text-xs text-muted-foreground">{label}</Label>
       {editing ? (
-        <Input
-          type={type}
-          value={value}
-          onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}
-          className="h-9"
-        />
+        <Input type={type} value={value} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))} className="h-9" />
       ) : (
-        <p className="text-sm font-medium text-foreground py-1.5 px-3 bg-muted/50 rounded-md min-h-[36px] flex items-center">
-          {value || '—'}
-        </p>
+        <p className="text-sm font-medium text-foreground py-1.5 px-3 bg-muted/50 rounded-md min-h-[36px] flex items-center">{value || '—'}</p>
       )}
     </div>
   );
@@ -72,37 +69,31 @@ const PersonalInfoSection = () => {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-4">
-        <CardTitle className="text-lg">Personal Information</CardTitle>
+        <CardTitle className="text-lg">{t('personalInformation')}</CardTitle>
         {editing ? (
           <div className="flex gap-2">
-            <Button size="sm" variant="ghost" onClick={() => setEditing(false)}>
-              <X className="h-4 w-4 mr-1" /> Cancel
-            </Button>
-            <Button size="sm" onClick={handleSave}>
-              <Save className="h-4 w-4 mr-1" /> Save
-            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setEditing(false)}><X className="h-4 w-4 mr-1" /> {t('cancel')}</Button>
+            <Button size="sm" onClick={handleSave}><Save className="h-4 w-4 mr-1" /> {t('save')}</Button>
           </div>
         ) : (
-          <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
-            <Pencil className="h-4 w-4 mr-1" /> Edit
-          </Button>
+          <Button size="sm" variant="outline" onClick={() => setEditing(true)}><Pencil className="h-4 w-4 mr-1" /> {t('edit')}</Button>
         )}
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="Full Name" value={form.name} field="name" />
-          <Field label="Email Address" value={form.email} field="email" type="email" />
-          <Field label="Phone Number" value={form.phone} field="phone" type="tel" />
-          <Field label="Date of Birth" value={form.dob} field="dob" type="date" />
+          <Field label={t('fullName')} value={form.name} field="name" />
+          <Field label={t('emailAddress')} value={form.email} field="email" type="email" />
+          <Field label={t('phoneNumber')} value={form.phone} field="phone" type="tel" />
+          <Field label={t('dateOfBirth')} value={form.dob} field="dob" type="date" />
 
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Gender</Label>
+            <Label className="text-xs text-muted-foreground">{t('gender')}</Label>
             {editing ? (
               <Select value={form.gender} onValueChange={v => setForm(p => ({ ...p, gender: v }))}>
-                <SelectTrigger className="h-9"><SelectValue placeholder="Select" /></SelectTrigger>
+                <SelectTrigger className="h-9"><SelectValue placeholder={t('selectGender')} /></SelectTrigger>
                 <SelectContent>
-                  {['Male', 'Female', 'Other', 'Prefer not to say'].map(g => (
-                    <SelectItem key={g} value={g}>{g}</SelectItem>
+                  {genderOptions.map(g => (
+                    <SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -111,19 +102,17 @@ const PersonalInfoSection = () => {
             )}
           </div>
 
-          <Field label="Occupation" value={form.occupation} field="occupation" />
-          <Field label="Residential Address" value={form.address} field="address" />
-          <Field label="City" value={form.city} field="city" />
+          <Field label={t('occupation')} value={form.occupation} field="occupation" />
+          <Field label={t('residentialAddress')} value={form.address} field="address" />
+          <Field label={t('city')} value={form.city} field="city" />
 
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">State</Label>
+            <Label className="text-xs text-muted-foreground">{t('state')}</Label>
             {editing ? (
               <Select value={form.state} onValueChange={v => setForm(p => ({ ...p, state: v }))}>
-                <SelectTrigger className="h-9"><SelectValue placeholder="Select state" /></SelectTrigger>
+                <SelectTrigger className="h-9"><SelectValue placeholder={t('pleaseSelectState')} /></SelectTrigger>
                 <SelectContent>
-                  {INDIAN_STATES.map(s => (
-                    <SelectItem key={s} value={s}>{s}</SelectItem>
-                  ))}
+                  {INDIAN_STATES.map(s => (<SelectItem key={s} value={s}>{s}</SelectItem>))}
                 </SelectContent>
               </Select>
             ) : (
@@ -131,17 +120,15 @@ const PersonalInfoSection = () => {
             )}
           </div>
 
-          <Field label="Pincode" value={form.pincode} field="pincode" />
+          <Field label={t('pincode')} value={form.pincode} field="pincode" />
 
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Preferred Language</Label>
+            <Label className="text-xs text-muted-foreground">{t('preferredLanguage')}</Label>
             {editing ? (
               <Select value={form.language} onValueChange={v => setForm(p => ({ ...p, language: v }))}>
                 <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {languages.map(l => (
-                    <SelectItem key={l} value={l}>{l}</SelectItem>
-                  ))}
+                  {LANGUAGE_OPTIONS.map(l => (<SelectItem key={l.code} value={l.label}>{l.nativeLabel}</SelectItem>))}
                 </SelectContent>
               </Select>
             ) : (
