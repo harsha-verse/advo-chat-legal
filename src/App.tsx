@@ -160,6 +160,15 @@ const App = () => (
             <Route path="/lawyer/:id" element={
               <ProtectedRoute><LawyerPublicProfile /></ProtectedRoute>
             } />
+            <Route path="/my-cases" element={
+              <ProtectedRoute><MyCases /></ProtectedRoute>
+            } />
+            <Route path="/case/:id" element={
+              <ProtectedRoute><CaseDetail /></ProtectedRoute>
+            } />
+            <Route path="/submit-case" element={
+              <ProtectedRoute><SubmitCase /></ProtectedRoute>
+            } />
             <Route path="/admin" element={
               <ProtectedRoute><AdminDashboard /></ProtectedRoute>
             } />
