@@ -60,20 +60,38 @@ const SubmitCase: React.FC = () => {
       } as any).select().single();
 
       if (error) throw error;
+      const caseId = (data as any).id;
 
-      // Notify lawyer if directed
       if (lawyerId) {
+        // Direct lawyer request
         await supabase.from('notifications').insert({
           user_id: lawyerId,
           title: 'New Case Request',
           message: `New case request: "${formData.title}" (${formData.case_type})`,
           type: 'case_request',
-          related_case_id: (data as any).id,
+          related_case_id: caseId,
         });
+        toast({ title: 'Case Submitted!', description: 'Your case has been sent to the lawyer.' });
+        navigate('/my-cases');
+      } else {
+        // Trigger smart matching
+        toast({ title: 'Case Submitted!', description: 'Finding the best lawyers for your case...' });
+        try {
+          const { data: matchData } = await supabase.functions.invoke('match-lawyers', {
+            body: { case_id: caseId, action: 'match' },
+          });
+          if (matchData?.auto_assigned) {
+            toast({ title: 'Lawyer Auto-Assigned', description: 'An urgent case lawyer has been assigned.' });
+            navigate(`/case/${caseId}`);
+          } else if (matchData?.matches?.length > 0) {
+            navigate(`/case/${caseId}/select-lawyer`);
+          } else {
+            navigate('/my-cases');
+          }
+        } catch {
+          navigate('/my-cases');
+        }
       }
-
-      toast({ title: 'Case Submitted!', description: 'Your case has been submitted. A lawyer will review it soon.' });
-      navigate('/my-cases');
     } catch (err: any) {
       toast({ title: 'Error', description: err.message, variant: 'destructive' });
     } finally {
