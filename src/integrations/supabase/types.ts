@@ -14,16 +14,181 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      lawyer_documents: {
+        Row: {
+          admin_notes: string | null
+          document_type: string
+          file_name: string
+          file_url: string
+          id: string
+          status: string
+          uploaded_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          document_type: string
+          file_name: string
+          file_url: string
+          id?: string
+          status?: string
+          uploaded_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          document_type?: string
+          file_name?: string
+          file_url?: string
+          id?: string
+          status?: string
+          uploaded_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lawyer_profiles: {
+        Row: {
+          bar_council_number: string
+          bio: string | null
+          consultation_fee: number | null
+          created_at: string
+          experience: number | null
+          id: string
+          practice_areas: string[]
+          rating: number | null
+          role_type: Database["public"]["Enums"]["lawyer_role_type"]
+          specialization: string | null
+          total_reviews: number | null
+          updated_at: string
+          user_id: string
+          verification_status: Database["public"]["Enums"]["lawyer_verification_status"]
+          verified_at: string | null
+          year_of_practice: number
+        }
+        Insert: {
+          bar_council_number: string
+          bio?: string | null
+          consultation_fee?: number | null
+          created_at?: string
+          experience?: number | null
+          id?: string
+          practice_areas?: string[]
+          rating?: number | null
+          role_type?: Database["public"]["Enums"]["lawyer_role_type"]
+          specialization?: string | null
+          total_reviews?: number | null
+          updated_at?: string
+          user_id: string
+          verification_status?: Database["public"]["Enums"]["lawyer_verification_status"]
+          verified_at?: string | null
+          year_of_practice?: number
+        }
+        Update: {
+          bar_council_number?: string
+          bio?: string | null
+          consultation_fee?: number | null
+          created_at?: string
+          experience?: number | null
+          id?: string
+          practice_areas?: string[]
+          rating?: number | null
+          role_type?: Database["public"]["Enums"]["lawyer_role_type"]
+          specialization?: string | null
+          total_reviews?: number | null
+          updated_at?: string
+          user_id?: string
+          verification_status?: Database["public"]["Enums"]["lawyer_verification_status"]
+          verified_at?: string | null
+          year_of_practice?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          city: string | null
+          created_at: string
+          email: string
+          id: string
+          name: string
+          phone: string | null
+          preferred_language: string | null
+          state: string | null
+          updated_at: string
+          user_type: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          city?: string | null
+          created_at?: string
+          email: string
+          id: string
+          name?: string
+          phone?: string | null
+          preferred_language?: string | null
+          state?: string | null
+          updated_at?: string
+          user_type?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          city?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          preferred_language?: string | null
+          state?: string | null
+          updated_at?: string
+          user_type?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      lawyer_role_type:
+        | "junior_lawyer"
+        | "advocate"
+        | "senior_advocate"
+        | "legal_consultant"
+      lawyer_verification_status:
+        | "pending"
+        | "under_review"
+        | "verified"
+        | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +315,20 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      lawyer_role_type: [
+        "junior_lawyer",
+        "advocate",
+        "senior_advocate",
+        "legal_consultant",
+      ],
+      lawyer_verification_status: [
+        "pending",
+        "under_review",
+        "verified",
+        "rejected",
+      ],
+    },
   },
 } as const
