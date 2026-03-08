@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
   Home, Users, FileText, File, MessageCircle, User,
-  Briefcase, Scale, MapPin, Building
+  Briefcase, Scale, MapPin, Building, Landmark
 } from 'lucide-react';
 
 const Navigation: React.FC = () => {
