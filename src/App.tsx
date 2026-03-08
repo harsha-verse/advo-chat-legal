@@ -28,6 +28,7 @@ import CaseDetail from "./pages/CaseDetail";
 import SubmitCase from "./pages/SubmitCase";
 import BookConsultation from "./pages/BookConsultation";
 import MyConsultations from "./pages/MyConsultations";
+import SelectLawyer from "./pages/SelectLawyer";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import "./i18n";
@@ -170,6 +171,9 @@ const App = () => (
             } />
             <Route path="/submit-case" element={
               <ProtectedRoute><SubmitCase /></ProtectedRoute>
+            } />
+            <Route path="/case/:caseId/select-lawyer" element={
+              <ProtectedRoute><SelectLawyer /></ProtectedRoute>
             } />
             <Route path="/book-consultation" element={
               <ProtectedRoute><BookConsultation /></ProtectedRoute>
