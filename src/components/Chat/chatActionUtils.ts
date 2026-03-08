@@ -212,3 +212,8 @@ export function getGuideRoute(categories: string[]): { path: string; label: stri
   }
   return { path: '/state-legal-support', label: 'State Legal Support Guide' };
 }
+
+export function getAuthorityRoute(categories: string[]): { path: string; label: string } {
+  const cat = categories[0] || 'all';
+  return { path: `/authority-finder?category=${cat}`, label: 'Find Relevant Authority' };
+}
