@@ -84,6 +84,17 @@ const ChatBot: React.FC = () => {
     setTimeout(() => setCopiedMsgId(null), 2000);
   };
 
+  // Sync auto-read setting from localStorage (cross-component)
+  useEffect(() => {
+    const handler = (e: StorageEvent) => {
+      if (e.key === 'lawlite-auto-read') {
+        setAutoReadEnabled(e.newValue === 'true');
+      }
+    };
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
+  }, []);
+
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
