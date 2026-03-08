@@ -172,6 +172,9 @@ const App = () => (
             <Route path="/submit-case" element={
               <ProtectedRoute><SubmitCase /></ProtectedRoute>
             } />
+            <Route path="/case/:caseId/select-lawyer" element={
+              <ProtectedRoute><SelectLawyer /></ProtectedRoute>
+            } />
             <Route path="/book-consultation" element={
               <ProtectedRoute><BookConsultation /></ProtectedRoute>
             } />
