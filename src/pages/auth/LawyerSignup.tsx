@@ -105,8 +105,8 @@ const LawyerSignup: React.FC = () => {
     if (errors.practice_areas) setErrors(prev => ({ ...prev, practice_areas: '' }));
   };
 
-  const Field = ({ name, label, type = 'text', placeholder = '' }: { name: string; label: string; type?: string; placeholder?: string }) => (
-    <div className="space-y-2">
+  const renderField = (name: string, label: string, type = 'text', placeholder = '') => (
+    <div className="space-y-2" key={name}>
       <Label htmlFor={name}>{label} *</Label>
       <Input id={name} name={name} type={type} value={(formData as any)[name]} onChange={handleChange} placeholder={placeholder} className={errors[name] ? 'border-destructive' : ''} />
       {errors[name] && <p className="text-xs text-destructive">{errors[name]}</p>}
@@ -136,12 +136,12 @@ const LawyerSignup: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Personal Info */}
             <div className="space-y-1 mb-2"><h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Personal Information</h3></div>
-            <Field name="name" label={t('fullName')} />
-            <Field name="email" label={t('email')} type="email" />
-            <Field name="phone" label="Phone Number" type="tel" placeholder="+91 XXXXX XXXXX" />
+            {renderField('name', t('fullName'))}
+            {renderField('email', t('email'), 'email')}
+            {renderField('phone', 'Phone Number', 'tel', '+91 XXXXX XXXXX')}
             <div className="grid grid-cols-2 gap-3">
-              <Field name="password" label={t('password')} type="password" />
-              <Field name="confirmPassword" label={t('confirmPassword')} type="password" />
+              {renderField('password', t('password'), 'password')}
+              {renderField('confirmPassword', t('confirmPassword'), 'password')}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -153,16 +153,16 @@ const LawyerSignup: React.FC = () => {
                 </Select>
                 {errors.state && <p className="text-xs text-destructive">{errors.state}</p>}
               </div>
-              <Field name="city" label="City" />
+              {renderField('city', 'City')}
             </div>
 
             {/* Professional Info */}
             <div className="space-y-1 mt-4 mb-2"><h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Professional Details</h3></div>
-            <Field name="bar_council_number" label="Bar Council Enrollment Number" placeholder="e.g. KAR/1234/2020" />
+            {renderField('bar_council_number', 'Bar Council Enrollment Number', 'text', 'e.g. KAR/1234/2020')}
             
             <div className="grid grid-cols-2 gap-3">
-              <Field name="year_of_practice" label="Year of Practice Start" type="number" placeholder="e.g. 2015" />
-              <Field name="experience" label="Years of Experience" type="number" placeholder="e.g. 8" />
+              {renderField('year_of_practice', 'Year of Practice Start', 'number', 'e.g. 2015')}
+              {renderField('experience', 'Years of Experience', 'number', 'e.g. 8')}
             </div>
 
             <div className="space-y-2">
@@ -186,7 +186,7 @@ const LawyerSignup: React.FC = () => {
               {errors.practice_areas && <p className="text-xs text-destructive">{errors.practice_areas}</p>}
             </div>
 
-            <Field name="consultation_fee" label="Consultation Fee (₹/hour)" type="number" placeholder="e.g. 500" />
+            {renderField('consultation_fee', 'Consultation Fee (₹/hour)', 'number', 'e.g. 500')}
 
             <div className="space-y-2">
               <Label>Preferred Language</Label>
