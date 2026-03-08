@@ -296,7 +296,7 @@ const DocumentGenerator: React.FC = () => {
                 </div>
                 {generatedContent && (
                   <div className="mt-6 border rounded-lg p-4 max-h-64 overflow-y-auto">
-                    <ReactMarkdown className="prose prose-sm dark:prose-invert max-w-none">{generatedContent}</ReactMarkdown>
+                    <ReactMarkdown>{generatedContent}</ReactMarkdown>
                   </div>
                 )}
               </CardContent>
