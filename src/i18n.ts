@@ -1024,7 +1024,6 @@ const resources = {
       pageNotFound: "404",
       pageNotFoundText: "ओह! पेज नहीं मिला",
       returnToHome: "होम पर वापस जाएं",
-      copyText: "कॉपी करें",
       copied: "कॉपी हो गया!",
       copiedToClipboard: "क्लिपबोर्ड पर कॉपी हो गया",
       trySuggestions: "यह पूछकर देखें:",
