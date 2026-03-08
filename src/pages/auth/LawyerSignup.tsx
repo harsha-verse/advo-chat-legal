@@ -136,12 +136,12 @@ const LawyerSignup: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Personal Info */}
             <div className="space-y-1 mb-2"><h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Personal Information</h3></div>
-            <Field name="name" label={t('fullName')} />
-            <Field name="email" label={t('email')} type="email" />
-            <Field name="phone" label="Phone Number" type="tel" placeholder="+91 XXXXX XXXXX" />
+            {renderField('name', t('fullName'))}
+            {renderField('email', t('email'), 'email')}
+            {renderField('phone', 'Phone Number', 'tel', '+91 XXXXX XXXXX')}
             <div className="grid grid-cols-2 gap-3">
-              <Field name="password" label={t('password')} type="password" />
-              <Field name="confirmPassword" label={t('confirmPassword')} type="password" />
+              {renderField('password', t('password'), 'password')}
+              {renderField('confirmPassword', t('confirmPassword'), 'password')}
             </div>
 
             <div className="grid grid-cols-2 gap-3">
