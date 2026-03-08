@@ -458,6 +458,20 @@ const resources = {
       pageNotFoundText: "Oops! Page not found",
       returnToHome: "Return to Home",
 
+      // Copy
+      copyText: "Copy",
+      copied: "Copied!",
+      copiedToClipboard: "Copied to clipboard",
+
+      // Suggestions
+      trySuggestions: "Try asking about:",
+      suggestTenantDeposit: "Tenant deposit not returned",
+      suggestSalaryNotPaid: "Salary not paid by company",
+      suggestConsumerComplaint: "How to file consumer complaint",
+      suggestTrafficFine: "Traffic fine dispute",
+      suggestPropertyDispute: "Property dispute with neighbour",
+      suggestDomesticViolence: "Domestic violence help",
+
       // Misc
       comingSoon: "Coming soon...",
       chatPageComingSoon: "Chat page coming soon...",
