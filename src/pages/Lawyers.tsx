@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ChatBot from '@/components/Chat/ChatBot';
+import FeaturedLawyers from '@/components/Lawyer/FeaturedLawyers';
 import { Search, Star, MapPin, Clock, CheckCircle, MessageCircle, Calendar, Scale, Users, Building, Shield, Laptop, Heart, Gavel, Globe } from 'lucide-react';
 
 interface LawyerResult {
