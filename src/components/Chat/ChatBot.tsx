@@ -369,6 +369,28 @@ const ChatBot: React.FC = () => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); }
   };
 
+  const handleDiagnosisComplete = (summary: string, category: string) => {
+    setShowDiagnosis(false);
+    // Add a user message showing the diagnosis summary context
+    const userMsg: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: `🩺 ${t('diagCompletedLabel')}\n\n${summary}`,
+    };
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
+    setShowSuggestions(false);
+    setIsTyping(true);
+
+    const historyForAI = updatedMessages.filter((m) => m.id !== '1').map((m) => ({ role: m.role, content: m.content }));
+    streamChat(historyForAI as Message[])
+      .catch((e) => {
+        const errorMsg = e instanceof Error ? e.message : 'Something went wrong. Please try again.';
+        setMessages((prev) => [...prev, { id: Date.now().toString(), role: 'assistant', content: `❌ ${errorMsg}` }]);
+      })
+      .finally(() => setIsTyping(false));
+  };
+
   return (
     <>
       <AnimatePresence>
