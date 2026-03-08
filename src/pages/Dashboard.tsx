@@ -13,9 +13,9 @@ import { getStateInfo } from '@/data/stateData';
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
-  const userState = user?.preferences?.selectedState;
+  const userState = profile?.state;
   const stateInfo = getStateInfo(userState);
 
   const quickActions = [
