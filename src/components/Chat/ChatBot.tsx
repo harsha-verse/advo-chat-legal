@@ -51,7 +51,11 @@ const ChatBot: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
   const [isProcessingVoice, setIsProcessingVoice] = useState(false);
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
+  const [autoReadEnabled, setAutoReadEnabled] = useState(() => {
+    try { return localStorage.getItem('lawlite-auto-read') === 'true'; } catch { return false; }
+  });
   const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
