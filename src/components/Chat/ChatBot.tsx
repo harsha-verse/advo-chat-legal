@@ -180,33 +180,69 @@ const ChatBot: React.FC = () => {
     return match || null;
   };
 
+  // Clean text for speech: strip markdown, convert newlines to pauses, shorten
+  const cleanForSpeech = (text: string): string => {
+    return text
+      .replace(/[#*_\[\]()>`~|]/g, '')
+      .replace(/^\s*[-•]\s*/gm, '') // remove bullet markers
+      .replace(/\n{2,}/g, '. ') // double newlines become sentence breaks
+      .replace(/\n/g, ', ') // single newlines become short pauses
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  };
+
   // Voice Output (Text-to-Speech) using Web Speech Synthesis
-  const speakText = (text: string, msgId: string) => {
+  const speakText = useCallback((text: string, msgId: string) => {
     if (!('speechSynthesis' in window)) {
       toast.error(t('ttsNotSupported'));
       return;
     }
+
+    // If same message is speaking, toggle pause/resume
     if (speakingMsgId === msgId) {
-      window.speechSynthesis.cancel();
-      setSpeakingMsgId(null);
+      if (isPaused) {
+        window.speechSynthesis.resume();
+        setIsPaused(false);
+      } else {
+        window.speechSynthesis.pause();
+        setIsPaused(true);
+      }
       return;
     }
+
+    // Stop any current playback
     window.speechSynthesis.cancel();
-    const cleanText = text.replace(/[#*_\[\]()>`~|]/g, '').replace(/\n+/g, '. ');
+    setIsPaused(false);
+
+    const cleanText = cleanForSpeech(text);
     const langCode = SPEECH_LANG_MAP[currentLang] || 'en-IN';
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = langCode;
-    
-    // Dynamically select best voice for the language
+
     const bestVoice = findBestVoice(langCode);
-    if (bestVoice) utterance.voice = bestVoice;
-    
+    if (bestVoice) {
+      utterance.voice = bestVoice;
+    } else {
+      // Fallback: if no voice for language, use English and notify
+      const fallback = findBestVoice('en-IN');
+      if (fallback) utterance.voice = fallback;
+      toast.info(t('voiceFallbackEnglish'));
+    }
+
     utterance.rate = 0.9;
-    utterance.onend = () => setSpeakingMsgId(null);
-    utterance.onerror = () => setSpeakingMsgId(null);
+    utterance.pitch = 1;
+    utterance.onend = () => { setSpeakingMsgId(null); setIsPaused(false); };
+    utterance.onerror = () => { setSpeakingMsgId(null); setIsPaused(false); };
     window.speechSynthesis.speak(utterance);
     setSpeakingMsgId(msgId);
-  };
+  }, [speakingMsgId, isPaused, currentLang, t]);
+
+  // Stop speech completely
+  const stopSpeech = useCallback(() => {
+    window.speechSynthesis?.cancel();
+    setSpeakingMsgId(null);
+    setIsPaused(false);
+  }, []);
 
   const streamChat = async (allMessages: Message[]) => {
     const resp = await fetch(CHAT_URL, {
