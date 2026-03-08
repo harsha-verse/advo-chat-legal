@@ -84,9 +84,10 @@ const App = () => (
               </PublicRoute>
             } />
             <Route path="/signup" element={
-              <PublicRoute>
-                <Signup />
-              </PublicRoute>
+              <PublicRoute><Signup /></PublicRoute>
+            } />
+            <Route path="/lawyer-signup" element={
+              <PublicRoute><LawyerSignup /></PublicRoute>
             } />
             
             {/* Protected routes */}
