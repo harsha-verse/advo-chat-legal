@@ -405,7 +405,7 @@ const ChatBot: React.FC = () => {
                 {messages.map((message) => (
                   <div key={message.id}>
                     <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[85%] rounded-lg p-3 ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                      <div className={`max-w-[85%] rounded-lg p-3 relative ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'} ${speakingMsgId === message.id ? 'ring-2 ring-primary/40' : ''}`}>
                         <div className="flex items-start space-x-2">
                           {message.role === 'assistant' && <Bot className="h-4 w-4 mt-0.5 flex-shrink-0" />}
                           {message.role === 'user' && <User className="h-4 w-4 mt-0.5 flex-shrink-0" />}
