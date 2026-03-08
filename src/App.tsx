@@ -26,6 +26,8 @@ import LawyerPublicProfile from "./pages/LawyerPublicProfile";
 import MyCases from "./pages/MyCases";
 import CaseDetail from "./pages/CaseDetail";
 import SubmitCase from "./pages/SubmitCase";
+import BookConsultation from "./pages/BookConsultation";
+import MyConsultations from "./pages/MyConsultations";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import "./i18n";
