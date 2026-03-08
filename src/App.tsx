@@ -28,6 +28,7 @@ import CaseDetail from "./pages/CaseDetail";
 import SubmitCase from "./pages/SubmitCase";
 import BookConsultation from "./pages/BookConsultation";
 import MyConsultations from "./pages/MyConsultations";
+import SelectLawyer from "./pages/SelectLawyer";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import "./i18n";
