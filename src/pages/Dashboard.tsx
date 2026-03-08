@@ -173,9 +173,9 @@ const Dashboard: React.FC = () => {
             <CardContent className="p-6">
               <div className="space-y-4">
                 {[
-                  { action: 'Downloaded rental agreement template', time: '2 hours ago' },
-                  { action: 'Consulted with Adv. Sharma about property law', time: '1 day ago' },
-                  { action: 'Submitted review for Adv. Patel', time: '2 days ago' },
+                  { action: t('downloadedRentalTemplate'), time: t('hoursAgo') },
+                  { action: t('consultedPropertyLaw'), time: t('oneDayAgo') },
+                  { action: t('submittedReview'), time: t('twoDaysAgo') },
                 ].map((activity, index) => (
                   <div key={index} className="flex items-start space-x-3 p-3 rounded-lg bg-muted/50">
                     <div className="bg-green-100 p-1 rounded-full flex-shrink-0"><CheckCircle className="h-4 w-4 text-green-600" /></div>

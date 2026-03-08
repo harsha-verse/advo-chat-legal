@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Mail, Phone, MapPin, Calendar, ShieldCheck, Hash } from 'lucide-react';
 
 const ProfileOverview = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   if (!user) return null;
 
@@ -26,13 +28,13 @@ const ProfileOverview = () => {
 
         <div className="flex-1 space-y-2">
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-xl font-bold text-foreground">{user.name || 'User'}</h1>
+            <h1 className="text-xl font-bold text-foreground">{user.name || t('user')}</h1>
             {user.verified && (
               <Badge variant="default" className="gap-1 bg-green-600 hover:bg-green-700">
-                <ShieldCheck className="h-3 w-3" /> Verified
+                <ShieldCheck className="h-3 w-3" /> {t('verified')}
               </Badge>
             )}
-            <Badge variant="outline" className="capitalize">{user.type}</Badge>
+            <Badge variant="outline" className="capitalize">{t(user.type)}</Badge>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-1 text-sm text-muted-foreground">
@@ -40,13 +42,13 @@ const ProfileOverview = () => {
               <Mail className="h-3.5 w-3.5" /> {user.email}
             </span>
             <span className="flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5" /> {user.preferences?.selectedState || 'Not set'}
+              <MapPin className="h-3.5 w-3.5" /> {user.preferences?.selectedState || t('notSet')}
             </span>
             <span className="flex items-center gap-1.5">
-              <Calendar className="h-3.5 w-3.5" /> Member since {memberSince}
+              <Calendar className="h-3.5 w-3.5" /> {t('memberSince')} {memberSince}
             </span>
             <span className="flex items-center gap-1.5">
-              <Hash className="h-3.5 w-3.5" /> ID: {user.id.slice(-8).toUpperCase()}
+              <Hash className="h-3.5 w-3.5" /> {t('userId')}: {user.id.slice(-8).toUpperCase()}
             </span>
           </div>
         </div>

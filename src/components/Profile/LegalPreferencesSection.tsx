@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { toast } from '@/hooks/use-toast';
 import { Scale, Save, Pencil, X } from 'lucide-react';
 
 const LegalPreferencesSection = () => {
+  const { t } = useTranslation();
   const { user, updatePreferences } = useAuth();
   const [editing, setEditing] = useState(false);
   const [state, setState] = useState(user?.preferences?.selectedState || '');
@@ -20,42 +22,37 @@ const LegalPreferencesSection = () => {
   );
 
   const toggleInterest = (interest: string) => {
-    setInterests(prev =>
-      prev.includes(interest) ? prev.filter(i => i !== interest) : [...prev, interest]
-    );
+    setInterests(prev => prev.includes(interest) ? prev.filter(i => i !== interest) : [...prev, interest]);
   };
 
   const handleSave = () => {
-    updatePreferences({
-      selectedState: state as any,
-      legalHelpType: interests[0] as any,
-    });
+    updatePreferences({ selectedState: state as any, legalHelpType: interests[0] as any });
     setEditing(false);
-    toast({ title: 'Preferences Saved', description: 'Your legal preferences have been updated.' });
+    toast({ title: t('preferencesSaved'), description: t('preferencesSavedDesc') });
   };
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-4">
         <CardTitle className="text-lg flex items-center gap-2">
-          <Scale className="h-4 w-4" /> Legal Preferences
+          <Scale className="h-4 w-4" /> {t('legalPreferences')}
         </CardTitle>
         {editing ? (
           <div className="flex gap-2">
-            <Button size="sm" variant="ghost" onClick={() => setEditing(false)}><X className="h-4 w-4 mr-1" /> Cancel</Button>
-            <Button size="sm" onClick={handleSave}><Save className="h-4 w-4 mr-1" /> Save</Button>
+            <Button size="sm" variant="ghost" onClick={() => setEditing(false)}><X className="h-4 w-4 mr-1" /> {t('cancel')}</Button>
+            <Button size="sm" onClick={handleSave}><Save className="h-4 w-4 mr-1" /> {t('save')}</Button>
           </div>
         ) : (
-          <Button size="sm" variant="outline" onClick={() => setEditing(true)}><Pencil className="h-4 w-4 mr-1" /> Edit</Button>
+          <Button size="sm" variant="outline" onClick={() => setEditing(true)}><Pencil className="h-4 w-4 mr-1" /> {t('edit')}</Button>
         )}
       </CardHeader>
       <CardContent className="space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">State for Legal Support</Label>
+            <Label className="text-xs text-muted-foreground">{t('stateForLegalSupport')}</Label>
             {editing ? (
               <Select value={state} onValueChange={setState}>
-                <SelectTrigger className="h-9"><SelectValue placeholder="Select state" /></SelectTrigger>
+                <SelectTrigger className="h-9"><SelectValue placeholder={t('pleaseSelectState')} /></SelectTrigger>
                 <SelectContent>
                   {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                 </SelectContent>
@@ -65,9 +62,9 @@ const LegalPreferencesSection = () => {
             )}
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">District / City</Label>
+            <Label className="text-xs text-muted-foreground">{t('districtCity')}</Label>
             {editing ? (
-              <Input value={district} onChange={e => setDistrict(e.target.value)} className="h-9" placeholder="Enter district or city" />
+              <Input value={district} onChange={e => setDistrict(e.target.value)} className="h-9" placeholder={t('enterDistrictCity')} />
             ) : (
               <p className="text-sm font-medium text-foreground py-1.5 px-3 bg-muted/50 rounded-md">{district || '—'}</p>
             )}
@@ -75,20 +72,15 @@ const LegalPreferencesSection = () => {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">Legal Interests</Label>
-          <p className="text-xs text-muted-foreground">Select areas you are interested in for personalized recommendations.</p>
+          <Label className="text-xs text-muted-foreground">{t('legalInterests')}</Label>
+          <p className="text-xs text-muted-foreground">{t('legalInterestsDesc')}</p>
           <div className="flex flex-wrap gap-2 mt-2">
             {LEGAL_HELP_TYPES.map(type => {
               const selected = interests.includes(type);
               return (
-                <Badge
-                  key={type}
-                  variant={selected ? 'default' : 'outline'}
-                  className={`cursor-pointer transition-colors ${editing ? '' : 'pointer-events-none'} ${
-                    selected ? '' : 'hover:bg-primary/10'
-                  }`}
-                  onClick={() => editing && toggleInterest(type)}
-                >
+                <Badge key={type} variant={selected ? 'default' : 'outline'}
+                  className={`cursor-pointer transition-colors ${editing ? '' : 'pointer-events-none'} ${selected ? '' : 'hover:bg-primary/10'}`}
+                  onClick={() => editing && toggleInterest(type)}>
                   {type}
                 </Badge>
               );
