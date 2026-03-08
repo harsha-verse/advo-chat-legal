@@ -56,22 +56,34 @@ export type Database = {
         Row: {
           case_id: string
           created_at: string
+          file_name: string | null
+          file_type: string | null
+          file_url: string | null
           id: string
           message: string
+          read_at: string | null
           sender_id: string
         }
         Insert: {
           case_id: string
           created_at?: string
+          file_name?: string | null
+          file_type?: string | null
+          file_url?: string | null
           id?: string
           message: string
+          read_at?: string | null
           sender_id: string
         }
         Update: {
           case_id?: string
           created_at?: string
+          file_name?: string | null
+          file_type?: string | null
+          file_url?: string | null
           id?: string
           message?: string
+          read_at?: string | null
           sender_id?: string
         }
         Relationships: [
@@ -172,6 +184,80 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      consultations: {
+        Row: {
+          case_id: string | null
+          client_feedback: string | null
+          client_id: string
+          client_rating: number | null
+          completed_at: string | null
+          consultation_type: string
+          created_at: string
+          decline_reason: string | null
+          duration_minutes: number
+          id: string
+          lawyer_id: string
+          lawyer_notes: string | null
+          meeting_link: string | null
+          scheduled_date: string
+          scheduled_time: string
+          status: string
+          suggested_date: string | null
+          suggested_time: string | null
+          updated_at: string
+        }
+        Insert: {
+          case_id?: string | null
+          client_feedback?: string | null
+          client_id: string
+          client_rating?: number | null
+          completed_at?: string | null
+          consultation_type?: string
+          created_at?: string
+          decline_reason?: string | null
+          duration_minutes?: number
+          id?: string
+          lawyer_id: string
+          lawyer_notes?: string | null
+          meeting_link?: string | null
+          scheduled_date: string
+          scheduled_time: string
+          status?: string
+          suggested_date?: string | null
+          suggested_time?: string | null
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string | null
+          client_feedback?: string | null
+          client_id?: string
+          client_rating?: number | null
+          completed_at?: string | null
+          consultation_type?: string
+          created_at?: string
+          decline_reason?: string | null
+          duration_minutes?: number
+          id?: string
+          lawyer_id?: string
+          lawyer_notes?: string | null
+          meeting_link?: string | null
+          scheduled_date?: string
+          scheduled_time?: string
+          status?: string
+          suggested_date?: string | null
+          suggested_time?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultations_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       lawyer_case_stats: {
         Row: {
