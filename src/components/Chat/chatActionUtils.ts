@@ -78,6 +78,9 @@ const COMPLEXITY_KEYWORDS = [
   'court', 'case', 'file case', 'sue', 'petition', 'hearing',
   'appeal', 'high court', 'supreme court', 'injunction', 'stay order',
   'compensation', 'damages', 'multiple', 'serious', 'urgent', 'emergency',
+  // Hinglish & rural
+  'adalat', 'kachehri', 'muqadma', 'case karna', 'court jaana',
+  'bail chahiye', 'zamanat', 'notice aaya', 'summon', 'warrant',
 ];
 
 export function detectContext(messageContent: string): DetectedContext {
