@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { Star, MapPin, Scale, FileText, BookOpen, ChevronRight } from 'lucide-react';
-import { detectContext, matchLawyers, matchTemplates, getGuideRoute, type MatchedLawyer, type MatchedTemplate } from './chatActionUtils';
+import { Star, MapPin, Scale, FileText, BookOpen, ChevronRight, Landmark } from 'lucide-react';
+import { detectContext, matchLawyers, matchTemplates, getGuideRoute, getAuthorityRoute, type MatchedLawyer, type MatchedTemplate } from './chatActionUtils';
 
 interface ChatActionCardsProps { messageContent: string; }
 
@@ -17,6 +17,7 @@ const ChatActionCards: React.FC<ChatActionCardsProps> = ({ messageContent }) => 
   const lawyers = matchLawyers(ctx.categories, userState);
   const templates = ctx.needsTemplate ? matchTemplates(ctx.categories) : [];
   const guide = getGuideRoute(ctx.categories);
+  const authority = getAuthorityRoute(ctx.categories);
 
   return (
     <div className="space-y-3 mt-3">
@@ -26,9 +27,9 @@ const ChatActionCards: React.FC<ChatActionCardsProps> = ({ messageContent }) => 
           <Button size="sm" variant="default" className="text-xs h-7 gap-1" onClick={() => navigate(`/lawyers?category=${ctx.categories[0]}`)}><Scale className="h-3 w-3" /> {t('consultALawyer')}</Button>
           {templates.length > 0 && (<Button size="sm" variant="outline" className="text-xs h-7 gap-1" onClick={() => navigate(`/templates?category=${ctx.categories[0]}`)}><FileText className="h-3 w-3" /> {t('downloadTemplate')}</Button>)}
           <Button size="sm" variant="outline" className="text-xs h-7 gap-1" onClick={() => navigate(guide.path)}><BookOpen className="h-3 w-3" /> {t('viewStepByStepGuide')}</Button>
+          <Button size="sm" variant="outline" className="text-xs h-7 gap-1" onClick={() => navigate(authority.path)}><Landmark className="h-3 w-3" /> {t('findAuthority')}</Button>
         </div>
       </div>
-
       {ctx.needsLawyer && lawyers.length > 0 && (
         <div className="bg-card rounded-lg p-3 border">
           <p className="text-xs font-semibold mb-2">{ctx.isComplex ? t('complexIssueWarning') : t('recommendedLawyers')}</p>

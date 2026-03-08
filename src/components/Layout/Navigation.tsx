@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
   Home, Users, FileText, File, MessageCircle, User,
-  Briefcase, Scale, MapPin, Building
+  Briefcase, Scale, MapPin, Building, Landmark
 } from 'lucide-react';
 
 const Navigation: React.FC = () => {
@@ -21,6 +21,7 @@ const Navigation: React.FC = () => {
     { path: '/consultants', icon: Users, label: t('consultants') },
     { path: '/state-legal-support', icon: MapPin, label: t('stateLegalSupport') },
     { path: '/msme-support', icon: Building, label: t('msmeSupport') },
+    { path: '/authority-finder', icon: Landmark, label: t('authorityFinder') },
     { path: '/chat', icon: MessageCircle, label: t('chat') },
     { path: '/profile', icon: User, label: t('profile') },
   ];
