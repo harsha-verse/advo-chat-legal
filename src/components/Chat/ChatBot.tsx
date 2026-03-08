@@ -5,11 +5,12 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from '@/context/AuthContext';
 import {
-  MessageCircle, Send, Minimize2, Maximize2, X, Bot, User, Mic, MicOff, Volume2, VolumeX, Copy, Check, Pause, Square,
+  MessageCircle, Send, Minimize2, Maximize2, X, Bot, User, Mic, MicOff, Volume2, VolumeX, Copy, Check, Pause, Square, Stethoscope,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import ChatActionCards from './ChatActionCards';
+import DiagnosisFlow from './DiagnosisFlow';
 import { SPEECH_LANG_MAP } from '@/i18n';
 import { toast } from 'sonner';
 
