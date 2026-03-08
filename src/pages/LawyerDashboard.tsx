@@ -13,8 +13,10 @@ import { useToast } from '@/hooks/use-toast';
 import {
   Scale, Upload, FileText, ShieldCheck, Clock, CheckCircle,
   XCircle, User, Briefcase, MessageCircle, Star, AlertTriangle, Edit,
-  Bell, ArrowRight, Calendar, MapPin
+  Bell, ArrowRight, Calendar, MapPin, TrendingUp
 } from 'lucide-react';
+import PerformanceStats from '@/components/Lawyer/PerformanceStats';
+import ReviewsList from '@/components/Lawyer/ReviewsList';
 
 const VERIFICATION_DOCS = [
   { type: 'bar_certificate', label: 'Bar Council Enrollment Certificate', icon: Scale },
