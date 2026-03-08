@@ -112,18 +112,24 @@ const CaseDetail: React.FC = () => {
     }
   };
 
-  const sendMessage = async () => {
-    if (!newMessage.trim() || !caseData) return;
-    const { error } = await supabase.from('case_messages').insert({
+  const sendMessage = async (fileData?: { file_url: string; file_name: string; file_type: string }) => {
+    if (!fileData && !newMessage.trim()) return;
+    if (!caseData) return;
+    const insert: any = {
       case_id: caseData.id,
       sender_id: user!.id,
-      message: newMessage.trim(),
-    });
+      message: fileData ? `📎 ${fileData.file_name}` : newMessage.trim(),
+    };
+    if (fileData) {
+      insert.file_url = fileData.file_url;
+      insert.file_name = fileData.file_name;
+      insert.file_type = fileData.file_type;
+    }
+    const { error } = await supabase.from('case_messages').insert(insert);
     if (error) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
     } else {
-      setNewMessage('');
-      // Notify other party
+      if (!fileData) setNewMessage('');
       const recipientId = isLawyer ? caseData.client_id : caseData.lawyer_id;
       if (recipientId) {
         await supabase.from('notifications').insert({
@@ -136,6 +142,29 @@ const CaseDetail: React.FC = () => {
       }
     }
   };
+
+  const handleChatFileUpload = async (file: File) => {
+    if (!caseData || !user) return;
+    try {
+      const filePath = `${caseData.id}/chat/${user.id}/${Date.now()}_${file.name}`;
+      const { error: upErr } = await supabase.storage.from('case-documents').upload(filePath, file);
+      if (upErr) throw upErr;
+      const { data: urlData } = supabase.storage.from('case-documents').getPublicUrl(filePath);
+      await sendMessage({ file_url: urlData.publicUrl, file_name: file.name, file_type: file.type });
+    } catch (err: any) {
+      toast({ title: 'Upload Failed', description: err.message, variant: 'destructive' });
+    }
+  };
+
+  // Mark messages as read
+  useEffect(() => {
+    if (!messages.length || !user || !caseData) return;
+    const unread = messages.filter(m => m.sender_id !== user.id && !m.read_at);
+    if (unread.length > 0) {
+      const ids = unread.map(m => m.id);
+      supabase.from('case_messages').update({ read_at: new Date().toISOString() }).in('id', ids).then(() => {});
+    }
+  }, [messages, user]);
 
   const addNote = async () => {
     if (!newNote.trim() || !caseData) return;
@@ -274,10 +303,18 @@ const CaseDetail: React.FC = () => {
                         return (
                           <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                             <div className={`max-w-[75%] rounded-lg px-4 py-2 ${isMe ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}>
-                              <p className="text-sm">{msg.message}</p>
-                              <p className={`text-xs mt-1 ${isMe ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
-                                {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                              </p>
+                              {msg.file_url ? (
+                                <a href={msg.file_url} target="_blank" rel="noopener noreferrer"
+                                  className={`text-sm underline flex items-center gap-1 ${isMe ? 'text-primary-foreground' : 'text-primary'}`}>
+                                  📎 {msg.file_name || 'File'}
+                                </a>
+                              ) : (
+                                <p className="text-sm">{msg.message}</p>
+                              )}
+                              <div className={`flex items-center gap-1 mt-1 ${isMe ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                                <span className="text-xs">{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                {isMe && msg.read_at && <CheckCircle className="h-3 w-3" />}
+                              </div>
                             </div>
                           </div>
                         );
@@ -287,13 +324,19 @@ const CaseDetail: React.FC = () => {
                   </ScrollArea>
                   {caseData.status !== 'closed' && caseData.status !== 'declined' && (
                     <div className="flex gap-2 pt-3 border-t border-border mt-2">
+                      <Input type="file" className="hidden" id="chat-file-upload"
+                        onChange={e => { const f = e.target.files?.[0]; if (f) handleChatFileUpload(f); }} />
+                      <Button size="icon" variant="ghost" asChild>
+                        <label htmlFor="chat-file-upload" className="cursor-pointer"><Upload className="h-4 w-4" /></label>
+                      </Button>
                       <Input
                         placeholder="Type a message..."
                         value={newMessage}
                         onChange={e => setNewMessage(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
+                        className="flex-1"
                       />
-                      <Button size="icon" onClick={sendMessage} disabled={!newMessage.trim()}>
+                      <Button size="icon" onClick={() => sendMessage()} disabled={!newMessage.trim()}>
                         <Send className="h-4 w-4" />
                       </Button>
                     </div>

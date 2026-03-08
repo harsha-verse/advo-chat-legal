@@ -75,8 +75,8 @@ const LawyerPublicProfile: React.FC = () => {
                 {lawyer.rating > 0 && <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />{lawyer.rating} ({lawyer.total_reviews} reviews)</span>}
               </div>
               <div className="flex gap-2 pt-2">
-                <Button><Calendar className="h-4 w-4 mr-2" />Book Consultation</Button>
-                <Button variant="outline">Send Message</Button>
+                <Button onClick={() => navigate(`/book-consultation?lawyer=${id}`)}><Calendar className="h-4 w-4 mr-2" />Book Consultation</Button>
+                <Button variant="outline" onClick={() => navigate(`/submit-case?lawyer=${id}`)}>Submit Case</Button>
               </div>
             </div>
           </div>

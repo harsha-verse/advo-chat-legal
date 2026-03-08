@@ -26,6 +26,8 @@ import LawyerPublicProfile from "./pages/LawyerPublicProfile";
 import MyCases from "./pages/MyCases";
 import CaseDetail from "./pages/CaseDetail";
 import SubmitCase from "./pages/SubmitCase";
+import BookConsultation from "./pages/BookConsultation";
+import MyConsultations from "./pages/MyConsultations";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import "./i18n";
@@ -168,6 +170,12 @@ const App = () => (
             } />
             <Route path="/submit-case" element={
               <ProtectedRoute><SubmitCase /></ProtectedRoute>
+            } />
+            <Route path="/book-consultation" element={
+              <ProtectedRoute><BookConsultation /></ProtectedRoute>
+            } />
+            <Route path="/my-consultations" element={
+              <ProtectedRoute><MyConsultations /></ProtectedRoute>
             } />
             <Route path="/admin" element={
               <ProtectedRoute><AdminDashboard /></ProtectedRoute>
