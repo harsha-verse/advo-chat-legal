@@ -112,18 +112,24 @@ const CaseDetail: React.FC = () => {
     }
   };
 
-  const sendMessage = async () => {
-    if (!newMessage.trim() || !caseData) return;
-    const { error } = await supabase.from('case_messages').insert({
+  const sendMessage = async (fileData?: { file_url: string; file_name: string; file_type: string }) => {
+    if (!fileData && !newMessage.trim()) return;
+    if (!caseData) return;
+    const insert: any = {
       case_id: caseData.id,
       sender_id: user!.id,
-      message: newMessage.trim(),
-    });
+      message: fileData ? `📎 ${fileData.file_name}` : newMessage.trim(),
+    };
+    if (fileData) {
+      insert.file_url = fileData.file_url;
+      insert.file_name = fileData.file_name;
+      insert.file_type = fileData.file_type;
+    }
+    const { error } = await supabase.from('case_messages').insert(insert);
     if (error) {
       toast({ title: 'Error', description: error.message, variant: 'destructive' });
     } else {
-      setNewMessage('');
-      // Notify other party
+      if (!fileData) setNewMessage('');
       const recipientId = isLawyer ? caseData.client_id : caseData.lawyer_id;
       if (recipientId) {
         await supabase.from('notifications').insert({
@@ -136,6 +142,29 @@ const CaseDetail: React.FC = () => {
       }
     }
   };
+
+  const handleChatFileUpload = async (file: File) => {
+    if (!caseData || !user) return;
+    try {
+      const filePath = `${caseData.id}/chat/${user.id}/${Date.now()}_${file.name}`;
+      const { error: upErr } = await supabase.storage.from('case-documents').upload(filePath, file);
+      if (upErr) throw upErr;
+      const { data: urlData } = supabase.storage.from('case-documents').getPublicUrl(filePath);
+      await sendMessage({ file_url: urlData.publicUrl, file_name: file.name, file_type: file.type });
+    } catch (err: any) {
+      toast({ title: 'Upload Failed', description: err.message, variant: 'destructive' });
+    }
+  };
+
+  // Mark messages as read
+  useEffect(() => {
+    if (!messages.length || !user || !caseData) return;
+    const unread = messages.filter(m => m.sender_id !== user.id && !m.read_at);
+    if (unread.length > 0) {
+      const ids = unread.map(m => m.id);
+      supabase.from('case_messages').update({ read_at: new Date().toISOString() }).in('id', ids).then(() => {});
+    }
+  }, [messages, user]);
 
   const addNote = async () => {
     if (!newNote.trim() || !caseData) return;
