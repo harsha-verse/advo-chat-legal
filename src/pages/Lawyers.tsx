@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ChatBot from '@/components/Chat/ChatBot';
+import FeaturedLawyers from '@/components/Lawyer/FeaturedLawyers';
 import { Search, Star, MapPin, Clock, CheckCircle, MessageCircle, Calendar, Scale, Users, Building, Shield, Laptop, Heart, Gavel, Globe } from 'lucide-react';
 
 interface LawyerResult {
@@ -119,6 +120,9 @@ const Lawyers: React.FC = () => {
         <h1 className="text-3xl font-bold text-foreground mb-2">{t('lawyers')}</h1>
         <p className="text-muted-foreground">{t('findConnectLawyers')}</p>
       </div>
+
+      {/* Featured Lawyers */}
+      <FeaturedLawyers />
 
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />

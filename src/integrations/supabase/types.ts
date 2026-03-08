@@ -486,6 +486,81 @@ export type Database = {
         }
         Relationships: []
       }
+      lawyer_reviews: {
+        Row: {
+          admin_moderated: boolean
+          case_id: string | null
+          client_id: string
+          communication_rating: number | null
+          consultation_id: string | null
+          created_at: string
+          flag_reason: string | null
+          id: string
+          is_flagged: boolean
+          is_verified: boolean
+          knowledge_rating: number | null
+          lawyer_id: string
+          overall_rating: number
+          professionalism_rating: number | null
+          responsiveness_rating: number | null
+          review_text: string | null
+          updated_at: string
+        }
+        Insert: {
+          admin_moderated?: boolean
+          case_id?: string | null
+          client_id: string
+          communication_rating?: number | null
+          consultation_id?: string | null
+          created_at?: string
+          flag_reason?: string | null
+          id?: string
+          is_flagged?: boolean
+          is_verified?: boolean
+          knowledge_rating?: number | null
+          lawyer_id: string
+          overall_rating: number
+          professionalism_rating?: number | null
+          responsiveness_rating?: number | null
+          review_text?: string | null
+          updated_at?: string
+        }
+        Update: {
+          admin_moderated?: boolean
+          case_id?: string | null
+          client_id?: string
+          communication_rating?: number | null
+          consultation_id?: string | null
+          created_at?: string
+          flag_reason?: string | null
+          id?: string
+          is_flagged?: boolean
+          is_verified?: boolean
+          knowledge_rating?: number | null
+          lawyer_id?: string
+          overall_rating?: number
+          professionalism_rating?: number | null
+          responsiveness_rating?: number | null
+          review_text?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lawyer_reviews_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lawyer_reviews_consultation_id_fkey"
+            columns: ["consultation_id"]
+            isOneToOne: false
+            referencedRelation: "consultations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string
