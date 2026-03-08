@@ -7,26 +7,26 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Globe } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { LANGUAGE_OPTIONS } from '@/i18n';
 import logo from '@/assets/logo.png';
 
 const Login: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { login } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.email) newErrors.email = t('pleaseEnterEmail');
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Please enter a valid email address';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = t('invalidEmail');
     if (!formData.password) newErrors.password = t('pleaseEnterPassword');
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -39,13 +39,13 @@ const Login: React.FC = () => {
     try {
       const success = await login(formData.email, formData.password, 'user');
       if (success) {
-        toast({ title: "Success", description: "Logged in successfully!" });
+        toast({ title: t('success'), description: t('loginSuccess') });
         navigate('/dashboard');
       } else {
-        toast({ title: "Error", description: t('invalidCredentials'), variant: "destructive" });
+        toast({ title: t('error'), description: t('invalidCredentials'), variant: "destructive" });
       }
     } catch {
-      toast({ title: "Error", description: "An error occurred. Please try again.", variant: "destructive" });
+      toast({ title: t('error'), description: t('errorOccurred'), variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -66,6 +66,20 @@ const Login: React.FC = () => {
           </div>
           <CardTitle className="text-2xl font-bold text-primary">LAWLITE</CardTitle>
           <CardDescription>{t('welcome')}</CardDescription>
+          {/* Language Selector */}
+          <div className="flex justify-center mt-2">
+            <Select onValueChange={(v) => i18n.changeLanguage(v)} value={i18n.language}>
+              <SelectTrigger className="w-32">
+                <Globe className="h-4 w-4 mr-1" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {LANGUAGE_OPTIONS.map((lang) => (
+                  <SelectItem key={lang.code} value={lang.code}>{lang.nativeLabel}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         
         <CardContent>
@@ -75,23 +89,18 @@ const Login: React.FC = () => {
               <Input id="email" name="email" type="email" value={formData.email} onChange={handleInputChange} className={errors.email ? 'border-destructive' : ''} />
               {errors.email && <Alert variant="destructive"><AlertDescription>{errors.email}</AlertDescription></Alert>}
             </div>
-            
             <div className="space-y-2">
               <Label htmlFor="password">{t('password')}</Label>
               <Input id="password" name="password" type="password" value={formData.password} onChange={handleInputChange} className={errors.password ? 'border-destructive' : ''} />
               {errors.password && <Alert variant="destructive"><AlertDescription>{errors.password}</AlertDescription></Alert>}
             </div>
-            
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Logging in...' : t('login')}
+              {isLoading ? t('loggingIn') : t('login')}
             </Button>
-            
             <div className="text-center space-y-2">
-              <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-                {t('forgotPassword')}
-              </Link>
+              <Link to="/forgot-password" className="text-sm text-primary hover:underline">{t('forgotPassword')}</Link>
               <p className="text-sm text-muted-foreground">
-                Don't have an account?{' '}
+                {t('dontHaveAccount')}{' '}
                 <Link to="/signup" className="text-primary hover:underline">{t('signup')}</Link>
               </p>
             </div>

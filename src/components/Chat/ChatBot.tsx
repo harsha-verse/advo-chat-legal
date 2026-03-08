@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from '@/context/AuthContext';
 import {
-  MessageCircle, Send, Minimize2, Maximize2, X, Bot, User,
+  MessageCircle, Send, Minimize2, Maximize2, X, Bot, User, Mic, MicOff, Volume2, VolumeX,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import ChatActionCards from './ChatActionCards';
+import { SPEECH_LANG_MAP } from '@/i18n';
 
 interface Message {
   id: string;
@@ -19,29 +21,99 @@ interface Message {
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/nyaya-chat`;
 
 const ChatBot: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const userState = user?.preferences?.selectedState;
+  const currentLang = i18n.language;
 
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'assistant',
       content: userState
-        ? `🙏 Namaste! I'm **NyayaBot**, your AI legal awareness assistant.\n\nI see you're from **${userState}**. I'll provide ${userState}-specific legal guidance automatically.\n\n**Ask me anything**, for example:\n- "owner not returning deposit"\n- "traffic fine why"\n- "how to file consumer complaint"\n\n⚠️ I provide legal awareness, not final legal advice.`
-        : "🙏 Namaste! I'm **NyayaBot**, your AI-powered legal awareness assistant.\n\nI can help you understand Indian laws, your rights, legal procedures, and more — in simple language.\n\n**Ask me anything**, for example:\n- \"owner not returning deposit\"\n- \"traffic fine why\"\n- \"article 21 meaning\"\n\n⚠️ I provide legal awareness, not final legal advice.",
+        ? `${t('chatbotGreeting')}\n\n${t('chatbotGreetingState', { state: userState })}\n\n${t('chatbotAskAnything')}\n- ${t('chatbotExample1')}\n- ${t('chatbotExample2')}\n- ${t('chatbotExample3')}\n\n${t('chatbotDisclaimer')}`
+        : `${t('chatbotGreeting')}\n\n${t('chatbotAskAnything')}\n- ${t('chatbotExample1')}\n- ${t('chatbotExample2')}\n- ${t('chatbotExample3')}\n\n${t('chatbotDisclaimer')}`,
     },
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<any>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => { scrollToBottom(); }, [messages]);
+
+  // Update welcome message when language changes
+  useEffect(() => {
+    setMessages(prev => {
+      const rest = prev.filter(m => m.id !== '1');
+      const welcomeContent = userState
+        ? `${t('chatbotGreeting')}\n\n${t('chatbotGreetingState', { state: userState })}\n\n${t('chatbotAskAnything')}\n- ${t('chatbotExample1')}\n- ${t('chatbotExample2')}\n- ${t('chatbotExample3')}\n\n${t('chatbotDisclaimer')}`
+        : `${t('chatbotGreeting')}\n\n${t('chatbotAskAnything')}\n- ${t('chatbotExample1')}\n- ${t('chatbotExample2')}\n- ${t('chatbotExample3')}\n\n${t('chatbotDisclaimer')}`;
+      return [{ id: '1', role: 'assistant', content: welcomeContent }, ...rest];
+    });
+  }, [currentLang, userState, t]);
+
+  // Voice Input (Speech-to-Text) using Web Speech API
+  const startListening = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert(t('voiceNotSupported'));
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = SPEECH_LANG_MAP[currentLang] || 'en-IN';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInputMessage(prev => prev + transcript);
+      setIsListening(false);
+    };
+    recognition.onerror = () => setIsListening(false);
+    recognition.onend = () => setIsListening(false);
+
+    recognition.start();
+    recognitionRef.current = recognition;
+    setIsListening(true);
+  };
+
+  const stopListening = () => {
+    recognitionRef.current?.stop();
+    setIsListening(false);
+  };
+
+  // Voice Output (Text-to-Speech) using Web Speech Synthesis
+  const speakText = (text: string, msgId: string) => {
+    if (!('speechSynthesis' in window)) {
+      alert(t('ttsNotSupported'));
+      return;
+    }
+    // Stop if already speaking this message
+    if (speakingMsgId === msgId) {
+      window.speechSynthesis.cancel();
+      setSpeakingMsgId(null);
+      return;
+    }
+    window.speechSynthesis.cancel();
+    // Strip markdown for cleaner TTS
+    const cleanText = text.replace(/[#*_\[\]()>`~|]/g, '').replace(/\n+/g, '. ');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.lang = SPEECH_LANG_MAP[currentLang] || 'en-IN';
+    utterance.rate = 0.9;
+    utterance.onend = () => setSpeakingMsgId(null);
+    utterance.onerror = () => setSpeakingMsgId(null);
+    window.speechSynthesis.speak(utterance);
+    setSpeakingMsgId(msgId);
+  };
 
   const streamChat = async (allMessages: Message[]) => {
     const resp = await fetch(CHAT_URL, {
@@ -53,6 +125,7 @@ const ChatBot: React.FC = () => {
       body: JSON.stringify({
         messages: allMessages.map((m) => ({ role: m.role, content: m.content })),
         userState: userState || undefined,
+        language: currentLang,
       }),
     });
 
@@ -171,7 +244,7 @@ const ChatBot: React.FC = () => {
                 <div>
                   <h3 className="font-semibold text-lg">NyayaBot</h3>
                   <p className="text-xs text-muted-foreground">
-                    {userState ? `📍 ${userState} • AI Legal Assistant` : 'AI Legal Awareness Assistant'}
+                    {userState ? `📍 ${userState} • ${t('aiLegalAssistantLabel')}` : t('aiLegalAwarenessAssistant')}
                   </p>
                 </div>
               </div>
@@ -201,11 +274,27 @@ const ChatBot: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    {/* Show action cards after completed assistant messages (not streaming, not welcome) */}
+                    {/* TTS button for assistant messages */}
                     {message.role === 'assistant' && message.id !== '1' && message.id !== 'streaming' && (
-                      <div className="mt-2 max-w-[90%]">
-                        <ChatActionCards messageContent={message.content} />
-                      </div>
+                      <>
+                        <div className="mt-1 ml-6">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs h-6 gap-1 text-muted-foreground hover:text-foreground"
+                            onClick={() => speakText(message.content, message.id)}
+                          >
+                            {speakingMsgId === message.id ? (
+                              <><VolumeX className="h-3 w-3" /> {t('stopAudio')}</>
+                            ) : (
+                              <><Volume2 className="h-3 w-3" /> {t('playAudio')}</>
+                            )}
+                          </Button>
+                        </div>
+                        <div className="mt-2 max-w-[90%]">
+                          <ChatActionCards messageContent={message.content} />
+                        </div>
+                      </>
                     )}
                   </div>
                 ))}
@@ -230,11 +319,21 @@ const ChatBot: React.FC = () => {
             {/* Input */}
             <div className="p-4 border-t bg-muted/30">
               <div className="flex space-x-2">
+                {/* Voice Input Button */}
+                <Button
+                  variant={isListening ? "destructive" : "outline"}
+                  size="icon"
+                  className="shrink-0"
+                  onClick={isListening ? stopListening : startListening}
+                  title={t('voiceInputTooltip')}
+                >
+                  {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                </Button>
                 <Input
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask about your rights, laws, legal procedures..."
+                  placeholder={isListening ? t('voiceListening') : t('chatbotInputPlaceholder')}
                   className="flex-1"
                   disabled={isTyping}
                 />
@@ -243,7 +342,7 @@ const ChatBot: React.FC = () => {
                 </Button>
               </div>
               <div className="text-xs text-muted-foreground mt-2 text-center">
-                ⚠️ Legal awareness only. Consult a verified lawyer for specific advice.
+                {t('chatbotDisclaimerShort')}
               </div>
             </div>
           </motion.div>

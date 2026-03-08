@@ -3,162 +3,47 @@ import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { 
-  Scale,
-  FileText,
-  Users,
-  MessageCircle,
-  TrendingUp,
-  Shield,
-  Building,
-  Heart,
-  Laptop,
-  Globe,
-  UserCheck,
-  Briefcase,
-  Gavel,
-  Home,
-  Zap
-} from 'lucide-react';
+import { Scale, FileText, Users, MessageCircle, Shield, Building, Heart, Laptop, Globe, UserCheck, Briefcase, Gavel, Home, Zap } from 'lucide-react';
 
 const Services: React.FC = () => {
   const { t } = useTranslation();
 
   const mainServices = [
-    {
-      title: t('businessSetup'),
-      description: 'Company registration, compliance, and legal documentation for startups',
-      icon: Building,
-      color: 'bg-blue-500',
-      href: '/templates?category=business'
-    },
-    {
-      title: t('documentation'),
-      description: 'Legal document creation, review, and template customization',
-      icon: FileText,
-      color: 'bg-green-500',
-      href: '/templates'
-    },
-    {
-      title: t('disputes'),
-      description: 'Dispute resolution, mediation, and legal representation',
-      icon: Scale,
-      color: 'bg-red-500',
-      href: '/lawyers?specialization=civil'
-    },
-    {
-      title: t('consultant'),
-      description: 'Expert legal consultation and strategic advice',
-      icon: UserCheck,
-      color: 'bg-purple-500',
-      href: '/consultants'
-    },
-    {
-      title: t('legalAdvice'),
-      description: 'Professional legal guidance for personal and business matters',
-      icon: MessageCircle,
-      color: 'bg-orange-500',
-      href: '/chat'
-    }
+    { title: t('businessSetup'), description: t('businessSetupDesc'), icon: Building, color: 'bg-blue-500', href: '/templates?category=business' },
+    { title: t('documentation'), description: t('documentationDesc'), icon: FileText, color: 'bg-green-500', href: '/templates' },
+    { title: t('disputes'), description: t('disputesDesc'), icon: Scale, color: 'bg-red-500', href: '/lawyers?specialization=civil' },
+    { title: t('consultant'), description: t('consultantDesc'), icon: UserCheck, color: 'bg-purple-500', href: '/consultants' },
+    { title: t('legalAdvice'), description: t('legalAdviceDesc'), icon: MessageCircle, color: 'bg-orange-500', href: '/chat' },
   ];
 
   const legalCategories = [
-    {
-      title: t('familyLaw'),
-      description: 'Divorce, custody, matrimonial disputes',
-      icon: Heart,
-      cases: '2,500+ cases handled',
-      href: '/lawyers?specialization=family'
-    },
-    {
-      title: t('criminalLaw'),
-      description: 'Criminal defense, bail applications',
-      icon: Gavel,
-      cases: '1,800+ cases handled',
-      href: '/lawyers?specialization=criminal'
-    },
-    {
-      title: t('cyberLaw'),
-      description: 'Cybercrime, data protection, IT law',
-      icon: Laptop,
-      cases: '950+ cases handled',
-      href: '/lawyers?specialization=cyber'
-    },
-    {
-      title: t('civilLaw'),
-      description: 'Property disputes, contracts, torts',
-      icon: Users,
-      cases: '3,200+ cases handled',
-      href: '/lawyers?specialization=civil'
-    },
-    {
-      title: t('corporateLaw'),
-      description: 'Business law, mergers, compliance',
-      icon: Building,
-      cases: '1,200+ cases handled',
-      href: '/lawyers?specialization=corporate'
-    },
-    {
-      title: 'Property Law',
-      description: 'Real estate, land acquisition, property disputes',
-      icon: Home,
-      cases: '2,100+ cases handled',
-      href: '/lawyers?specialization=property'
-    }
+    { title: t('familyLaw'), description: 'Divorce, custody, matrimonial disputes', icon: Heart, cases: '2,500+ ' + t('casesHandled'), href: '/lawyers?specialization=family' },
+    { title: t('criminalLaw'), description: 'Criminal defense, bail applications', icon: Gavel, cases: '1,800+ ' + t('casesHandled'), href: '/lawyers?specialization=criminal' },
+    { title: t('cyberLaw'), description: 'Cybercrime, data protection, IT law', icon: Laptop, cases: '950+ ' + t('casesHandled'), href: '/lawyers?specialization=cyber' },
+    { title: t('civilLaw'), description: 'Property disputes, contracts, torts', icon: Users, cases: '3,200+ ' + t('casesHandled'), href: '/lawyers?specialization=civil' },
+    { title: t('corporateLaw'), description: 'Business law, mergers, compliance', icon: Building, cases: '1,200+ ' + t('casesHandled'), href: '/lawyers?specialization=corporate' },
+    { title: t('propertyLaw'), description: 'Real estate, land acquisition, property disputes', icon: Home, cases: '2,100+ ' + t('casesHandled'), href: '/lawyers?specialization=property' },
   ];
 
   const additionalServices = [
-    {
-      title: t('legalInformation'),
-      description: 'Access to legal databases and law resources',
-      icon: Globe
-    },
-    {
-      title: t('crossborderLaws'),
-      description: 'International law and cross-border legal matters',
-      icon: Globe
-    },
-    {
-      title: t('legalAid'),
-      description: 'Legal assistance for underprivileged sections',
-      icon: Shield
-    },
-    {
-      title: t('trafficLaws'),
-      description: 'Traffic violations, license issues, vehicle laws',
-      icon: Zap
-    },
-    {
-      title: 'Public Interest',
-      description: 'PIL, RTI, public policy matters',
-      icon: Users
-    },
-    {
-      title: 'Immigration',
-      description: 'Visa, citizenship, immigration law',
-      icon: Globe
-    },
-    {
-      title: 'Intellectual Property',
-      description: 'Patents, trademarks, copyrights',
-      icon: Briefcase
-    }
+    { title: t('legalInformation'), description: t('legalInformationDesc'), icon: Globe },
+    { title: t('crossborderLaws'), description: t('crossborderLawsDesc'), icon: Globe },
+    { title: t('legalAid'), description: t('legalAidDesc'), icon: Shield },
+    { title: t('trafficLaws'), description: t('trafficLawsDesc'), icon: Zap },
+    { title: t('publicInterest'), description: t('publicInterestDesc'), icon: Users },
+    { title: t('immigration'), description: t('immigrationDesc'), icon: Globe },
+    { title: t('intellectualProperty'), description: t('intellectualPropertyDesc'), icon: Briefcase },
   ];
 
   return (
     <div className="p-6 space-y-8">
-      {/* Header */}
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold text-foreground">{t('services')}</h1>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Comprehensive legal services powered by technology. Find lawyers, access templates, 
-          get consultations, and manage legal documents all in one platform.
-        </p>
+        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">{t('servicesSubtitle')}</p>
       </div>
 
-      {/* Main Services */}
       <section>
-        <h2 className="text-2xl font-bold mb-6">Core Services</h2>
+        <h2 className="text-2xl font-bold mb-6">{t('coreServices')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {mainServices.map((service) => {
             const Icon = service.icon;
@@ -171,11 +56,7 @@ const Services: React.FC = () => {
                     </div>
                     <CardTitle className="text-xl">{service.title}</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-base">
-                      {service.description}
-                    </CardDescription>
-                  </CardContent>
+                  <CardContent><CardDescription className="text-base">{service.description}</CardDescription></CardContent>
                 </Card>
               </Link>
             );
@@ -183,9 +64,8 @@ const Services: React.FC = () => {
         </div>
       </section>
 
-      {/* Legal Categories */}
       <section>
-        <h2 className="text-2xl font-bold mb-6">Legal Specializations</h2>
+        <h2 className="text-2xl font-bold mb-6">{t('legalSpecializations')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {legalCategories.map((category) => {
             const Icon = category.icon;
@@ -194,17 +74,11 @@ const Services: React.FC = () => {
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
                   <CardHeader>
                     <div className="flex items-start space-x-4">
-                      <div className="bg-primary/10 p-3 rounded-lg">
-                        <Icon className="h-6 w-6 text-primary" />
-                      </div>
+                      <div className="bg-primary/10 p-3 rounded-lg"><Icon className="h-6 w-6 text-primary" /></div>
                       <div className="flex-1">
                         <CardTitle className="text-lg">{category.title}</CardTitle>
-                        <CardDescription className="mt-2">
-                          {category.description}
-                        </CardDescription>
-                        <p className="text-sm text-primary font-medium mt-3">
-                          {category.cases}
-                        </p>
+                        <CardDescription className="mt-2">{category.description}</CardDescription>
+                        <p className="text-sm text-primary font-medium mt-3">{category.cases}</p>
                       </div>
                     </div>
                   </CardHeader>
@@ -215,9 +89,8 @@ const Services: React.FC = () => {
         </div>
       </section>
 
-      {/* Additional Services */}
       <section>
-        <h2 className="text-2xl font-bold mb-6">Additional Services</h2>
+        <h2 className="text-2xl font-bold mb-6">{t('additionalServices')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {additionalServices.map((service, index) => {
             const Icon = service.icon;
@@ -225,15 +98,8 @@ const Services: React.FC = () => {
               <Card key={index} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-3">
-                    <div className="bg-accent/10 p-2 rounded-lg">
-                      <Icon className="h-5 w-5 text-accent" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-sm">{service.title}</h3>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {service.description}
-                      </p>
-                    </div>
+                    <div className="bg-accent/10 p-2 rounded-lg"><Icon className="h-5 w-5 text-accent" /></div>
+                    <div><h3 className="font-semibold text-sm">{service.title}</h3><p className="text-xs text-muted-foreground mt-1">{service.description}</p></div>
                   </div>
                 </CardContent>
               </Card>
@@ -242,43 +108,22 @@ const Services: React.FC = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
       <section className="bg-primary/5 rounded-xl p-8">
-        <h2 className="text-2xl font-bold text-center mb-8">Why Choose LAWLITE?</h2>
+        <h2 className="text-2xl font-bold text-center mb-8">{t('whyChooseLawlite')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary mb-2">500+</div>
-            <div className="text-muted-foreground">Verified Lawyers</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary mb-2">10,000+</div>
-            <div className="text-muted-foreground">Cases Resolved</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary mb-2">50+</div>
-            <div className="text-muted-foreground">Legal Templates</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary mb-2">24/7</div>
-            <div className="text-muted-foreground">AI Legal Assistant</div>
-          </div>
+          <div className="text-center"><div className="text-3xl font-bold text-primary mb-2">500+</div><div className="text-muted-foreground">{t('verifiedLawyers')}</div></div>
+          <div className="text-center"><div className="text-3xl font-bold text-primary mb-2">10,000+</div><div className="text-muted-foreground">{t('casesResolved')}</div></div>
+          <div className="text-center"><div className="text-3xl font-bold text-primary mb-2">50+</div><div className="text-muted-foreground">{t('legalTemplatesCount')}</div></div>
+          <div className="text-center"><div className="text-3xl font-bold text-primary mb-2">24/7</div><div className="text-muted-foreground">{t('aiLegalAssistant')}</div></div>
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="text-center space-y-6 py-8">
-        <h2 className="text-3xl font-bold">Ready to Get Started?</h2>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          Join thousands of users who trust LAWLITE for their legal needs. 
-          Get expert legal help, access templates, and manage your legal matters efficiently.
-        </p>
+        <h2 className="text-3xl font-bold">{t('readyToStart')}</h2>
+        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t('readyToStartDesc')}</p>
         <div className="flex justify-center space-x-4">
-          <Button size="lg" asChild>
-            <Link to="/lawyers">Find a Lawyer</Link>
-          </Button>
-          <Button size="lg" variant="outline" asChild>
-            <Link to="/templates">Browse Templates</Link>
-          </Button>
+          <Button size="lg" asChild><Link to="/lawyers">{t('findALawyer')}</Link></Button>
+          <Button size="lg" variant="outline" asChild><Link to="/templates">{t('browseTemplates')}</Link></Button>
         </div>
       </section>
     </div>

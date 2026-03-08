@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Bell, Search, Globe, MapPin } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { INDIAN_STATES } from '@/types';
+import { LANGUAGE_OPTIONS } from '@/i18n';
 import logo from '@/assets/logo.png';
 
 const Header: React.FC = () => {
@@ -16,6 +17,7 @@ const Header: React.FC = () => {
 
   const changeLanguage = (language: string) => {
     i18n.changeLanguage(language);
+    updatePreferences({ preferredLanguage: language });
   };
 
   const handleStateChange = (state: string) => {
@@ -26,13 +28,11 @@ const Header: React.FC = () => {
     <header className="bg-card shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
           <div className="flex items-center space-x-3">
             <img src={logo} alt="LAWLITE" className="h-10 w-10" />
             <h1 className="text-xl font-bold text-primary">LAWLITE</h1>
           </div>
 
-          {/* Search Bar */}
           <div className="flex-1 max-w-md mx-8 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
@@ -44,16 +44,14 @@ const Header: React.FC = () => {
             />
           </div>
 
-          {/* Right Section */}
           <div className="flex items-center space-x-3">
-            {/* State Switcher */}
             <Select
               value={user?.preferences?.selectedState || ''}
               onValueChange={handleStateChange}
             >
               <SelectTrigger className="w-[140px]">
                 <MapPin className="h-4 w-4 mr-1 text-primary" />
-                <SelectValue placeholder="State" />
+                <SelectValue placeholder={t('state')} />
               </SelectTrigger>
               <SelectContent>
                 {INDIAN_STATES.map((state) => (
@@ -62,26 +60,23 @@ const Header: React.FC = () => {
               </SelectContent>
             </Select>
 
-            {/* Language Selector */}
-            <Select onValueChange={changeLanguage} defaultValue="en">
-              <SelectTrigger className="w-20">
+            <Select onValueChange={changeLanguage} value={i18n.language}>
+              <SelectTrigger className="w-24">
                 <Globe className="h-4 w-4" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="en">EN</SelectItem>
-                <SelectItem value="hi">हिं</SelectItem>
-                <SelectItem value="kn">ಕನ್</SelectItem>
-                <SelectItem value="ta">தமிழ்</SelectItem>
-                <SelectItem value="ml">മലയാളം</SelectItem>
+                {LANGUAGE_OPTIONS.map((lang) => (
+                  <SelectItem key={lang.code} value={lang.code}>
+                    {lang.nativeLabel}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
-            {/* Notifications */}
             <Button variant="ghost" size="icon">
               <Bell className="h-5 w-5" />
             </Button>
 
-            {/* User Avatar */}
             {user && (
               <div className="flex items-center space-x-2">
                 <Avatar>

@@ -149,12 +149,29 @@ End EVERY response with:
 - NEVER impersonate a lawyer
 - Do NOT answer questions unrelated to Indian law — politely redirect.`;
 
-function buildSystemPrompt(userState?: string): string {
-  if (!userState) return BASE_SYSTEM_PROMPT;
+const LANG_MAP: Record<string, string> = {
+  en: 'English', hi: 'Hindi', kn: 'Kannada', ta: 'Tamil', te: 'Telugu',
+  ml: 'Malayalam', mr: 'Marathi', gu: 'Gujarati', pa: 'Punjabi',
+  bn: 'Bengali', ur: 'Urdu', od: 'Odia', as: 'Assamese',
+};
 
-  return BASE_SYSTEM_PROMPT + `
+function buildSystemPrompt(userState?: string, language?: string): string {
+  let prompt = BASE_SYSTEM_PROMPT;
 
-## STATE CONTEXT — ${userState.toUpperCase()}
+  // Language instruction
+  const langName = language && LANG_MAP[language] ? LANG_MAP[language] : null;
+  if (langName && language !== 'en') {
+    prompt += `\n\n## LANGUAGE OVERRIDE — ${langName.toUpperCase()}
+The user has selected **${langName}** as their platform language. You MUST:
+1. Respond ENTIRELY in **${langName}** script and language
+2. Use simple, everyday ${langName} — avoid complex vocabulary
+3. Keep legal terms in English with ${langName} explanation in brackets
+4. All section headers, explanations, and steps must be in ${langName}
+5. If you don't know a ${langName} word, use the Hindi or English equivalent with explanation`;
+  }
+
+  if (userState) {
+    prompt += `\n\n## STATE CONTEXT — ${userState.toUpperCase()}
 The user is from **${userState}**. You MUST:
 1. **Automatically provide ${userState}-specific** legal procedures, rules, and authorities in ALL answers
 2. Mention relevant ${userState} government portals and departments
@@ -164,6 +181,9 @@ The user is from **${userState}**. You MUST:
 6. Do NOT ask "which state are you from?" — you already know it's ${userState}
 
 If the user asks about a different state, provide info for that state but note their home state is ${userState}.`;
+  }
+
+  return prompt;
 }
 
 serve(async (req) => {
@@ -172,11 +192,11 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, userState } = await req.json();
+    const { messages, userState, language } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const systemPrompt = buildSystemPrompt(userState);
+    const systemPrompt = buildSystemPrompt(userState, language);
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
