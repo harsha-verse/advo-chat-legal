@@ -455,8 +455,13 @@ const resources = {
       voiceAutoStopped: "Recording stopped after 30 seconds.",
       stopRecording: "Stop",
       processingVoice: "Processing voice input…",
-      playAudio: "🔊 Play Audio",
-      stopAudio: "⏹ Stop Audio",
+      playAudio: "🔊 Play",
+      pauseAudio: "⏸ Pause",
+      resumeAudio: "▶ Resume",
+      stopAudio: "⏹ Stop",
+      voiceFallbackEnglish: "Voice not available for this language. Using English.",
+      autoReadResponses: "Auto-read chatbot responses",
+      autoReadResponsesDesc: "Automatically play audio for every chatbot reply",
       ttsNotSupported: "Text-to-speech is not supported in your browser",
 
       // 404
