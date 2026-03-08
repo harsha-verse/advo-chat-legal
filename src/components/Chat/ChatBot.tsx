@@ -5,11 +5,12 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from '@/context/AuthContext';
 import {
-  MessageCircle, Send, Minimize2, Maximize2, X, Bot, User, Mic, MicOff, Volume2, VolumeX, Copy, Check, Pause, Square,
+  MessageCircle, Send, Minimize2, Maximize2, X, Bot, User, Mic, MicOff, Volume2, VolumeX, Copy, Check, Pause, Square, Stethoscope,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import ChatActionCards from './ChatActionCards';
+import DiagnosisFlow from './DiagnosisFlow';
 import { SPEECH_LANG_MAP } from '@/i18n';
 import { toast } from 'sonner';
 
@@ -57,6 +58,7 @@ const ChatBot: React.FC = () => {
     try { return localStorage.getItem('lawlite-auto-read') === 'true'; } catch { return false; }
   });
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [showDiagnosis, setShowDiagnosis] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const listenTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -367,6 +369,28 @@ const ChatBot: React.FC = () => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); }
   };
 
+  const handleDiagnosisComplete = (summary: string, category: string) => {
+    setShowDiagnosis(false);
+    // Add a user message showing the diagnosis summary context
+    const userMsg: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: `🩺 ${t('diagCompletedLabel')}\n\n${summary}`,
+    };
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
+    setShowSuggestions(false);
+    setIsTyping(true);
+
+    const historyForAI = updatedMessages.filter((m) => m.id !== '1').map((m) => ({ role: m.role, content: m.content }));
+    streamChat(historyForAI as Message[])
+      .catch((e) => {
+        const errorMsg = e instanceof Error ? e.message : 'Something went wrong. Please try again.';
+        setMessages((prev) => [...prev, { id: Date.now().toString(), role: 'assistant', content: `❌ ${errorMsg}` }]);
+      })
+      .finally(() => setIsTyping(false));
+  };
+
   return (
     <>
       <AnimatePresence>
@@ -492,9 +516,31 @@ const ChatBot: React.FC = () => {
                   </div>
                 ))}
 
+                {/* Diagnosis Flow */}
+                {showDiagnosis && (
+                  <DiagnosisFlow
+                    onComplete={handleDiagnosisComplete}
+                    onCancel={() => setShowDiagnosis(false)}
+                  />
+                )}
+
                 {/* Quick Suggestion Chips */}
-                {showSuggestions && messages.length <= 1 && !isTyping && (
-                  <div className="space-y-2">
+                {showSuggestions && messages.length <= 1 && !isTyping && !showDiagnosis && (
+                  <div className="space-y-3">
+                    {/* Diagnose button */}
+                    <button
+                      onClick={() => setShowDiagnosis(true)}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border-2 border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/40 transition-all text-left group"
+                    >
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <Stethoscope className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">{t('diagStartButton')}</p>
+                        <p className="text-[10px] text-muted-foreground">{t('diagStartDesc')}</p>
+                      </div>
+                    </button>
+
                     <p className="text-xs font-medium text-muted-foreground">{t('trySuggestions')}</p>
                     <div className="flex flex-wrap gap-2">
                       {SUGGESTION_KEYS.map((key) => (
