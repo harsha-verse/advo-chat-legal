@@ -128,6 +128,11 @@ const App = () => (
                 <AuthorityFinder />
               </ProtectedRoute>
             } />
+            <Route path="/generate-document" element={
+              <ProtectedRoute>
+                <DocumentGenerator />
+              </ProtectedRoute>
+            } />
             <Route path="/chat" element={
               <ProtectedRoute>
                 <div className="p-6">Chat page coming soon...</div>
