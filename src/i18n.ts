@@ -864,6 +864,16 @@ const resources = {
       pageNotFound: "404",
       pageNotFoundText: "ओह! पेज नहीं मिला",
       returnToHome: "होम पर वापस जाएं",
+      copyText: "कॉपी करें",
+      copied: "कॉपी हो गया!",
+      copiedToClipboard: "क्लिपबोर्ड पर कॉपी हो गया",
+      trySuggestions: "यह पूछकर देखें:",
+      suggestTenantDeposit: "किराएदार की जमानत राशि वापस नहीं मिली",
+      suggestSalaryNotPaid: "कंपनी ने वेतन नहीं दिया",
+      suggestConsumerComplaint: "उपभोक्ता शिकायत कैसे दर्ज करें",
+      suggestTrafficFine: "ट्रैफिक जुर्माना विवाद",
+      suggestPropertyDispute: "पड़ोसी के साथ संपत्ति विवाद",
+      suggestDomesticViolence: "घरेलू हिंसा सहायता",
     }
   },
   kn: {
