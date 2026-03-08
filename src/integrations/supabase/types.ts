@@ -52,6 +52,47 @@ export type Database = {
           },
         ]
       }
+      case_matches: {
+        Row: {
+          case_id: string
+          created_at: string
+          id: string
+          lawyer_id: string
+          match_reasons: string[] | null
+          match_score: number
+          responded_at: string | null
+          status: string
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          id?: string
+          lawyer_id: string
+          match_reasons?: string[] | null
+          match_score?: number
+          responded_at?: string | null
+          status?: string
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          id?: string
+          lawyer_id?: string
+          match_reasons?: string[] | null
+          match_score?: number
+          responded_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "case_matches_case_id_fkey"
+            columns: ["case_id"]
+            isOneToOne: false
+            referencedRelation: "cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       case_messages: {
         Row: {
           case_id: string
@@ -134,6 +175,7 @@ export type Database = {
       cases: {
         Row: {
           accepted_at: string | null
+          auto_assigned: boolean | null
           case_type: string
           client_id: string
           client_location_city: string | null
@@ -143,14 +185,17 @@ export type Database = {
           description: string
           id: string
           lawyer_id: string | null
+          match_status: string | null
           preferred_consultation: string | null
           priority: string | null
+          response_deadline: string | null
           status: string
           title: string
           updated_at: string
         }
         Insert: {
           accepted_at?: string | null
+          auto_assigned?: boolean | null
           case_type: string
           client_id: string
           client_location_city?: string | null
@@ -160,14 +205,17 @@ export type Database = {
           description: string
           id?: string
           lawyer_id?: string | null
+          match_status?: string | null
           preferred_consultation?: string | null
           priority?: string | null
+          response_deadline?: string | null
           status?: string
           title: string
           updated_at?: string
         }
         Update: {
           accepted_at?: string | null
+          auto_assigned?: boolean | null
           case_type?: string
           client_id?: string
           client_location_city?: string | null
@@ -177,8 +225,10 @@ export type Database = {
           description?: string
           id?: string
           lawyer_id?: string | null
+          match_status?: string | null
           preferred_consultation?: string | null
           priority?: string | null
+          response_deadline?: string | null
           status?: string
           title?: string
           updated_at?: string
@@ -362,6 +412,7 @@ export type Database = {
           id: string
           languages_spoken: string[] | null
           law_firm: string | null
+          max_active_cases: number | null
           practice_areas: string[]
           profile_visible: boolean | null
           rating: number | null
@@ -390,6 +441,7 @@ export type Database = {
           id?: string
           languages_spoken?: string[] | null
           law_firm?: string | null
+          max_active_cases?: number | null
           practice_areas?: string[]
           profile_visible?: boolean | null
           rating?: number | null
@@ -418,6 +470,7 @@ export type Database = {
           id?: string
           languages_spoken?: string[] | null
           law_firm?: string | null
+          max_active_cases?: number | null
           practice_areas?: string[]
           profile_visible?: boolean | null
           rating?: number | null
