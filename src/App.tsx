@@ -151,6 +151,12 @@ const App = () => (
             <Route path="/lawyer-dashboard" element={
               <ProtectedRoute><LawyerDashboard /></ProtectedRoute>
             } />
+            <Route path="/lawyer-profile/edit" element={
+              <ProtectedRoute><LawyerProfileEdit /></ProtectedRoute>
+            } />
+            <Route path="/lawyer/:id" element={
+              <ProtectedRoute><LawyerPublicProfile /></ProtectedRoute>
+            } />
             <Route path="/admin" element={
               <ProtectedRoute><AdminDashboard /></ProtectedRoute>
             } />
