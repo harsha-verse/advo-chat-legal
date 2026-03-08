@@ -153,7 +153,7 @@ const LawyerSignup: React.FC = () => {
                 </Select>
                 {errors.state && <p className="text-xs text-destructive">{errors.state}</p>}
               </div>
-              <Field name="city" label="City" />
+              {renderField('city', 'City')}
             </div>
 
             {/* Professional Info */}
