@@ -147,9 +147,10 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/lawyer-dashboard" element={
-              <ProtectedRoute>
-                <div className="p-6">Lawyer dashboard coming soon...</div>
-              </ProtectedRoute>
+              <ProtectedRoute><LawyerDashboard /></ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute><AdminDashboard /></ProtectedRoute>
             } />
             
             {/* Catch all route */}
