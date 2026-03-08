@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { Star, MapPin, Scale, FileText, BookOpen, ChevronRight, Landmark } from 'lucide-react';
+import { Star, MapPin, Scale, FileText, BookOpen, ChevronRight, Landmark, FilePlus } from 'lucide-react';
 import { detectContext, matchLawyers, matchTemplates, getGuideRoute, getAuthorityRoute, type MatchedLawyer, type MatchedTemplate } from './chatActionUtils';
 
 interface ChatActionCardsProps { messageContent: string; }
@@ -28,6 +28,7 @@ const ChatActionCards: React.FC<ChatActionCardsProps> = ({ messageContent }) => 
           {templates.length > 0 && (<Button size="sm" variant="outline" className="text-xs h-7 gap-1" onClick={() => navigate(`/templates?category=${ctx.categories[0]}`)}><FileText className="h-3 w-3" /> {t('downloadTemplate')}</Button>)}
           <Button size="sm" variant="outline" className="text-xs h-7 gap-1" onClick={() => navigate(guide.path)}><BookOpen className="h-3 w-3" /> {t('viewStepByStepGuide')}</Button>
           <Button size="sm" variant="outline" className="text-xs h-7 gap-1" onClick={() => navigate(authority.path)}><Landmark className="h-3 w-3" /> {t('findAuthority')}</Button>
+          <Button size="sm" variant="outline" className="text-xs h-7 gap-1" onClick={() => navigate(`/generate-document`)}><FilePlus className="h-3 w-3" /> {t('generateDocument')}</Button>
         </div>
       </div>
       {ctx.needsLawyer && lawyers.length > 0 && (

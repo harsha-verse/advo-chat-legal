@@ -17,6 +17,7 @@ import Consultants from "./pages/Consultants";
 import StateLegalSupport from "./pages/StateLegalSupport";
 import MSMESupport from "./pages/MSMESupport";
 import AuthorityFinder from "./pages/AuthorityFinder";
+import DocumentGenerator from "./pages/DocumentGenerator";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import "./i18n";
@@ -125,6 +126,11 @@ const App = () => (
             <Route path="/authority-finder" element={
               <ProtectedRoute>
                 <AuthorityFinder />
+              </ProtectedRoute>
+            } />
+            <Route path="/generate-document" element={
+              <ProtectedRoute>
+                <DocumentGenerator />
               </ProtectedRoute>
             } />
             <Route path="/chat" element={

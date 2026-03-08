@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { 
   Scale, FileText, File, Users, TrendingUp, Clock, CheckCircle,
-  MapPin, ExternalLink, AlertTriangle, Shield
+  MapPin, ExternalLink, AlertTriangle, Shield, FilePlus
 } from 'lucide-react';
 import { getStateInfo } from '@/data/stateData';
 
@@ -23,6 +23,7 @@ const Dashboard: React.FC = () => {
     { title: t('legalTemplates'), description: t('legalTemplatesDesc'), icon: File, href: '/templates', color: 'bg-secondary' },
     { title: t('myDocuments'), description: t('myDocumentsDesc'), icon: FileText, href: '/documents', color: 'bg-accent' },
     { title: t('consultants'), description: t('connectConsultants'), icon: Users, href: '/consultants', color: 'bg-muted' },
+    { title: t('generateDocument'), description: t('docGeneratorSubtitle'), icon: FilePlus, href: '/generate-document', color: 'bg-primary' },
   ];
 
   return (
