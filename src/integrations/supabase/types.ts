@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      lawyer_case_stats: {
+        Row: {
+          case_category: string
+          cases_handled: number
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          case_category: string
+          cases_handled?: number
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          case_category?: string
+          cases_handled?: number
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lawyer_documents: {
         Row: {
           admin_notes: string | null
@@ -47,18 +71,58 @@ export type Database = {
         }
         Relationships: []
       }
+      lawyer_education: {
+        Row: {
+          certifications: string | null
+          created_at: string
+          degree: string
+          graduation_year: number
+          id: string
+          university: string
+          user_id: string
+        }
+        Insert: {
+          certifications?: string | null
+          created_at?: string
+          degree: string
+          graduation_year: number
+          id?: string
+          university: string
+          user_id: string
+        }
+        Update: {
+          certifications?: string | null
+          created_at?: string
+          degree?: string
+          graduation_year?: number
+          id?: string
+          university?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lawyer_profiles: {
         Row: {
+          available_days: string[] | null
+          available_end_time: string | null
+          available_start_time: string | null
           bar_council_number: string
           bio: string | null
+          consultation_duration: number | null
           consultation_fee: number | null
+          consultation_types: string[] | null
+          court_jurisdictions: string[] | null
           created_at: string
           experience: number | null
           id: string
+          languages_spoken: string[] | null
+          law_firm: string | null
           practice_areas: string[]
+          profile_visible: boolean | null
           rating: number | null
           role_type: Database["public"]["Enums"]["lawyer_role_type"]
           specialization: string | null
+          tagline: string | null
           total_reviews: number | null
           updated_at: string
           user_id: string
@@ -67,16 +131,26 @@ export type Database = {
           year_of_practice: number
         }
         Insert: {
+          available_days?: string[] | null
+          available_end_time?: string | null
+          available_start_time?: string | null
           bar_council_number: string
           bio?: string | null
+          consultation_duration?: number | null
           consultation_fee?: number | null
+          consultation_types?: string[] | null
+          court_jurisdictions?: string[] | null
           created_at?: string
           experience?: number | null
           id?: string
+          languages_spoken?: string[] | null
+          law_firm?: string | null
           practice_areas?: string[]
+          profile_visible?: boolean | null
           rating?: number | null
           role_type?: Database["public"]["Enums"]["lawyer_role_type"]
           specialization?: string | null
+          tagline?: string | null
           total_reviews?: number | null
           updated_at?: string
           user_id: string
@@ -85,16 +159,26 @@ export type Database = {
           year_of_practice?: number
         }
         Update: {
+          available_days?: string[] | null
+          available_end_time?: string | null
+          available_start_time?: string | null
           bar_council_number?: string
           bio?: string | null
+          consultation_duration?: number | null
           consultation_fee?: number | null
+          consultation_types?: string[] | null
+          court_jurisdictions?: string[] | null
           created_at?: string
           experience?: number | null
           id?: string
+          languages_spoken?: string[] | null
+          law_firm?: string | null
           practice_areas?: string[]
+          profile_visible?: boolean | null
           rating?: number | null
           role_type?: Database["public"]["Enums"]["lawyer_role_type"]
           specialization?: string | null
+          tagline?: string | null
           total_reviews?: number | null
           updated_at?: string
           user_id?: string
