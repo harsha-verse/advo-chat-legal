@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from '@/context/AuthContext';
 import {
-  MessageCircle, Send, Minimize2, Maximize2, X, Bot, User, Mic, MicOff, Volume2, VolumeX, Copy, Check,
+  MessageCircle, Send, Minimize2, Maximize2, X, Bot, User, Mic, MicOff, Volume2, VolumeX, Copy, Check, Pause, Square,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
@@ -51,7 +51,11 @@ const ChatBot: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
   const [isProcessingVoice, setIsProcessingVoice] = useState(false);
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
+  const [autoReadEnabled, setAutoReadEnabled] = useState(() => {
+    try { return localStorage.getItem('lawlite-auto-read') === 'true'; } catch { return false; }
+  });
   const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
@@ -79,6 +83,17 @@ const ChatBot: React.FC = () => {
     toast.success(t('copiedToClipboard'));
     setTimeout(() => setCopiedMsgId(null), 2000);
   };
+
+  // Sync auto-read setting from localStorage (cross-component)
+  useEffect(() => {
+    const handler = (e: StorageEvent) => {
+      if (e.key === 'lawlite-auto-read') {
+        setAutoReadEnabled(e.newValue === 'true');
+      }
+    };
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
+  }, []);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -176,33 +191,69 @@ const ChatBot: React.FC = () => {
     return match || null;
   };
 
+  // Clean text for speech: strip markdown, convert newlines to pauses, shorten
+  const cleanForSpeech = (text: string): string => {
+    return text
+      .replace(/[#*_\[\]()>`~|]/g, '')
+      .replace(/^\s*[-•]\s*/gm, '') // remove bullet markers
+      .replace(/\n{2,}/g, '. ') // double newlines become sentence breaks
+      .replace(/\n/g, ', ') // single newlines become short pauses
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  };
+
   // Voice Output (Text-to-Speech) using Web Speech Synthesis
-  const speakText = (text: string, msgId: string) => {
+  const speakText = useCallback((text: string, msgId: string) => {
     if (!('speechSynthesis' in window)) {
       toast.error(t('ttsNotSupported'));
       return;
     }
+
+    // If same message is speaking, toggle pause/resume
     if (speakingMsgId === msgId) {
-      window.speechSynthesis.cancel();
-      setSpeakingMsgId(null);
+      if (isPaused) {
+        window.speechSynthesis.resume();
+        setIsPaused(false);
+      } else {
+        window.speechSynthesis.pause();
+        setIsPaused(true);
+      }
       return;
     }
+
+    // Stop any current playback
     window.speechSynthesis.cancel();
-    const cleanText = text.replace(/[#*_\[\]()>`~|]/g, '').replace(/\n+/g, '. ');
+    setIsPaused(false);
+
+    const cleanText = cleanForSpeech(text);
     const langCode = SPEECH_LANG_MAP[currentLang] || 'en-IN';
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = langCode;
-    
-    // Dynamically select best voice for the language
+
     const bestVoice = findBestVoice(langCode);
-    if (bestVoice) utterance.voice = bestVoice;
-    
+    if (bestVoice) {
+      utterance.voice = bestVoice;
+    } else {
+      // Fallback: if no voice for language, use English and notify
+      const fallback = findBestVoice('en-IN');
+      if (fallback) utterance.voice = fallback;
+      toast.info(t('voiceFallbackEnglish'));
+    }
+
     utterance.rate = 0.9;
-    utterance.onend = () => setSpeakingMsgId(null);
-    utterance.onerror = () => setSpeakingMsgId(null);
+    utterance.pitch = 1;
+    utterance.onend = () => { setSpeakingMsgId(null); setIsPaused(false); };
+    utterance.onerror = () => { setSpeakingMsgId(null); setIsPaused(false); };
     window.speechSynthesis.speak(utterance);
     setSpeakingMsgId(msgId);
-  };
+  }, [speakingMsgId, isPaused, currentLang, t]);
+
+  // Stop speech completely
+  const stopSpeech = useCallback(() => {
+    window.speechSynthesis?.cancel();
+    setSpeakingMsgId(null);
+    setIsPaused(false);
+  }, []);
 
   const streamChat = async (allMessages: Message[]) => {
     const resp = await fetch(CHAT_URL, {
@@ -281,7 +332,17 @@ const ChatBot: React.FC = () => {
       }
     }
 
-    setMessages((prev) => prev.map((m) => m.id === 'streaming' ? { ...m, id: Date.now().toString() } : m));
+    setMessages((prev) => {
+      const updated = prev.map((m) => m.id === 'streaming' ? { ...m, id: Date.now().toString() } : m);
+      // Auto-read the last assistant message if enabled
+      if (autoReadEnabled) {
+        const lastMsg = updated[updated.length - 1];
+        if (lastMsg?.role === 'assistant') {
+          setTimeout(() => speakText(lastMsg.content, lastMsg.id), 300);
+        }
+      }
+      return updated;
+    });
   };
 
   const handleSendMessage = async (text?: string) => {
@@ -355,7 +416,7 @@ const ChatBot: React.FC = () => {
                 {messages.map((message) => (
                   <div key={message.id}>
                     <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[85%] rounded-lg p-3 ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                      <div className={`max-w-[85%] rounded-lg p-3 relative ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'} ${speakingMsgId === message.id ? 'ring-2 ring-primary/40' : ''}`}>
                         <div className="flex items-start space-x-2">
                           {message.role === 'assistant' && <Bot className="h-4 w-4 mt-0.5 flex-shrink-0" />}
                           {message.role === 'user' && <User className="h-4 w-4 mt-0.5 flex-shrink-0" />}
@@ -369,6 +430,7 @@ const ChatBot: React.FC = () => {
                     {message.role === 'assistant' && message.id !== '1' && message.id !== 'streaming' && (
                       <>
                         <div className="mt-1 ml-6 flex items-center gap-1">
+                          {/* Play / Pause button */}
                           <Button
                             variant="ghost"
                             size="sm"
@@ -376,11 +438,39 @@ const ChatBot: React.FC = () => {
                             onClick={() => speakText(message.content, message.id)}
                           >
                             {speakingMsgId === message.id ? (
-                              <><VolumeX className="h-3 w-3" /> {t('stopAudio')}</>
+                              isPaused ? (
+                                <><Volume2 className="h-3 w-3" /> {t('resumeAudio')}</>
+                              ) : (
+                                <><Pause className="h-3 w-3" /> {t('pauseAudio')}</>
+                              )
                             ) : (
                               <><Volume2 className="h-3 w-3" /> {t('playAudio')}</>
                             )}
                           </Button>
+                          {/* Stop button (only when speaking) */}
+                          {speakingMsgId === message.id && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs h-6 gap-1 text-muted-foreground hover:text-foreground"
+                              onClick={stopSpeech}
+                            >
+                              <Square className="h-3 w-3" /> {t('stopAudio')}
+                            </Button>
+                          )}
+                          {/* Sound wave animation */}
+                          {speakingMsgId === message.id && !isPaused && (
+                            <div className="flex items-end gap-0.5 h-3 ml-1">
+                              {[1, 2, 3, 4].map(i => (
+                                <motion.div
+                                  key={i}
+                                  className="w-0.5 bg-primary rounded-full"
+                                  animate={{ height: ['3px', '12px', '3px'] }}
+                                  transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.08 }}
+                                />
+                              ))}
+                            </div>
+                          )}
                           <Button
                             variant="ghost"
                             size="sm"
