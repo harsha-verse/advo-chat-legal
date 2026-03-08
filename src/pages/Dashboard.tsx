@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { 
   Scale, FileText, File, Users, TrendingUp, Clock, CheckCircle,
-  MapPin, ExternalLink, AlertTriangle, Shield
+  MapPin, ExternalLink, AlertTriangle, Shield, FilePlus
 } from 'lucide-react';
 import { getStateInfo } from '@/data/stateData';
 
