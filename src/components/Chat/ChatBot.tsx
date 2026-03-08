@@ -516,9 +516,31 @@ const ChatBot: React.FC = () => {
                   </div>
                 ))}
 
+                {/* Diagnosis Flow */}
+                {showDiagnosis && (
+                  <DiagnosisFlow
+                    onComplete={handleDiagnosisComplete}
+                    onCancel={() => setShowDiagnosis(false)}
+                  />
+                )}
+
                 {/* Quick Suggestion Chips */}
-                {showSuggestions && messages.length <= 1 && !isTyping && (
-                  <div className="space-y-2">
+                {showSuggestions && messages.length <= 1 && !isTyping && !showDiagnosis && (
+                  <div className="space-y-3">
+                    {/* Diagnose button */}
+                    <button
+                      onClick={() => setShowDiagnosis(true)}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border-2 border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/40 transition-all text-left group"
+                    >
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <Stethoscope className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">{t('diagStartButton')}</p>
+                        <p className="text-[10px] text-muted-foreground">{t('diagStartDesc')}</p>
+                      </div>
+                    </button>
+
                     <p className="text-xs font-medium text-muted-foreground">{t('trySuggestions')}</p>
                     <div className="flex flex-wrap gap-2">
                       {SUGGESTION_KEYS.map((key) => (
