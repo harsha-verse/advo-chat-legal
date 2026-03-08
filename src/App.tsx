@@ -122,6 +122,11 @@ const App = () => (
                 <MSMESupport />
               </ProtectedRoute>
             } />
+            <Route path="/authority-finder" element={
+              <ProtectedRoute>
+                <AuthorityFinder />
+              </ProtectedRoute>
+            } />
             <Route path="/chat" element={
               <ProtectedRoute>
                 <div className="p-6">Chat page coming soon...</div>
