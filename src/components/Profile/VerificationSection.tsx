@@ -12,7 +12,7 @@ type VerificationStatus = 'not_verified' | 'under_review' | 'verified';
 const VerificationSection = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const [idStatus, setIdStatus] = useState<VerificationStatus>(user?.verified ? 'verified' : 'not_verified');
+  const [idStatus, setIdStatus] = useState<VerificationStatus>('not_verified');
   const [addressStatus, setAddressStatus] = useState<VerificationStatus>('not_verified');
 
   const statusConfig: Record<VerificationStatus, { label: string; color: string }> = {

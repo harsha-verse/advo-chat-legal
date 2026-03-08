@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,37 +14,33 @@ import { LANGUAGE_OPTIONS } from '@/i18n';
 
 const PersonalInfoSection = () => {
   const { t } = useTranslation();
-  const { user, updatePreferences } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({
-    name: user?.name || '',
+    name: profile?.name || '',
     email: user?.email || '',
-    phone: '',
+    phone: profile?.phone || '',
     dob: '',
     gender: '',
     address: '',
-    city: '',
-    state: user?.preferences?.selectedState || '',
+    city: profile?.city || '',
+    state: profile?.state || '',
     pincode: '',
-    language: user?.preferences?.preferredLanguage || 'English',
+    language: profile?.preferred_language || 'en',
     occupation: '',
   });
 
   if (!user) return null;
 
-  const handleSave = () => {
-    updatePreferences({
-      selectedState: form.state as any,
-      preferredLanguage: form.language,
-    });
-    const storedUsers = JSON.parse(localStorage.getItem('lawlite_users') || '[]');
-    const idx = storedUsers.findIndex((u: any) => u.id === user.id);
-    if (idx !== -1) {
-      storedUsers[idx] = { ...storedUsers[idx], name: form.name };
-      localStorage.setItem('lawlite_users', JSON.stringify(storedUsers));
-    }
-    const updatedUser = { ...user, name: form.name };
-    localStorage.setItem('lawlite_user', JSON.stringify(updatedUser));
+  const handleSave = async () => {
+    await supabase.from('profiles').update({
+      name: form.name,
+      phone: form.phone || null,
+      city: form.city || null,
+      state: form.state || null,
+      preferred_language: form.language,
+    }).eq('id', user.id);
+    await refreshProfile();
     setEditing(false);
     toast({ title: t('profileUpdated'), description: t('profileUpdatedDesc') });
   };
@@ -85,51 +82,38 @@ const PersonalInfoSection = () => {
           <Field label={t('emailAddress')} value={form.email} field="email" type="email" />
           <Field label={t('phoneNumber')} value={form.phone} field="phone" type="tel" />
           <Field label={t('dateOfBirth')} value={form.dob} field="dob" type="date" />
-
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">{t('gender')}</Label>
             {editing ? (
               <Select value={form.gender} onValueChange={v => setForm(p => ({ ...p, gender: v }))}>
                 <SelectTrigger className="h-9"><SelectValue placeholder={t('selectGender')} /></SelectTrigger>
-                <SelectContent>
-                  {genderOptions.map(g => (
-                    <SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>
-                  ))}
-                </SelectContent>
+                <SelectContent>{genderOptions.map(g => <SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>)}</SelectContent>
               </Select>
             ) : (
               <p className="text-sm font-medium text-foreground py-1.5 px-3 bg-muted/50 rounded-md min-h-[36px] flex items-center">{form.gender || '—'}</p>
             )}
           </div>
-
           <Field label={t('occupation')} value={form.occupation} field="occupation" />
           <Field label={t('residentialAddress')} value={form.address} field="address" />
           <Field label={t('city')} value={form.city} field="city" />
-
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">{t('state')}</Label>
             {editing ? (
               <Select value={form.state} onValueChange={v => setForm(p => ({ ...p, state: v }))}>
                 <SelectTrigger className="h-9"><SelectValue placeholder={t('pleaseSelectState')} /></SelectTrigger>
-                <SelectContent>
-                  {INDIAN_STATES.map(s => (<SelectItem key={s} value={s}>{s}</SelectItem>))}
-                </SelectContent>
+                <SelectContent>{INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
               </Select>
             ) : (
               <p className="text-sm font-medium text-foreground py-1.5 px-3 bg-muted/50 rounded-md min-h-[36px] flex items-center">{form.state || '—'}</p>
             )}
           </div>
-
           <Field label={t('pincode')} value={form.pincode} field="pincode" />
-
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">{t('preferredLanguage')}</Label>
             {editing ? (
               <Select value={form.language} onValueChange={v => setForm(p => ({ ...p, language: v }))}>
                 <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {LANGUAGE_OPTIONS.map(l => (<SelectItem key={l.code} value={l.label}>{l.nativeLabel}</SelectItem>))}
-                </SelectContent>
+                <SelectContent>{LANGUAGE_OPTIONS.map(l => <SelectItem key={l.code} value={l.code}>{l.nativeLabel}</SelectItem>)}</SelectContent>
               </Select>
             ) : (
               <p className="text-sm font-medium text-foreground py-1.5 px-3 bg-muted/50 rounded-md min-h-[36px] flex items-center">{form.language || '—'}</p>

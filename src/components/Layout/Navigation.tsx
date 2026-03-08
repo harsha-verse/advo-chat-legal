@@ -5,12 +5,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
   Home, Users, FileText, File, MessageCircle, User,
-  Briefcase, Scale, MapPin, Building, Landmark, FilePlus
+  Briefcase, Scale, MapPin, Building, Landmark, FilePlus, ShieldCheck
 } from 'lucide-react';
 
 const Navigation: React.FC = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { profile, isAdmin } = useAuth();
   const location = useLocation();
 
   const userNavItems = [
@@ -36,25 +36,23 @@ const Navigation: React.FC = () => {
     { path: '/profile', icon: User, label: t('profile') },
   ];
 
-  const navItems = user?.type === 'lawyer' ? lawyerNavItems : userNavItems;
+  const navItems = profile?.user_type === 'lawyer' ? lawyerNavItems : userNavItems;
+
+  // Add admin link if user is admin
+  const allItems = isAdmin ? [...navItems, { path: '/admin', icon: ShieldCheck, label: 'Admin' }] : navItems;
 
   return (
     <nav className="bg-card border-r h-full min-h-screen w-64 fixed left-0 top-16 z-40">
       <div className="p-4 space-y-2">
-        {navItems.map((item) => {
+        {allItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
           return (
-            <Link
-              key={item.path}
-              to={item.path}
+            <Link key={item.path} to={item.path}
               className={cn(
                 'flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors',
-                isActive 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-              )}
-            >
+                isActive ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+              )}>
               <Icon className="h-5 w-5" />
               <span>{item.label}</span>
             </Link>

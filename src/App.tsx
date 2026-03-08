@@ -9,6 +9,7 @@ import Navigation from "@/components/Layout/Navigation";
 import ChatBot from "@/components/Chat/ChatBot";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
+import LawyerSignup from "./pages/auth/LawyerSignup";
 import Dashboard from "./pages/Dashboard";
 import Lawyers from "./pages/Lawyers";
 import Templates from "./pages/Templates";
@@ -18,6 +19,8 @@ import StateLegalSupport from "./pages/StateLegalSupport";
 import MSMESupport from "./pages/MSMESupport";
 import AuthorityFinder from "./pages/AuthorityFinder";
 import DocumentGenerator from "./pages/DocumentGenerator";
+import LawyerDashboard from "./pages/LawyerDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import "./i18n";
@@ -27,7 +30,6 @@ const queryClient = new QueryClient();
 // Protected Route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, isLoading } = useAuth();
-  
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
@@ -52,10 +54,10 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 // Public Route component (for auth pages)
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   
   if (user) {
-    const redirectPath = user.type === 'lawyer' ? '/lawyer-dashboard' : '/dashboard';
+    const redirectPath = profile?.user_type === 'lawyer' ? '/lawyer-dashboard' : '/dashboard';
     return <Navigate to={redirectPath} replace />;
   }
   
@@ -82,9 +84,10 @@ const App = () => (
               </PublicRoute>
             } />
             <Route path="/signup" element={
-              <PublicRoute>
-                <Signup />
-              </PublicRoute>
+              <PublicRoute><Signup /></PublicRoute>
+            } />
+            <Route path="/lawyer-signup" element={
+              <PublicRoute><LawyerSignup /></PublicRoute>
             } />
             
             {/* Protected routes */}
@@ -144,9 +147,10 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/lawyer-dashboard" element={
-              <ProtectedRoute>
-                <div className="p-6">Lawyer dashboard coming soon...</div>
-              </ProtectedRoute>
+              <ProtectedRoute><LawyerDashboard /></ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute><AdminDashboard /></ProtectedRoute>
             } />
             
             {/* Catch all route */}

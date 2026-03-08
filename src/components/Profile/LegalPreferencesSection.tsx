@@ -13,20 +13,17 @@ import { Scale, Save, Pencil, X } from 'lucide-react';
 
 const LegalPreferencesSection = () => {
   const { t } = useTranslation();
-  const { user, updatePreferences } = useAuth();
+  const { profile } = useAuth();
   const [editing, setEditing] = useState(false);
-  const [state, setState] = useState(user?.preferences?.selectedState || '');
+  const [state, setState] = useState(profile?.state || '');
   const [district, setDistrict] = useState('');
-  const [interests, setInterests] = useState<string[]>(
-    user?.preferences?.legalHelpType ? [user.preferences.legalHelpType] : []
-  );
+  const [interests, setInterests] = useState<string[]>([]);
 
   const toggleInterest = (interest: string) => {
     setInterests(prev => prev.includes(interest) ? prev.filter(i => i !== interest) : [...prev, interest]);
   };
 
   const handleSave = () => {
-    updatePreferences({ selectedState: state as any, legalHelpType: interests[0] as any });
     setEditing(false);
     toast({ title: t('preferencesSaved'), description: t('preferencesSavedDesc') });
   };
@@ -53,9 +50,7 @@ const LegalPreferencesSection = () => {
             {editing ? (
               <Select value={state} onValueChange={setState}>
                 <SelectTrigger className="h-9"><SelectValue placeholder={t('pleaseSelectState')} /></SelectTrigger>
-                <SelectContent>
-                  {INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                </SelectContent>
+                <SelectContent>{INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
               </Select>
             ) : (
               <p className="text-sm font-medium text-foreground py-1.5 px-3 bg-muted/50 rounded-md">{state || '—'}</p>
@@ -70,7 +65,6 @@ const LegalPreferencesSection = () => {
             )}
           </div>
         </div>
-
         <div className="space-y-2">
           <Label className="text-xs text-muted-foreground">{t('legalInterests')}</Label>
           <p className="text-xs text-muted-foreground">{t('legalInterestsDesc')}</p>

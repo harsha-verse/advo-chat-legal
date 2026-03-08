@@ -43,8 +43,8 @@ const ISSUE_FILTERS = [
 
 const AuthorityFinder: React.FC = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
-  const [selectedState, setSelectedState] = useState<string>(user?.preferences?.selectedState || '');
+  const { profile } = useAuth();
+  const [selectedState, setSelectedState] = useState<string>(profile?.state || '');
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 

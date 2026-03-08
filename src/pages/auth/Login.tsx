@@ -37,12 +37,12 @@ const Login: React.FC = () => {
     if (!validateForm()) return;
     setIsLoading(true);
     try {
-      const success = await login(formData.email, formData.password, 'user');
-      if (success) {
+      const result = await login(formData.email, formData.password);
+      if (result.success) {
         toast({ title: t('success'), description: t('loginSuccess') });
         navigate('/dashboard');
       } else {
-        toast({ title: t('error'), description: t('invalidCredentials'), variant: "destructive" });
+        toast({ title: t('error'), description: result.error || t('invalidCredentials'), variant: "destructive" });
       }
     } catch {
       toast({ title: t('error'), description: t('errorOccurred'), variant: "destructive" });
@@ -66,13 +66,9 @@ const Login: React.FC = () => {
           </div>
           <CardTitle className="text-2xl font-bold text-primary">LAWLITE</CardTitle>
           <CardDescription>{t('welcome')}</CardDescription>
-          {/* Language Selector */}
           <div className="flex justify-center mt-2">
             <Select onValueChange={(v) => i18n.changeLanguage(v)} value={i18n.language}>
-              <SelectTrigger className="w-32">
-                <Globe className="h-4 w-4 mr-1" />
-                <SelectValue />
-              </SelectTrigger>
+              <SelectTrigger className="w-32"><Globe className="h-4 w-4 mr-1" /><SelectValue /></SelectTrigger>
               <SelectContent>
                 {LANGUAGE_OPTIONS.map((lang) => (
                   <SelectItem key={lang.code} value={lang.code}>{lang.nativeLabel}</SelectItem>
@@ -102,6 +98,10 @@ const Login: React.FC = () => {
               <p className="text-sm text-muted-foreground">
                 {t('dontHaveAccount')}{' '}
                 <Link to="/signup" className="text-primary hover:underline">{t('signup')}</Link>
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Are you a lawyer?{' '}
+                <Link to="/lawyer-signup" className="text-primary hover:underline font-medium">Register as Lawyer</Link>
               </p>
             </div>
           </form>
