@@ -171,6 +171,12 @@ const App = () => (
             <Route path="/submit-case" element={
               <ProtectedRoute><SubmitCase /></ProtectedRoute>
             } />
+            <Route path="/book-consultation" element={
+              <ProtectedRoute><BookConsultation /></ProtectedRoute>
+            } />
+            <Route path="/my-consultations" element={
+              <ProtectedRoute><MyConsultations /></ProtectedRoute>
+            } />
             <Route path="/admin" element={
               <ProtectedRoute><AdminDashboard /></ProtectedRoute>
             } />
