@@ -128,7 +128,7 @@ const App = () => (
             } />
             <Route path="/profile" element={
               <ProtectedRoute>
-                <div className="p-6">Profile page coming soon...</div>
+                <Profile />
               </ProtectedRoute>
             } />
             <Route path="/lawyer-dashboard" element={
