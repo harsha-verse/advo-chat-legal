@@ -5,12 +5,13 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAuth } from '@/context/AuthContext';
 import {
-  MessageCircle, Send, Minimize2, Maximize2, X, Bot, User, Mic, MicOff, Volume2, VolumeX,
+  MessageCircle, Send, Minimize2, Maximize2, X, Bot, User, Mic, MicOff, Volume2, VolumeX, Copy, Check,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import ChatActionCards from './ChatActionCards';
 import { SPEECH_LANG_MAP } from '@/i18n';
+import { toast } from 'sonner';
 
 interface Message {
   id: string;
@@ -20,6 +21,15 @@ interface Message {
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/nyaya-chat`;
 
+const SUGGESTION_KEYS = [
+  'suggestTenantDeposit',
+  'suggestSalaryNotPaid',
+  'suggestConsumerComplaint',
+  'suggestTrafficFine',
+  'suggestPropertyDispute',
+  'suggestDomesticViolence',
+];
+
 const ChatBot: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
@@ -28,19 +38,20 @@ const ChatBot: React.FC = () => {
   const userState = user?.preferences?.selectedState;
   const currentLang = i18n.language;
 
+  const buildWelcome = () =>
+    userState
+      ? `${t('chatbotGreeting')}\n\n${t('chatbotGreetingState', { state: userState })}\n\n${t('chatbotAskAnything')}\n- ${t('chatbotExample1')}\n- ${t('chatbotExample2')}\n- ${t('chatbotExample3')}\n\n${t('chatbotDisclaimer')}`
+      : `${t('chatbotGreeting')}\n\n${t('chatbotAskAnything')}\n- ${t('chatbotExample1')}\n- ${t('chatbotExample2')}\n- ${t('chatbotExample3')}\n\n${t('chatbotDisclaimer')}`;
+
   const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: userState
-        ? `${t('chatbotGreeting')}\n\n${t('chatbotGreetingState', { state: userState })}\n\n${t('chatbotAskAnything')}\n- ${t('chatbotExample1')}\n- ${t('chatbotExample2')}\n- ${t('chatbotExample3')}\n\n${t('chatbotDisclaimer')}`
-        : `${t('chatbotGreeting')}\n\n${t('chatbotAskAnything')}\n- ${t('chatbotExample1')}\n- ${t('chatbotExample2')}\n- ${t('chatbotExample3')}\n\n${t('chatbotDisclaimer')}`,
-    },
+    { id: '1', role: 'assistant', content: buildWelcome() },
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
+  const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
 
@@ -54,12 +65,18 @@ const ChatBot: React.FC = () => {
   useEffect(() => {
     setMessages(prev => {
       const rest = prev.filter(m => m.id !== '1');
-      const welcomeContent = userState
-        ? `${t('chatbotGreeting')}\n\n${t('chatbotGreetingState', { state: userState })}\n\n${t('chatbotAskAnything')}\n- ${t('chatbotExample1')}\n- ${t('chatbotExample2')}\n- ${t('chatbotExample3')}\n\n${t('chatbotDisclaimer')}`
-        : `${t('chatbotGreeting')}\n\n${t('chatbotAskAnything')}\n- ${t('chatbotExample1')}\n- ${t('chatbotExample2')}\n- ${t('chatbotExample3')}\n\n${t('chatbotDisclaimer')}`;
-      return [{ id: '1', role: 'assistant', content: welcomeContent }, ...rest];
+      return [{ id: '1', role: 'assistant', content: buildWelcome() }, ...rest];
     });
   }, [currentLang, userState, t]);
+
+  // Copy text
+  const copyText = async (text: string, msgId: string) => {
+    const clean = text.replace(/[#*_\[\]()>`~|]/g, '');
+    await navigator.clipboard.writeText(clean);
+    setCopiedMsgId(msgId);
+    toast.success(t('copiedToClipboard'));
+    setTimeout(() => setCopiedMsgId(null), 2000);
+  };
 
   // Voice Input (Speech-to-Text) using Web Speech API
   const startListening = () => {
@@ -97,14 +114,12 @@ const ChatBot: React.FC = () => {
       alert(t('ttsNotSupported'));
       return;
     }
-    // Stop if already speaking this message
     if (speakingMsgId === msgId) {
       window.speechSynthesis.cancel();
       setSpeakingMsgId(null);
       return;
     }
     window.speechSynthesis.cancel();
-    // Strip markdown for cleaner TTS
     const cleanText = text.replace(/[#*_\[\]()>`~|]/g, '').replace(/\n+/g, '. ');
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = SPEECH_LANG_MAP[currentLang] || 'en-IN';
@@ -195,12 +210,14 @@ const ChatBot: React.FC = () => {
     setMessages((prev) => prev.map((m) => m.id === 'streaming' ? { ...m, id: Date.now().toString() } : m));
   };
 
-  const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isTyping) return;
-    const userMsg: Message = { id: Date.now().toString(), role: 'user', content: inputMessage };
+  const handleSendMessage = async (text?: string) => {
+    const msgText = text || inputMessage;
+    if (!msgText.trim() || isTyping) return;
+    const userMsg: Message = { id: Date.now().toString(), role: 'user', content: msgText };
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
     setInputMessage('');
+    setShowSuggestions(false);
     setIsTyping(true);
     try {
       const historyForAI = updatedMessages.filter((m) => m.id !== '1').map((m) => ({ role: m.role, content: m.content }));
@@ -274,10 +291,10 @@ const ChatBot: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    {/* TTS button for assistant messages */}
+                    {/* Action buttons for assistant messages */}
                     {message.role === 'assistant' && message.id !== '1' && message.id !== 'streaming' && (
                       <>
-                        <div className="mt-1 ml-6">
+                        <div className="mt-1 ml-6 flex items-center gap-1">
                           <Button
                             variant="ghost"
                             size="sm"
@@ -290,6 +307,18 @@ const ChatBot: React.FC = () => {
                               <><Volume2 className="h-3 w-3" /> {t('playAudio')}</>
                             )}
                           </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-xs h-6 gap-1 text-muted-foreground hover:text-foreground"
+                            onClick={() => copyText(message.content, message.id)}
+                          >
+                            {copiedMsgId === message.id ? (
+                              <><Check className="h-3 w-3" /> {t('copied')}</>
+                            ) : (
+                              <><Copy className="h-3 w-3" /> {t('copyText')}</>
+                            )}
+                          </Button>
                         </div>
                         <div className="mt-2 max-w-[90%]">
                           <ChatActionCards messageContent={message.content} />
@@ -298,6 +327,25 @@ const ChatBot: React.FC = () => {
                     )}
                   </div>
                 ))}
+
+                {/* Quick Suggestion Chips */}
+                {showSuggestions && messages.length <= 1 && !isTyping && (
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">{t('trySuggestions')}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {SUGGESTION_KEYS.map((key) => (
+                        <button
+                          key={key}
+                          onClick={() => handleSendMessage(t(key))}
+                          className="text-xs px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-colors"
+                        >
+                          {t(key)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {isTyping && messages[messages.length - 1]?.id !== 'streaming' && (
                   <div className="flex justify-start">
                     <div className="bg-muted rounded-lg p-3">
@@ -337,7 +385,7 @@ const ChatBot: React.FC = () => {
                   className="flex-1"
                   disabled={isTyping}
                 />
-                <Button onClick={handleSendMessage} size="icon" className="bg-primary hover:bg-primary/90" disabled={isTyping || !inputMessage.trim()}>
+                <Button onClick={() => handleSendMessage()} size="icon" className="bg-primary hover:bg-primary/90" disabled={isTyping || !inputMessage.trim()}>
                   <Send className="h-4 w-4" />
                 </Button>
               </div>

@@ -458,6 +458,20 @@ const resources = {
       pageNotFoundText: "Oops! Page not found",
       returnToHome: "Return to Home",
 
+      // Copy
+      copyText: "Copy",
+      copied: "Copied!",
+      copiedToClipboard: "Copied to clipboard",
+
+      // Suggestions
+      trySuggestions: "Try asking about:",
+      suggestTenantDeposit: "Tenant deposit not returned",
+      suggestSalaryNotPaid: "Salary not paid by company",
+      suggestConsumerComplaint: "How to file consumer complaint",
+      suggestTrafficFine: "Traffic fine dispute",
+      suggestPropertyDispute: "Property dispute with neighbour",
+      suggestDomesticViolence: "Domestic violence help",
+
       // Misc
       comingSoon: "Coming soon...",
       chatPageComingSoon: "Chat page coming soon...",
@@ -850,6 +864,16 @@ const resources = {
       pageNotFound: "404",
       pageNotFoundText: "ओह! पेज नहीं मिला",
       returnToHome: "होम पर वापस जाएं",
+      copyText: "कॉपी करें",
+      copied: "कॉपी हो गया!",
+      copiedToClipboard: "क्लिपबोर्ड पर कॉपी हो गया",
+      trySuggestions: "यह पूछकर देखें:",
+      suggestTenantDeposit: "किराएदार की जमानत राशि वापस नहीं मिली",
+      suggestSalaryNotPaid: "कंपनी ने वेतन नहीं दिया",
+      suggestConsumerComplaint: "उपभोक्ता शिकायत कैसे दर्ज करें",
+      suggestTrafficFine: "ट्रैफिक जुर्माना विवाद",
+      suggestPropertyDispute: "पड़ोसी के साथ संपत्ति विवाद",
+      suggestDomesticViolence: "घरेलू हिंसा सहायता",
     }
   },
   kn: {
