@@ -419,6 +419,7 @@ const ChatBot: React.FC = () => {
                     {message.role === 'assistant' && message.id !== '1' && message.id !== 'streaming' && (
                       <>
                         <div className="mt-1 ml-6 flex items-center gap-1">
+                          {/* Play / Pause button */}
                           <Button
                             variant="ghost"
                             size="sm"
@@ -426,11 +427,39 @@ const ChatBot: React.FC = () => {
                             onClick={() => speakText(message.content, message.id)}
                           >
                             {speakingMsgId === message.id ? (
-                              <><VolumeX className="h-3 w-3" /> {t('stopAudio')}</>
+                              isPaused ? (
+                                <><Volume2 className="h-3 w-3" /> {t('resumeAudio')}</>
+                              ) : (
+                                <><Pause className="h-3 w-3" /> {t('pauseAudio')}</>
+                              )
                             ) : (
                               <><Volume2 className="h-3 w-3" /> {t('playAudio')}</>
                             )}
                           </Button>
+                          {/* Stop button (only when speaking) */}
+                          {speakingMsgId === message.id && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs h-6 gap-1 text-muted-foreground hover:text-foreground"
+                              onClick={stopSpeech}
+                            >
+                              <Square className="h-3 w-3" /> {t('stopAudio')}
+                            </Button>
+                          )}
+                          {/* Sound wave animation */}
+                          {speakingMsgId === message.id && !isPaused && (
+                            <div className="flex items-end gap-0.5 h-3 ml-1">
+                              {[1, 2, 3, 4].map(i => (
+                                <motion.div
+                                  key={i}
+                                  className="w-0.5 bg-primary rounded-full"
+                                  animate={{ height: ['3px', '12px', '3px'] }}
+                                  transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.08 }}
+                                />
+                              ))}
+                            </div>
+                          )}
                           <Button
                             variant="ghost"
                             size="sm"
