@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import {
   Scale, Upload, FileText, ShieldCheck, Clock, CheckCircle,
-  XCircle, User, Briefcase, MessageCircle, Star, AlertTriangle
+  XCircle, User, Briefcase, MessageCircle, Star, AlertTriangle, Edit
 } from 'lucide-react';
 
 const VERIFICATION_DOCS = [
@@ -24,6 +25,7 @@ const LawyerDashboard: React.FC = () => {
   const { t } = useTranslation();
   const { user, profile, lawyerProfile, refreshProfile } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [documents, setDocuments] = useState<any[]>([]);
   const [uploading, setUploading] = useState<string | null>(null);
 
@@ -108,7 +110,12 @@ const LawyerDashboard: React.FC = () => {
             <h1 className="text-3xl font-bold text-foreground mb-2">Lawyer Dashboard</h1>
             <p className="text-muted-foreground">Welcome, {profile?.name || user?.email}</p>
           </div>
-          {statusBadge(verificationStatus)}
+          <div className="flex items-center gap-3">
+            <Button variant="outline" onClick={() => navigate('/lawyer-profile/edit')}>
+              <Edit className="h-4 w-4 mr-2" />Edit Profile
+            </Button>
+            {statusBadge(verificationStatus)}
+          </div>
         </div>
       </div>
 

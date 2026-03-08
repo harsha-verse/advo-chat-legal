@@ -1,46 +1,117 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ChatBot from '@/components/Chat/ChatBot';
-import { Search, Star, MapPin, Clock, CheckCircle, MessageCircle, Calendar, Scale, Users, Building, Shield, Laptop, Heart, Gavel } from 'lucide-react';
+import { Search, Star, MapPin, Clock, CheckCircle, MessageCircle, Calendar, Scale, Users, Building, Shield, Laptop, Heart, Gavel, Globe } from 'lucide-react';
+
+interface LawyerResult {
+  user_id: string;
+  name: string;
+  avatar_url: string | null;
+  city: string | null;
+  state: string | null;
+  role_type: string;
+  specialization: string | null;
+  practice_areas: string[];
+  experience: number;
+  rating: number;
+  total_reviews: number;
+  consultation_fee: number;
+  bio: string | null;
+  tagline: string | null;
+  languages_spoken: string[];
+}
 
 const Lawyers: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialization, setSelectedSpecialization] = useState('all');
   const [showChatBot, setShowChatBot] = useState(false);
+  const [lawyers, setLawyers] = useState<LawyerResult[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const specializations = [
     { id: 'all', name: t('allLawyers'), icon: Scale },
-    { id: 'family', name: t('familyLaw'), icon: Heart },
-    { id: 'criminal', name: t('criminalLaw'), icon: Gavel },
-    { id: 'corporate', name: t('corporateLaw'), icon: Building },
-    { id: 'civil', name: t('civilLaw'), icon: Users },
-    { id: 'cyber', name: t('cyberLaw'), icon: Laptop },
-    { id: 'property', name: t('propertyLaw'), icon: Shield },
+    { id: 'Family Law', name: t('familyLaw'), icon: Heart },
+    { id: 'Criminal Law', name: t('criminalLaw'), icon: Gavel },
+    { id: 'Corporate Law', name: t('corporateLaw'), icon: Building },
+    { id: 'Civil Litigation', name: t('civilLaw'), icon: Users },
+    { id: 'Cyber Law', name: t('cyberLaw'), icon: Laptop },
+    { id: 'Property Disputes', name: t('propertyLaw'), icon: Shield },
   ];
 
-  const lawyers = [
-    { id: 1, name: 'Adv. Priya Sharma', specialization: t('familyLaw'), experience: 12, rating: 4.9, reviews: 156, consultationFee: 2500, location: 'Mumbai', verified: true, image: '/api/placeholder/100/100', languages: ['English', 'Hindi', 'Marathi'], description: 'Expert in family disputes, divorce cases, and child custody matters.', category: 'family' },
-    { id: 2, name: 'Adv. Rajesh Kumar', specialization: t('criminalLaw'), experience: 15, rating: 4.8, reviews: 203, consultationFee: 3000, location: 'Delhi', verified: true, image: '/api/placeholder/100/100', languages: ['English', 'Hindi'], description: 'Specialized in criminal defense and white-collar crime cases.', category: 'criminal' },
-    { id: 3, name: 'Adv. Meera Patel', specialization: t('corporateLaw'), experience: 10, rating: 4.7, reviews: 98, consultationFee: 4000, location: 'Bangalore', verified: true, image: '/api/placeholder/100/100', languages: ['English', 'Hindi', 'Kannada'], description: 'Corporate governance, mergers & acquisitions, and startup legal advice.', category: 'corporate' },
-    { id: 4, name: 'Adv. Arjun Singh', specialization: t('civilLaw'), experience: 8, rating: 4.6, reviews: 67, consultationFee: 2000, location: 'Jaipur', verified: true, image: '/api/placeholder/100/100', languages: ['English', 'Hindi'], description: 'Civil litigation, property disputes, and contract law specialist.', category: 'civil' },
-    { id: 5, name: 'Adv. Kavya Nair', specialization: t('cyberLaw'), experience: 6, rating: 4.8, reviews: 89, consultationFee: 3500, location: 'Kochi', verified: true, image: '/api/placeholder/100/100', languages: ['English', 'Malayalam', 'Hindi'], description: 'Cybercrime, data protection, and technology law expert.', category: 'cyber' },
-    { id: 6, name: 'Adv. Rohit Gupta', specialization: t('propertyLaw'), experience: 14, rating: 4.7, reviews: 142, consultationFee: 2800, location: 'Pune', verified: true, image: '/api/placeholder/100/100', languages: ['English', 'Hindi', 'Marathi'], description: 'Real estate transactions, property disputes, and land acquisition.', category: 'property' },
-    { id: 7, name: 'Adv. Sunita Reddy', specialization: t('familyLaw'), experience: 9, rating: 4.6, reviews: 76, consultationFee: 2200, location: 'Hyderabad', verified: true, image: '/api/placeholder/100/100', languages: ['English', 'Telugu', 'Hindi'], description: 'Women rights, domestic violence cases, and matrimonial disputes.', category: 'family' },
-    { id: 8, name: 'Adv. Vikram Joshi', specialization: t('criminalLaw'), experience: 11, rating: 4.9, reviews: 134, consultationFee: 3200, location: 'Chennai', verified: true, image: '/api/placeholder/100/100', languages: ['English', 'Tamil', 'Hindi'], description: 'Criminal defense, bail applications, and court representation.', category: 'criminal' },
-  ];
+  useEffect(() => {
+    fetchLawyers();
+  }, []);
+
+  const fetchLawyers = async () => {
+    setLoading(true);
+    const { data: lawyerProfiles } = await supabase
+      .from('lawyer_profiles')
+      .select('*')
+      .eq('verification_status', 'verified')
+      .eq('profile_visible', true);
+
+    if (!lawyerProfiles || lawyerProfiles.length === 0) {
+      setLawyers([]);
+      setLoading(false);
+      return;
+    }
+
+    const userIds = lawyerProfiles.map(lp => lp.user_id);
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('*')
+      .in('id', userIds);
+
+    const profileMap = new Map((profiles || []).map(p => [p.id, p]));
+
+    const merged: LawyerResult[] = lawyerProfiles.map(lp => {
+      const p = profileMap.get(lp.user_id);
+      return {
+        user_id: lp.user_id,
+        name: p?.name || 'Lawyer',
+        avatar_url: p?.avatar_url || null,
+        city: p?.city || null,
+        state: p?.state || null,
+        role_type: lp.role_type,
+        specialization: lp.specialization,
+        practice_areas: lp.practice_areas || [],
+        experience: lp.experience || 0,
+        rating: lp.rating || 0,
+        total_reviews: lp.total_reviews || 0,
+        consultation_fee: lp.consultation_fee || 0,
+        bio: lp.bio,
+        tagline: (lp as any).tagline,
+        languages_spoken: (lp as any).languages_spoken || [],
+      };
+    });
+
+    setLawyers(merged);
+    setLoading(false);
+  };
 
   const filteredLawyers = lawyers.filter(lawyer => {
-    const matchesSearch = lawyer.name.toLowerCase().includes(searchQuery.toLowerCase()) || lawyer.specialization.toLowerCase().includes(searchQuery.toLowerCase()) || lawyer.location.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSpecialization = selectedSpecialization === 'all' || lawyer.category === selectedSpecialization;
-    return matchesSearch && matchesSpecialization;
+    const q = searchQuery.toLowerCase();
+    const matchesSearch = !q || lawyer.name.toLowerCase().includes(q) ||
+      (lawyer.specialization || '').toLowerCase().includes(q) ||
+      (lawyer.city || '').toLowerCase().includes(q) ||
+      lawyer.practice_areas.some(a => a.toLowerCase().includes(q));
+    const matchesSpec = selectedSpecialization === 'all' ||
+      lawyer.practice_areas.includes(selectedSpecialization) ||
+      lawyer.specialization === selectedSpecialization;
+    return matchesSearch && matchesSpec;
   });
+
+  const roleLabel = (r: string) => r?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
   return (
     <div className="p-6 space-y-6">
@@ -60,41 +131,64 @@ const Lawyers: React.FC = () => {
         </TabsList>
 
         <div className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredLawyers.map((lawyer) => (
-              <Card key={lawyer.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start space-x-4">
-                    <Avatar className="h-16 w-16"><AvatarImage src={lawyer.image} alt={lawyer.name} /><AvatarFallback>{lawyer.name.split(' ').map(n => n[0]).join('')}</AvatarFallback></Avatar>
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2"><CardTitle className="text-lg">{lawyer.name}</CardTitle>{lawyer.verified && <CheckCircle className="h-5 w-5 text-green-500" />}</div>
-                      <Badge variant="secondary" className="mt-1">{lawyer.specialization}</Badge>
+          {loading ? (
+            <div className="text-center py-12"><p className="text-muted-foreground">Loading lawyers...</p></div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredLawyers.map((lawyer) => (
+                <Card key={lawyer.user_id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/lawyer/${lawyer.user_id}`)}>
+                  <CardHeader>
+                    <div className="flex items-start space-x-4">
+                      <Avatar className="h-16 w-16">
+                        <AvatarImage src={lawyer.avatar_url || undefined} />
+                        <AvatarFallback className="bg-primary/10 text-primary">{lawyer.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <CardTitle className="text-lg">{lawyer.name}</CardTitle>
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                        </div>
+                        <p className="text-sm text-muted-foreground">{roleLabel(lawyer.role_type)}</p>
+                        {lawyer.specialization && <Badge variant="secondary" className="mt-1">{lawyer.specialization}</Badge>}
+                      </div>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground">{lawyer.description}</p>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="flex items-center space-x-2"><Clock className="h-4 w-4 text-muted-foreground" /><span>{lawyer.experience} {t('yearsExp')}</span></div>
-                      <div className="flex items-center space-x-2"><MapPin className="h-4 w-4 text-muted-foreground" /><span>{lawyer.location}</span></div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {lawyer.tagline && <p className="text-sm text-muted-foreground italic">"{lawyer.tagline}"</p>}
+                      {!lawyer.tagline && lawyer.bio && <p className="text-sm text-muted-foreground line-clamp-2">{lawyer.bio}</p>}
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div className="flex items-center space-x-2"><Clock className="h-4 w-4 text-muted-foreground" /><span>{lawyer.experience} {t('yearsExp')}</span></div>
+                        {lawyer.city && <div className="flex items-center space-x-2"><MapPin className="h-4 w-4 text-muted-foreground" /><span>{lawyer.city}</span></div>}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-1">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          <span className="font-medium">{lawyer.rating || '–'}</span>
+                          {lawyer.total_reviews > 0 && <span className="text-sm text-muted-foreground">({lawyer.total_reviews})</span>}
+                        </div>
+                        {lawyer.consultation_fee > 0 && (
+                          <div className="text-right"><p className="font-semibold text-primary">₹{lawyer.consultation_fee}</p><p className="text-xs text-muted-foreground">{t('perConsultation')}</p></div>
+                        )}
+                      </div>
+                      {lawyer.languages_spoken.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {lawyer.languages_spoken.slice(0, 3).map(l => <Badge key={l} variant="outline" className="text-xs">{l}</Badge>)}
+                          {lawyer.languages_spoken.length > 3 && <Badge variant="outline" className="text-xs">+{lawyer.languages_spoken.length - 3}</Badge>}
+                        </div>
+                      )}
+                      <div className="flex space-x-2" onClick={e => e.stopPropagation()}>
+                        <Button className="flex-1" size="sm" onClick={() => navigate(`/lawyer/${lawyer.user_id}`)}><Calendar className="h-4 w-4 mr-2" />{t('bookConsultation')}</Button>
+                        <Button variant="outline" size="sm"><MessageCircle className="h-4 w-4" /></Button>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-1"><Star className="h-4 w-4 fill-yellow-400 text-yellow-400" /><span className="font-medium">{lawyer.rating}</span><span className="text-sm text-muted-foreground">({lawyer.reviews} {t('reviews')})</span></div>
-                      <div className="text-right"><p className="font-semibold">₹{lawyer.consultationFee.toLocaleString()}</p><p className="text-xs text-muted-foreground">{t('perConsultation')}</p></div>
-                    </div>
-                    <div><p className="text-sm font-medium mb-1">{t('languages')}:</p><div className="flex flex-wrap gap-1">{lawyer.languages.map((lang) => (<Badge key={lang} variant="outline" className="text-xs">{lang}</Badge>))}</div></div>
-                    <div className="flex space-x-2">
-                      <Button className="flex-1" size="sm"><Calendar className="h-4 w-4 mr-2" />{t('bookConsultation')}</Button>
-                      <Button variant="outline" size="sm"><MessageCircle className="h-4 w-4" /></Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
 
-          {filteredLawyers.length === 0 && (
+          {!loading && filteredLawyers.length === 0 && (
             <div className="text-center py-12"><Scale className="h-12 w-12 text-muted-foreground mx-auto mb-4" /><h3 className="text-lg font-semibold mb-2">{t('noLawyersFound')}</h3><p className="text-muted-foreground">{t('noLawyersFoundDesc')}</p></div>
           )}
         </div>

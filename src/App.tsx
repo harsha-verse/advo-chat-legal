@@ -21,6 +21,8 @@ import AuthorityFinder from "./pages/AuthorityFinder";
 import DocumentGenerator from "./pages/DocumentGenerator";
 import LawyerDashboard from "./pages/LawyerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import LawyerProfileEdit from "./pages/LawyerProfileEdit";
+import LawyerPublicProfile from "./pages/LawyerPublicProfile";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import "./i18n";
@@ -148,6 +150,12 @@ const App = () => (
             } />
             <Route path="/lawyer-dashboard" element={
               <ProtectedRoute><LawyerDashboard /></ProtectedRoute>
+            } />
+            <Route path="/lawyer-profile/edit" element={
+              <ProtectedRoute><LawyerProfileEdit /></ProtectedRoute>
+            } />
+            <Route path="/lawyer/:id" element={
+              <ProtectedRoute><LawyerPublicProfile /></ProtectedRoute>
             } />
             <Route path="/admin" element={
               <ProtectedRoute><AdminDashboard /></ProtectedRoute>
