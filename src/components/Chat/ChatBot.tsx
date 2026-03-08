@@ -417,6 +417,55 @@ const ChatBot: React.FC = () => {
               </div>
             </ScrollArea>
 
+            {/* Recording indicator */}
+            <AnimatePresence>
+              {isListening && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="px-4 py-2 border-t bg-destructive/5 flex items-center justify-center gap-3"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75" />
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-destructive" />
+                    </span>
+                    <span className="text-xs font-medium text-destructive">{t('voiceListening')}</span>
+                  </div>
+                  {/* Waveform bars */}
+                  <div className="flex items-end gap-0.5 h-4">
+                    {[1, 2, 3, 4, 5].map(i => (
+                      <motion.div
+                        key={i}
+                        className="w-1 bg-destructive/60 rounded-full"
+                        animate={{ height: ['4px', '16px', '4px'] }}
+                        transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.1 }}
+                      />
+                    ))}
+                  </div>
+                  <Button variant="ghost" size="sm" className="text-xs h-6 text-destructive" onClick={stopListening}>
+                    {t('stopRecording')}
+                  </Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Processing indicator */}
+            <AnimatePresence>
+              {isProcessingVoice && !isListening && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="px-4 py-2 border-t bg-primary/5 flex items-center justify-center gap-2"
+                >
+                  <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  <span className="text-xs text-primary font-medium">{t('processingVoice')}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* Input */}
             <div className="p-4 border-t bg-muted/30">
               <div className="flex space-x-2">
@@ -424,7 +473,7 @@ const ChatBot: React.FC = () => {
                 <Button
                   variant={isListening ? "destructive" : "outline"}
                   size="icon"
-                  className="shrink-0"
+                  className={`shrink-0 ${isListening ? 'animate-pulse' : ''}`}
                   onClick={isListening ? stopListening : startListening}
                   title={t('voiceInputTooltip')}
                 >
@@ -434,7 +483,7 @@ const ChatBot: React.FC = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder={isListening ? t('voiceListening') : t('chatbotInputPlaceholder')}
+                  placeholder={isListening ? t('voiceListening') : isProcessingVoice ? t('processingVoice') : t('chatbotInputPlaceholder')}
                   className="flex-1"
                   disabled={isTyping}
                 />
