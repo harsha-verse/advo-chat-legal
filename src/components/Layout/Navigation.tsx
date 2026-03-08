@@ -4,16 +4,8 @@ import { useAuth } from '@/context/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
-  Home, 
-  Users, 
-  FileText, 
-  File, 
-  MessageCircle, 
-  User,
-  Briefcase,
-  Scale,
-  MapPin,
-  Building
+  Home, Users, FileText, File, MessageCircle, User,
+  Briefcase, Scale, MapPin, Building
 } from 'lucide-react';
 
 const Navigation: React.FC = () => {
@@ -27,16 +19,16 @@ const Navigation: React.FC = () => {
     { path: '/documents', icon: FileText, label: t('documents') },
     { path: '/templates', icon: File, label: t('templates') },
     { path: '/consultants', icon: Users, label: t('consultants') },
-    { path: '/state-legal-support', icon: MapPin, label: 'State Legal Support' },
-    { path: '/msme-support', icon: Building, label: 'MSME Support' },
+    { path: '/state-legal-support', icon: MapPin, label: t('stateLegalSupport') },
+    { path: '/msme-support', icon: Building, label: t('msmeSupport') },
     { path: '/chat', icon: MessageCircle, label: t('chat') },
     { path: '/profile', icon: User, label: t('profile') },
   ];
 
   const lawyerNavItems = [
     { path: '/lawyer-dashboard', icon: Home, label: t('dashboard') },
-    { path: '/my-clients', icon: Users, label: 'My Clients' },
-    { path: '/consultations', icon: Briefcase, label: 'Consultations' },
+    { path: '/my-clients', icon: Users, label: t('myClients') },
+    { path: '/consultations', icon: Briefcase, label: t('consultations') },
     { path: '/documents', icon: FileText, label: t('documents') },
     { path: '/chat', icon: MessageCircle, label: t('chat') },
     { path: '/profile', icon: User, label: t('profile') },
@@ -50,7 +42,6 @@ const Navigation: React.FC = () => {
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
-          
           return (
             <Link
               key={item.path}
