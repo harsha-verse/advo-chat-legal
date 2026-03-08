@@ -25,6 +25,7 @@ const LawyerDashboard: React.FC = () => {
   const { t } = useTranslation();
   const { user, profile, lawyerProfile, refreshProfile } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [documents, setDocuments] = useState<any[]>([]);
   const [uploading, setUploading] = useState<string | null>(null);
 
