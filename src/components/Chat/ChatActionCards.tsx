@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { Star, MapPin, Scale, FileText, BookOpen, ChevronRight } from 'lucide-react';
-import { detectContext, matchLawyers, matchTemplates, getGuideRoute, type MatchedLawyer, type MatchedTemplate } from './chatActionUtils';
+import { detectContext, matchLawyers, matchTemplates, getGuideRoute, getAuthorityRoute, type MatchedLawyer, type MatchedTemplate } from './chatActionUtils';
 
 interface ChatActionCardsProps { messageContent: string; }
 
