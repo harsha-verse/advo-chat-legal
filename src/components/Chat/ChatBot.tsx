@@ -49,11 +49,13 @@ const ChatBot: React.FC = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [isProcessingVoice, setIsProcessingVoice] = useState(false);
   const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
   const [copiedMsgId, setCopiedMsgId] = useState<string | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const listenTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -78,32 +80,83 @@ const ChatBot: React.FC = () => {
     setTimeout(() => setCopiedMsgId(null), 2000);
   };
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (listenTimeoutRef.current) clearTimeout(listenTimeoutRef.current);
+      recognitionRef.current?.abort();
+      window.speechSynthesis?.cancel();
+    };
+  }, []);
+
   // Voice Input (Speech-to-Text) using Web Speech API
   const startListening = () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert(t('voiceNotSupported'));
+      toast.error(t('voiceNotSupported'));
       return;
     }
-    const recognition = new SpeechRecognition();
-    recognition.lang = SPEECH_LANG_MAP[currentLang] || 'en-IN';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
 
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setInputMessage(prev => prev + transcript);
-      setIsListening(false);
-    };
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
+    // Request microphone permission explicitly
+    navigator.mediaDevices?.getUserMedia({ audio: true }).then(() => {
+      const recognition = new SpeechRecognition();
+      recognition.lang = SPEECH_LANG_MAP[currentLang] || 'en-IN';
+      recognition.interimResults = true;
+      recognition.continuous = true;
+      recognition.maxAlternatives = 1;
 
-    recognition.start();
-    recognitionRef.current = recognition;
-    setIsListening(true);
+      let finalTranscript = '';
+
+      recognition.onresult = (event: any) => {
+        let interim = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const result = event.results[i];
+          if (result.isFinal) {
+            finalTranscript += result[0].transcript;
+          } else {
+            interim += result[0].transcript;
+          }
+        }
+        setInputMessage(finalTranscript + interim);
+      };
+
+      recognition.onerror = (event: any) => {
+        setIsListening(false);
+        if (listenTimeoutRef.current) clearTimeout(listenTimeoutRef.current);
+        if (event.error === 'not-allowed') {
+          toast.error(t('micPermissionDenied'));
+        } else if (event.error === 'no-speech') {
+          toast.warning(t('noSpeechDetected'));
+        } else {
+          toast.error(t('voiceError'));
+        }
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+        if (listenTimeoutRef.current) clearTimeout(listenTimeoutRef.current);
+        if (finalTranscript) {
+          setIsProcessingVoice(true);
+          setTimeout(() => setIsProcessingVoice(false), 600);
+        }
+      };
+
+      recognition.start();
+      recognitionRef.current = recognition;
+      setIsListening(true);
+
+      // Auto-stop after 30 seconds
+      listenTimeoutRef.current = setTimeout(() => {
+        recognition.stop();
+        toast.info(t('voiceAutoStopped'));
+      }, 30000);
+    }).catch(() => {
+      toast.error(t('micPermissionDenied'));
+    });
   };
 
   const stopListening = () => {
+    if (listenTimeoutRef.current) clearTimeout(listenTimeoutRef.current);
     recognitionRef.current?.stop();
     setIsListening(false);
   };
@@ -364,6 +417,55 @@ const ChatBot: React.FC = () => {
               </div>
             </ScrollArea>
 
+            {/* Recording indicator */}
+            <AnimatePresence>
+              {isListening && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="px-4 py-2 border-t bg-destructive/5 flex items-center justify-center gap-3"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75" />
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-destructive" />
+                    </span>
+                    <span className="text-xs font-medium text-destructive">{t('voiceListening')}</span>
+                  </div>
+                  {/* Waveform bars */}
+                  <div className="flex items-end gap-0.5 h-4">
+                    {[1, 2, 3, 4, 5].map(i => (
+                      <motion.div
+                        key={i}
+                        className="w-1 bg-destructive/60 rounded-full"
+                        animate={{ height: ['4px', '16px', '4px'] }}
+                        transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.1 }}
+                      />
+                    ))}
+                  </div>
+                  <Button variant="ghost" size="sm" className="text-xs h-6 text-destructive" onClick={stopListening}>
+                    {t('stopRecording')}
+                  </Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Processing indicator */}
+            <AnimatePresence>
+              {isProcessingVoice && !isListening && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="px-4 py-2 border-t bg-primary/5 flex items-center justify-center gap-2"
+                >
+                  <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  <span className="text-xs text-primary font-medium">{t('processingVoice')}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* Input */}
             <div className="p-4 border-t bg-muted/30">
               <div className="flex space-x-2">
@@ -371,7 +473,7 @@ const ChatBot: React.FC = () => {
                 <Button
                   variant={isListening ? "destructive" : "outline"}
                   size="icon"
-                  className="shrink-0"
+                  className={`shrink-0 ${isListening ? 'animate-pulse' : ''}`}
                   onClick={isListening ? stopListening : startListening}
                   title={t('voiceInputTooltip')}
                 >
@@ -381,7 +483,7 @@ const ChatBot: React.FC = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder={isListening ? t('voiceListening') : t('chatbotInputPlaceholder')}
+                  placeholder={isListening ? t('voiceListening') : isProcessingVoice ? t('processingVoice') : t('chatbotInputPlaceholder')}
                   className="flex-1"
                   disabled={isTyping}
                 />
