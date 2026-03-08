@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import {
   Scale, Upload, FileText, ShieldCheck, Clock, CheckCircle,
-  XCircle, User, Briefcase, MessageCircle, Star, AlertTriangle
+  XCircle, User, Briefcase, MessageCircle, Star, AlertTriangle, Edit
 } from 'lucide-react';
 
 const VERIFICATION_DOCS = [
