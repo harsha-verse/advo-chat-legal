@@ -58,6 +58,7 @@ const ChatBot: React.FC = () => {
     try { return localStorage.getItem('lawlite-auto-read') === 'true'; } catch { return false; }
   });
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [showDiagnosis, setShowDiagnosis] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const listenTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
