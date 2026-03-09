@@ -27,7 +27,7 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({ template, open, onOpe
     let content = template.content;
     template.fields.forEach((field) => {
       const value = fieldValues[field.key] || field.placeholder;
-      content = content.replaceAll(field.placeholder, value);
+      content = content.split(field.placeholder).join(value);
     });
     return content;
   };
