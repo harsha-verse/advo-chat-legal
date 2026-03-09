@@ -117,7 +117,7 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({ template, open, onOpe
         </Tabs>
 
         <div className="bg-accent/50 border border-accent rounded-lg p-3 flex items-start gap-2 text-sm text-muted-foreground">
-          <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0 text-yellow-600" />
+          <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0 text-destructive" />
           <span>This template is provided for general informational purposes. For complex legal situations, consult a qualified lawyer.</span>
         </div>
 
