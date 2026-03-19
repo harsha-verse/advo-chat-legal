@@ -78,6 +78,16 @@ serve(async (req) => {
         });
       }
 
+      // Verify the caller is the case owner or an admin
+      const isOwner = caseData.client_id === userId;
+      const { data: isAdmin } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
+      if (!isOwner && !isAdmin) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
       // Get practice areas for case type
       const practiceAreas = CASE_TYPE_MAP[caseData.case_type] || [];
 
