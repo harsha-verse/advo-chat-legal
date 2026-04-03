@@ -32,23 +32,13 @@ import SelectLawyer from "./pages/SelectLawyer";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import "./i18n";
-
-let lang = "en";
-
-const text: Record<string, Record<string, string>> = {
-  en: { loading: "Loading..." },
-  hi: { loading: "लोड हो रहा है..." },
-  kn: { loading: "ಲೋಡ್ ಆಗುತ್ತಿದೆ..." }
-};
-
-function t(key: string) {
-  return text[lang]?.[key] ?? key;
-}
+import { useTranslation } from "react-i18next";
 
 const queryClient = new QueryClient();
 
 // Protected Route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
   const { user, isLoading } = useAuth();
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center">{t("loading")}</div>;
@@ -82,6 +72,11 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }
   
   return <>{children}</>;
+};
+
+const ChatComingSoon: React.FC = () => {
+  const { t } = useTranslation();
+  return <div className="p-6">{t("chatComingSoon")}</div>;
 };
 
 const App = () => (
@@ -158,7 +153,7 @@ const App = () => (
             } />
             <Route path="/chat" element={
               <ProtectedRoute>
-                <div className="p-6">Chat page coming soon...</div>
+                <ChatComingSoon />
               </ProtectedRoute>
             } />
             <Route path="/profile" element={
