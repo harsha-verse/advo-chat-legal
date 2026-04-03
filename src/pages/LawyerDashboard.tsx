@@ -308,7 +308,7 @@ const LawyerDashboard: React.FC = () => {
                       <h3 className="font-semibold text-foreground">{c.title}</h3>
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
                         <Badge variant="outline" className="text-xs">{c.case_type}</Badge>
-                        {c.priority === 'urgent' && <Badge variant="destructive" className="text-xs">Urgent</Badge>}
+                        {c.priority === 'urgent' && <Badge variant="destructive" className="text-xs">{t('urgent')}</Badge>}
                       </div>
                       <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{c.description}</p>
                       <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
