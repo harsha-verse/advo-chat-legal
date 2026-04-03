@@ -268,7 +268,7 @@ const LawyerDashboard: React.FC = () => {
                             }>{existing.status}</Badge>
                           </div>
                         ) : (
-                          <p className="text-xs text-muted-foreground">Not uploaded</p>
+                          <p className="text-xs text-muted-foreground">{t('notUploaded')}</p>
                         )}
                       </div>
                     </div>
