@@ -1174,6 +1174,7 @@ const resources = {
       delete: "நீக்கு",
       search: "தேடு",
       loading: "ஏற்றுகிறது...",
+      chatComingSoon: "அரட்டை பக்கம் விரைவில் வரும்...",
       email: "மின்னஞ்சல்",
       password: "கடவுச்சொல்",
       dashboard: "டாஷ்போர்ட்",
