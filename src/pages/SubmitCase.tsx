@@ -126,10 +126,10 @@ const SubmitCase: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Case Type *</Label>
+              <Label>{t('caseTypeLabel')} *</Label>
               <Select value={formData.case_type} onValueChange={v => setFormData(p => ({ ...p, case_type: v }))}>
-                <SelectTrigger><SelectValue placeholder="Select case type" /></SelectTrigger>
-                <SelectContent>{CASE_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+                <SelectTrigger><SelectValue placeholder={t('selectCaseType')} /></SelectTrigger>
+                <SelectContent>{CASE_TYPES.map(ct => <SelectItem key={ct} value={ct}>{ct}</SelectItem>)}</SelectContent>
               </Select>
             </div>
 
