@@ -143,23 +143,23 @@ const MyCases: React.FC = () => {
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search cases..." className="pl-10" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+          <Input placeholder={t('searchCases')} className="pl-10" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
         </div>
         <Select value={filterType} onValueChange={setFilterType}>
-          <SelectTrigger className="w-[180px]"><Filter className="h-4 w-4 mr-1" /><SelectValue placeholder="Case Type" /></SelectTrigger>
+          <SelectTrigger className="w-[180px]"><Filter className="h-4 w-4 mr-1" /><SelectValue placeholder={t('caseType')} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            {caseTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+            <SelectItem value="all">{t('allTypes')}</SelectItem>
+            {caseTypes.map(ct => <SelectItem key={ct} value={ct}>{ct}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-[180px]"><SelectValue placeholder="Status" /></SelectTrigger>
+          <SelectTrigger className="w-[180px]"><SelectValue placeholder={t('status')} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="accepted">Accepted</SelectItem>
-            <SelectItem value="in_progress">In Progress</SelectItem>
-            <SelectItem value="closed">Closed</SelectItem>
+            <SelectItem value="all">{t('allStatus')}</SelectItem>
+            <SelectItem value="pending">{t('pending')}</SelectItem>
+            <SelectItem value="accepted">{t('accepted')}</SelectItem>
+            <SelectItem value="in_progress">{t('inProgressLabel')}</SelectItem>
+            <SelectItem value="closed">{t('closed')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
