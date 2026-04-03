@@ -26,6 +26,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 const MyCases: React.FC = () => {
+  const { t } = useTranslation();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [cases, setCases] = useState<any[]>([]);
