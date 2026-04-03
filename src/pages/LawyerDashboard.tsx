@@ -257,7 +257,7 @@ const LawyerDashboard: React.FC = () => {
                         <Icon className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium">{doc.label}</p>
+                        <p className="text-sm font-medium">{t(doc.labelKey)}</p>
                         {existing ? (
                           <div className="flex items-center gap-2 mt-0.5">
                             <span className="text-xs text-muted-foreground">{existing.file_name}</span>
