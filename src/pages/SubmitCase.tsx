@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,6 +20,7 @@ const CASE_TYPES = [
 ];
 
 const SubmitCase: React.FC = () => {
+  const { t } = useTranslation();
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -40,7 +42,7 @@ const SubmitCase: React.FC = () => {
     e.preventDefault();
     if (!user) return;
     if (!formData.title || !formData.case_type || !formData.description) {
-      toast({ title: 'Error', description: 'Please fill all required fields.', variant: 'destructive' });
+      toast({ title: t('error'), description: t('pleaseFillRequired'), variant: 'destructive' });
       return;
     }
 
@@ -66,22 +68,22 @@ const SubmitCase: React.FC = () => {
         // Direct lawyer request
         await supabase.from('notifications').insert({
           user_id: lawyerId,
-          title: 'New Case Request',
-          message: `New case request: "${formData.title}" (${formData.case_type})`,
+          title: t('newCaseRequest'),
+          message: `${t('newCaseRequest')}: "${formData.title}" (${formData.case_type})`,
           type: 'case_request',
           related_case_id: caseId,
         });
-        toast({ title: 'Case Submitted!', description: 'Your case has been sent to the lawyer.' });
+        toast({ title: t('caseSubmitted'), description: t('caseSentToLawyer') });
         navigate('/my-cases');
       } else {
         // Trigger smart matching
-        toast({ title: 'Case Submitted!', description: 'Finding the best lawyers for your case...' });
+        toast({ title: t('caseSubmitted'), description: t('findingBestLawyers') });
         try {
           const { data: matchData } = await supabase.functions.invoke('match-lawyers', {
             body: { case_id: caseId, action: 'match' },
           });
           if (matchData?.auto_assigned) {
-            toast({ title: 'Lawyer Auto-Assigned', description: 'An urgent case lawyer has been assigned.' });
+            toast({ title: t('lawyerAutoAssigned'), description: t('urgentLawyerAssigned') });
             navigate(`/case/${caseId}`);
           } else if (matchData?.matches?.length > 0) {
             navigate(`/case/${caseId}/select-lawyer`);
@@ -93,7 +95,7 @@ const SubmitCase: React.FC = () => {
         }
       }
     } catch (err: any) {
-      toast({ title: 'Error', description: err.message, variant: 'destructive' });
+      toast({ title: t('error'), description: err.message, variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
@@ -102,7 +104,7 @@ const SubmitCase: React.FC = () => {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-2" />Back
+        <ArrowLeft className="h-4 w-4 mr-2" />{t('back')}
       </Button>
 
       <Card>
@@ -112,53 +114,53 @@ const SubmitCase: React.FC = () => {
               <Scale className="h-6 w-6 text-primary" />
             </div>
           </div>
-          <CardTitle>Submit a Case Request</CardTitle>
-          <CardDescription>Describe your legal issue and a lawyer will review it</CardDescription>
+          <CardTitle>{t('submitCaseRequest')}</CardTitle>
+          <CardDescription>{t('describeLegalIssue')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label>Case Title *</Label>
-              <Input placeholder="e.g. Property dispute in Bangalore" value={formData.title}
+              <Label>{t('caseTitle')} *</Label>
+              <Input placeholder={t('caseTitlePlaceholder')} value={formData.title}
                 onChange={e => setFormData(p => ({ ...p, title: e.target.value }))} />
             </div>
 
             <div className="space-y-2">
-              <Label>Case Type *</Label>
+              <Label>{t('caseTypeLabel')} *</Label>
               <Select value={formData.case_type} onValueChange={v => setFormData(p => ({ ...p, case_type: v }))}>
-                <SelectTrigger><SelectValue placeholder="Select case type" /></SelectTrigger>
-                <SelectContent>{CASE_TYPES.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
+                <SelectTrigger><SelectValue placeholder={t('selectCaseType')} /></SelectTrigger>
+                <SelectContent>{CASE_TYPES.map(ct => <SelectItem key={ct} value={ct}>{ct}</SelectItem>)}</SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label>Describe Your Legal Issue *</Label>
-              <Textarea placeholder="Provide details about your case..." value={formData.description}
+              <Label>{t('describeProblem')} *</Label>
+              <Textarea placeholder={t('provideDetails')} value={formData.description}
                 onChange={e => setFormData(p => ({ ...p, description: e.target.value }))}
                 className="min-h-[120px]" />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Priority</Label>
+                <Label>{t('priority')}</Label>
                 <Select value={formData.priority} onValueChange={v => setFormData(p => ({ ...p, priority: v }))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="urgent">Urgent</SelectItem>
+                    <SelectItem value="low">{t('low')}</SelectItem>
+                    <SelectItem value="medium">{t('medium')}</SelectItem>
+                    <SelectItem value="high">{t('high')}</SelectItem>
+                    <SelectItem value="urgent">{t('urgentLabel')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Preferred Consultation</Label>
+                <Label>{t('preferredConsultation')}</Label>
                 <Select value={formData.preferred_consultation} onValueChange={v => setFormData(p => ({ ...p, preferred_consultation: v }))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="online">Online</SelectItem>
-                    <SelectItem value="phone">Phone</SelectItem>
-                    <SelectItem value="in_person">In Person</SelectItem>
+                    <SelectItem value="online">{t('online')}</SelectItem>
+                    <SelectItem value="phone">{t('phoneLabel')}</SelectItem>
+                    <SelectItem value="in_person">{t('inPerson')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -166,21 +168,21 @@ const SubmitCase: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>City</Label>
-                <Input placeholder="Your city" value={formData.client_location_city}
+                <Label>{t('city')}</Label>
+                <Input placeholder={t('yourCity')} value={formData.client_location_city}
                   onChange={e => setFormData(p => ({ ...p, client_location_city: e.target.value }))} />
               </div>
               <div className="space-y-2">
-                <Label>State</Label>
+                <Label>{t('state')}</Label>
                 <Select value={formData.client_location_state} onValueChange={v => setFormData(p => ({ ...p, client_location_state: v }))}>
-                  <SelectTrigger><SelectValue placeholder="Select state" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t('selectState')} /></SelectTrigger>
                   <SelectContent>{INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
             </div>
 
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'Submit Case Request'}
+              {isSubmitting ? t('submitting') : t('submitCaseRequest')}
             </Button>
           </form>
         </CardContent>

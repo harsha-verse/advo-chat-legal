@@ -16,8 +16,8 @@ const Navigation: React.FC = () => {
   const userNavItems = [
     { path: '/dashboard', icon: Home, label: t('dashboard') },
     { path: '/lawyers', icon: Scale, label: t('lawyers') },
-    { path: '/my-cases', icon: Briefcase, label: 'My Cases' },
-    { path: '/my-consultations', icon: MessageCircle, label: 'Consultations' },
+    { path: '/my-cases', icon: Briefcase, label: t('myCases') },
+    { path: '/my-consultations', icon: MessageCircle, label: t('consultations') },
     { path: '/documents', icon: FileText, label: t('documents') },
     { path: '/templates', icon: File, label: t('templates') },
     { path: '/consultants', icon: Users, label: t('consultants') },
@@ -31,8 +31,8 @@ const Navigation: React.FC = () => {
 
   const lawyerNavItems = [
     { path: '/lawyer-dashboard', icon: Home, label: t('dashboard') },
-    { path: '/my-cases', icon: Briefcase, label: 'Case Dashboard' },
-    { path: '/my-consultations', icon: MessageCircle, label: 'Consultations' },
+    { path: '/my-cases', icon: Briefcase, label: t('caseDashboard') },
+    { path: '/my-consultations', icon: MessageCircle, label: t('consultations') },
     { path: '/documents', icon: FileText, label: t('documents') },
     { path: '/chat', icon: MessageCircle, label: t('chat') },
     { path: '/profile', icon: User, label: t('profile') },
@@ -41,7 +41,7 @@ const Navigation: React.FC = () => {
   const navItems = profile?.user_type === 'lawyer' ? lawyerNavItems : userNavItems;
 
   // Add admin link if user is admin
-  const allItems = isAdmin ? [...navItems, { path: '/admin', icon: ShieldCheck, label: 'Admin' }] : navItems;
+  const allItems = isAdmin ? [...navItems, { path: '/admin', icon: ShieldCheck, label: t('admin') }] : navItems;
 
   return (
     <nav className="bg-card border-r h-full min-h-screen w-64 fixed left-0 top-16 z-40">

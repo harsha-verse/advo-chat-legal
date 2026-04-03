@@ -136,7 +136,7 @@ const Lawyers: React.FC = () => {
 
         <div className="mt-6">
           {loading ? (
-            <div className="text-center py-12"><p className="text-muted-foreground">Loading lawyers...</p></div>
+            <div className="text-center py-12"><p className="text-muted-foreground">{t('loadingLawyers')}</p></div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredLawyers.map((lawyer) => (

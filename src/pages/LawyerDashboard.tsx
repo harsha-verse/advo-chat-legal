@@ -19,9 +19,9 @@ import PerformanceStats from '@/components/Lawyer/PerformanceStats';
 import ReviewsList from '@/components/Lawyer/ReviewsList';
 
 const VERIFICATION_DOCS = [
-  { type: 'bar_certificate', label: 'Bar Council Enrollment Certificate', icon: Scale },
-  { type: 'government_id', label: 'Government ID (Aadhaar / PAN)', icon: ShieldCheck },
-  { type: 'professional_photo', label: 'Professional Photo', icon: User },
+  { type: 'bar_certificate', labelKey: 'barCertificate', icon: Scale },
+  { type: 'government_id', labelKey: 'governmentIdDoc', icon: ShieldCheck },
+  { type: 'professional_photo', labelKey: 'professionalPhoto', icon: User },
 ];
 
 const STATUS_COLORS: Record<string, string> = {
@@ -113,10 +113,10 @@ const LawyerDashboard: React.FC = () => {
         await refreshProfile();
       }
 
-      toast({ title: 'Document Uploaded', description: `${file.name} uploaded successfully.` });
+      toast({ title: t('documentUploaded2'), description: `${file.name} ${t('uploadedSuccessfully')}` });
       fetchDocuments();
     } catch (err: any) {
-      toast({ title: 'Upload Failed', description: err.message, variant: 'destructive' });
+      toast({ title: t('uploadFailed'), description: err.message, variant: 'destructive' });
     } finally {
       setUploading(null);
     }
@@ -127,9 +127,9 @@ const LawyerDashboard: React.FC = () => {
       status: 'accepted', lawyer_id: user!.id, accepted_at: new Date().toISOString(), updated_at: new Date().toISOString(),
     }).eq('id', caseId);
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast({ title: t('error'), description: error.message, variant: 'destructive' });
     } else {
-      toast({ title: 'Case Accepted' });
+      toast({ title: t('caseAccepted') });
       fetchCases();
     }
   };
@@ -139,9 +139,9 @@ const LawyerDashboard: React.FC = () => {
       status: 'declined', updated_at: new Date().toISOString(),
     }).eq('id', caseId);
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast({ title: t('error'), description: error.message, variant: 'destructive' });
     } else {
-      toast({ title: 'Case Declined' });
+      toast({ title: t('caseDeclined') });
       fetchCases();
     }
   };
@@ -149,15 +149,15 @@ const LawyerDashboard: React.FC = () => {
   const getDocStatus = (docType: string) => documents.find(d => d.document_type === docType);
 
   const statusBadge = (status: string) => {
-    const config: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; icon: any }> = {
-      pending: { label: 'Pending Verification', variant: 'outline', icon: Clock },
-      under_review: { label: 'Under Review', variant: 'secondary', icon: Clock },
-      verified: { label: 'Verified Lawyer', variant: 'default', icon: CheckCircle },
-      rejected: { label: 'Rejected', variant: 'destructive', icon: XCircle },
+    const config: Record<string, { labelKey: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; icon: any }> = {
+      pending: { labelKey: 'pendingVerification', variant: 'outline', icon: Clock },
+      under_review: { labelKey: 'underReviewLabel', variant: 'secondary', icon: Clock },
+      verified: { labelKey: 'verifiedLawyer', variant: 'default', icon: CheckCircle },
+      rejected: { labelKey: 'rejectedLabel', variant: 'destructive', icon: XCircle },
     };
     const c = config[status] || config.pending;
     const Icon = c.icon;
-    return <Badge variant={c.variant} className="text-sm"><Icon className="h-3 w-3 mr-1" />{c.label}</Badge>;
+    return <Badge variant={c.variant} className="text-sm"><Icon className="h-3 w-3 mr-1" />{t(c.labelKey)}</Badge>;
   };
 
   const verificationStatus = lawyerProfile?.verification_status || 'pending';
@@ -171,15 +171,15 @@ const LawyerDashboard: React.FC = () => {
       <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg p-6">
         <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Lawyer Dashboard</h1>
-            <p className="text-muted-foreground">Welcome, {profile?.name || user?.email}</p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">{t('lawyerDashboard')}</h1>
+            <p className="text-muted-foreground">{t('welcomeName')}, {profile?.name || user?.email}</p>
           </div>
           <div className="flex items-center gap-3">
             <Button variant="outline" onClick={() => navigate('/lawyer-profile/edit')}>
-              <Edit className="h-4 w-4 mr-2" />Edit Profile
+              <Edit className="h-4 w-4 mr-2" />{t('editProfile')}
             </Button>
             <Button variant="outline" onClick={() => navigate('/my-cases')}>
-              <Briefcase className="h-4 w-4 mr-2" />All Cases
+              <Briefcase className="h-4 w-4 mr-2" />{t('allCases')}
             </Button>
             {statusBadge(verificationStatus)}
           </div>
@@ -189,10 +189,10 @@ const LawyerDashboard: React.FC = () => {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Case Requests', count: pendingCases.length, icon: Clock, color: 'text-yellow-600' },
-          { label: 'Active Cases', count: activeCases.length, icon: Briefcase, color: 'text-blue-600' },
-          { label: 'Completed', count: completedCases.length, icon: CheckCircle, color: 'text-green-600' },
-          { label: 'Notifications', count: notifications.length, icon: Bell, color: 'text-purple-600' },
+          { label: t('caseRequests'), count: pendingCases.length, icon: Clock, color: 'text-yellow-600' },
+          { label: t('activeCases'), count: activeCases.length, icon: Briefcase, color: 'text-blue-600' },
+          { label: t('completedLabel'), count: completedCases.length, icon: CheckCircle, color: 'text-green-600' },
+          { label: t('notificationsLabel'), count: notifications.length, icon: Bell, color: 'text-purple-600' },
         ].map(card => (
           <Card key={card.label}>
             <CardContent className="p-4 flex items-center gap-3">
@@ -215,14 +215,14 @@ const LawyerDashboard: React.FC = () => {
             <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-medium text-foreground">
-                {verificationStatus === 'pending' && 'Complete Your Verification'}
-                {verificationStatus === 'under_review' && 'Verification In Progress'}
-                {verificationStatus === 'rejected' && 'Verification Rejected'}
+                {verificationStatus === 'pending' && t('completeVerification')}
+                {verificationStatus === 'under_review' && t('verificationInProgress')}
+                {verificationStatus === 'rejected' && t('verificationRejected')}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                {verificationStatus === 'pending' && 'Upload all required documents below to start the verification process.'}
-                {verificationStatus === 'under_review' && "Your documents are being reviewed. You'll be notified once approved."}
-                {verificationStatus === 'rejected' && 'Please re-upload your documents or contact support.'}
+                {verificationStatus === 'pending' && t('uploadDocsToVerify')}
+                {verificationStatus === 'under_review' && t('docsBeingReviewed')}
+                {verificationStatus === 'rejected' && t('reuploadDocs')}
               </p>
             </div>
           </CardContent>
@@ -231,20 +231,20 @@ const LawyerDashboard: React.FC = () => {
 
       <Tabs defaultValue={verificationStatus === 'verified' ? 'cases' : 'verification'} className="space-y-4">
         <TabsList className="flex-wrap">
-          <TabsTrigger value="verification">Verification</TabsTrigger>
-          <TabsTrigger value="cases">Case Requests ({pendingCases.length})</TabsTrigger>
-          <TabsTrigger value="active">Active ({activeCases.length})</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications ({notifications.length})</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="verification">{t('verification')}</TabsTrigger>
+          <TabsTrigger value="cases">{t('caseRequests')} ({pendingCases.length})</TabsTrigger>
+          <TabsTrigger value="active">{t('active')} ({activeCases.length})</TabsTrigger>
+          <TabsTrigger value="notifications">{t('notificationsLabel')} ({notifications.length})</TabsTrigger>
+          <TabsTrigger value="performance">{t('performance')}</TabsTrigger>
+          <TabsTrigger value="profile">{t('profile')}</TabsTrigger>
         </TabsList>
 
         {/* Verification Tab */}
         <TabsContent value="verification" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2"><ShieldCheck className="h-5 w-5" /> Document Verification</CardTitle>
-              <CardDescription>Upload your credentials for verification</CardDescription>
+              <CardTitle className="text-lg flex items-center gap-2"><ShieldCheck className="h-5 w-5" /> {t('documentVerification')}</CardTitle>
+              <CardDescription>{t('uploadCredentials')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {VERIFICATION_DOCS.map(doc => {
@@ -257,7 +257,7 @@ const LawyerDashboard: React.FC = () => {
                         <Icon className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium">{doc.label}</p>
+                        <p className="text-sm font-medium">{t(doc.labelKey)}</p>
                         {existing ? (
                           <div className="flex items-center gap-2 mt-0.5">
                             <span className="text-xs text-muted-foreground">{existing.file_name}</span>
@@ -268,7 +268,7 @@ const LawyerDashboard: React.FC = () => {
                             }>{existing.status}</Badge>
                           </div>
                         ) : (
-                          <p className="text-xs text-muted-foreground">Not uploaded</p>
+                          <p className="text-xs text-muted-foreground">{t('notUploaded')}</p>
                         )}
                       </div>
                     </div>
@@ -278,7 +278,7 @@ const LawyerDashboard: React.FC = () => {
                           onChange={e => { const file = e.target.files?.[0]; if (file) handleUpload(doc.type, file); }} />
                         <Button size="sm" variant="outline" disabled={uploading === doc.type} asChild>
                           <label htmlFor={`upload-${doc.type}`} className="cursor-pointer">
-                            <Upload className="h-3.5 w-3.5 mr-1" />{uploading === doc.type ? 'Uploading...' : 'Upload'}
+                            <Upload className="h-3.5 w-3.5 mr-1" />{uploading === doc.type ? t('uploading') : t('upload')}
                           </label>
                         </Button>
                       </div>
@@ -296,7 +296,7 @@ const LawyerDashboard: React.FC = () => {
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
                 <Briefcase className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                <p>{verificationStatus !== 'verified' ? 'Complete verification to receive case requests.' : 'No pending case requests.'}</p>
+                <p>{verificationStatus !== 'verified' ? t('completeVerificationForCases') : t('noPendingCaseRequests')}</p>
               </CardContent>
             </Card>
           ) : (
@@ -308,7 +308,7 @@ const LawyerDashboard: React.FC = () => {
                       <h3 className="font-semibold text-foreground">{c.title}</h3>
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
                         <Badge variant="outline" className="text-xs">{c.case_type}</Badge>
-                        {c.priority === 'urgent' && <Badge variant="destructive" className="text-xs">Urgent</Badge>}
+                        {c.priority === 'urgent' && <Badge variant="destructive" className="text-xs">{t('urgent')}</Badge>}
                       </div>
                       <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{c.description}</p>
                       <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
@@ -319,9 +319,9 @@ const LawyerDashboard: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex flex-col gap-2 ml-4">
-                      <Button size="sm" onClick={() => handleAcceptCase(c.id)}><CheckCircle className="h-3.5 w-3.5 mr-1" />Accept</Button>
-                      <Button size="sm" variant="outline" onClick={() => handleDeclineCase(c.id)}><XCircle className="h-3.5 w-3.5 mr-1" />Decline</Button>
-                      <Button size="sm" variant="ghost" onClick={() => navigate(`/case/${c.id}`)}><ArrowRight className="h-3.5 w-3.5 mr-1" />Details</Button>
+                      <Button size="sm" onClick={() => handleAcceptCase(c.id)}><CheckCircle className="h-3.5 w-3.5 mr-1" />{t('accept')}</Button>
+                      <Button size="sm" variant="outline" onClick={() => handleDeclineCase(c.id)}><XCircle className="h-3.5 w-3.5 mr-1" />{t('decline')}</Button>
+                      <Button size="sm" variant="ghost" onClick={() => navigate(`/case/${c.id}`)}><ArrowRight className="h-3.5 w-3.5 mr-1" />{t('details')}</Button>
                     </div>
                   </div>
                 </CardContent>
@@ -336,7 +336,7 @@ const LawyerDashboard: React.FC = () => {
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
                 <Briefcase className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                <p>No active cases.</p>
+                <p>{t('noActiveCases')}</p>
               </CardContent>
             </Card>
           ) : (
@@ -365,7 +365,7 @@ const LawyerDashboard: React.FC = () => {
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
                 <Bell className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                <p>No new notifications.</p>
+                <p>{t('noNewNotifications')}</p>
               </CardContent>
             </Card>
           ) : (
@@ -404,21 +404,21 @@ const LawyerDashboard: React.FC = () => {
         {/* Profile Tab */}
         <TabsContent value="profile">
           <Card>
-            <CardHeader><CardTitle className="text-lg">Professional Profile</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-lg">{t('professionalProfile')}</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div><Label className="text-muted-foreground text-xs">Name</Label><p className="font-medium">{profile?.name}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Email</Label><p className="font-medium">{profile?.email}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Phone</Label><p className="font-medium">{profile?.phone || 'Not set'}</p></div>
-                <div><Label className="text-muted-foreground text-xs">State</Label><p className="font-medium">{profile?.state || 'Not set'}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Bar Council Number</Label><p className="font-medium">{lawyerProfile?.bar_council_number}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Role</Label><p className="font-medium capitalize">{lawyerProfile?.role_type?.replace('_', ' ')}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Experience</Label><p className="font-medium">{lawyerProfile?.experience} years</p></div>
-                <div><Label className="text-muted-foreground text-xs">Consultation Fee</Label><p className="font-medium">₹{lawyerProfile?.consultation_fee}/hr</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('name')}</Label><p className="font-medium">{profile?.name}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('email')}</Label><p className="font-medium">{profile?.email}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('phone')}</Label><p className="font-medium">{profile?.phone || t('notSetLabel')}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('state')}</Label><p className="font-medium">{profile?.state || t('notSetLabel')}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('barCouncilNumber')}</Label><p className="font-medium">{lawyerProfile?.bar_council_number}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('role')}</Label><p className="font-medium capitalize">{lawyerProfile?.role_type?.replace('_', ' ')}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('experience')}</Label><p className="font-medium">{lawyerProfile?.experience} {t('years')}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('consultationFeeLabel')}</Label><p className="font-medium">₹{lawyerProfile?.consultation_fee}/{t('perHour')}</p></div>
               </div>
               {lawyerProfile?.practice_areas && lawyerProfile.practice_areas.length > 0 && (
                 <div>
-                  <Label className="text-muted-foreground text-xs">Practice Areas</Label>
+                  <Label className="text-muted-foreground text-xs">{t('practiceAreas')}</Label>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {lawyerProfile.practice_areas.map(a => <Badge key={a} variant="outline">{a}</Badge>)}
                   </div>

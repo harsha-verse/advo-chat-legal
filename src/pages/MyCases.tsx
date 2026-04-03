@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -25,6 +26,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 const MyCases: React.FC = () => {
+  const { t } = useTranslation();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [cases, setCases] = useState<any[]>([]);
@@ -66,9 +68,9 @@ const MyCases: React.FC = () => {
   const caseTypes = [...new Set(cases.map(c => c.case_type))];
 
   const summaryCards = [
-    { label: 'Case Requests', count: cases.filter(c => c.status === 'pending').length, icon: Clock, color: 'text-yellow-600' },
-    { label: 'Active Cases', count: cases.filter(c => ['accepted', 'in_progress', 'under_review', 'consultation_scheduled', 'waiting_for_client'].includes(c.status)).length, icon: Briefcase, color: 'text-blue-600' },
-    { label: 'Completed', count: cases.filter(c => c.status === 'closed').length, icon: CheckCircle, color: 'text-green-600' },
+    { label: t('caseRequests'), count: cases.filter(c => c.status === 'pending').length, icon: Clock, color: 'text-yellow-600' },
+    { label: t('activeCases'), count: cases.filter(c => ['accepted', 'in_progress', 'under_review', 'consultation_scheduled', 'waiting_for_client'].includes(c.status)).length, icon: Briefcase, color: 'text-blue-600' },
+    { label: t('completedLabel'), count: cases.filter(c => c.status === 'closed').length, icon: CheckCircle, color: 'text-green-600' },
   ];
 
   const CaseCard = ({ caseItem }: { caseItem: any }) => (
@@ -82,7 +84,7 @@ const MyCases: React.FC = () => {
               <Badge className={`text-xs ${STATUS_COLORS[caseItem.status] || ''}`}>
                 {caseItem.status.replace(/_/g, ' ')}
               </Badge>
-              {caseItem.priority === 'urgent' && <Badge variant="destructive" className="text-xs">Urgent</Badge>}
+               {caseItem.priority === 'urgent' && <Badge variant="destructive" className="text-xs">{t('urgent')}</Badge>}
             </div>
             <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{caseItem.description}</p>
             <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
@@ -110,12 +112,12 @@ const MyCases: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">{isLawyer ? 'Case Dashboard' : 'My Cases'}</h1>
-          <p className="text-muted-foreground">{isLawyer ? 'Manage your case requests and active cases' : 'Track and manage your legal cases'}</p>
+          <h1 className="text-3xl font-bold text-foreground">{isLawyer ? t('caseDashboard') : t('myCasesTitle')}</h1>
+          <p className="text-muted-foreground">{isLawyer ? t('manageCaseRequests') : t('trackManageCases')}</p>
         </div>
         {!isLawyer && (
           <Button onClick={() => navigate('/submit-case')}>
-            <Plus className="h-4 w-4 mr-2" />Submit New Case
+            <Plus className="h-4 w-4 mr-2" />{t('submitNewCase')}
           </Button>
         )}
       </div>
@@ -141,23 +143,23 @@ const MyCases: React.FC = () => {
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search cases..." className="pl-10" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+          <Input placeholder={t('searchCases')} className="pl-10" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
         </div>
         <Select value={filterType} onValueChange={setFilterType}>
-          <SelectTrigger className="w-[180px]"><Filter className="h-4 w-4 mr-1" /><SelectValue placeholder="Case Type" /></SelectTrigger>
+          <SelectTrigger className="w-[180px]"><Filter className="h-4 w-4 mr-1" /><SelectValue placeholder={t('caseType')} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            {caseTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+            <SelectItem value="all">{t('allTypes')}</SelectItem>
+            {caseTypes.map(ct => <SelectItem key={ct} value={ct}>{ct}</SelectItem>)}
           </SelectContent>
         </Select>
         <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-[180px]"><SelectValue placeholder="Status" /></SelectTrigger>
+          <SelectTrigger className="w-[180px]"><SelectValue placeholder={t('status')} /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="accepted">Accepted</SelectItem>
-            <SelectItem value="in_progress">In Progress</SelectItem>
-            <SelectItem value="closed">Closed</SelectItem>
+            <SelectItem value="all">{t('allStatus')}</SelectItem>
+            <SelectItem value="pending">{t('pending')}</SelectItem>
+            <SelectItem value="accepted">{t('accepted')}</SelectItem>
+            <SelectItem value="in_progress">{t('inProgressLabel')}</SelectItem>
+            <SelectItem value="closed">{t('closed')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -170,23 +172,23 @@ const MyCases: React.FC = () => {
       ) : (
         <Tabs defaultValue="requests">
           <TabsList>
-            <TabsTrigger value="requests">{isLawyer ? 'Case Requests' : 'Pending'} ({pendingCases.length})</TabsTrigger>
-            <TabsTrigger value="active">Active ({activeCases.length})</TabsTrigger>
-            <TabsTrigger value="completed">Completed ({completedCases.length})</TabsTrigger>
+            <TabsTrigger value="requests">{isLawyer ? t('caseRequests') : t('pending')} ({pendingCases.length})</TabsTrigger>
+            <TabsTrigger value="active">{t('active')} ({activeCases.length})</TabsTrigger>
+            <TabsTrigger value="completed">{t('completedLabel')} ({completedCases.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="requests" className="space-y-3 mt-4">
-            {pendingCases.length === 0 ? <EmptyState message={isLawyer ? 'No pending case requests.' : 'No pending cases.'} /> :
+            {pendingCases.length === 0 ? <EmptyState message={isLawyer ? t('noPendingCaseRequestsLawyer') : t('noPendingCases')} /> :
               pendingCases.map(c => <CaseCard key={c.id} caseItem={c} />)}
           </TabsContent>
 
           <TabsContent value="active" className="space-y-3 mt-4">
-            {activeCases.length === 0 ? <EmptyState message="No active cases." /> :
+            {activeCases.length === 0 ? <EmptyState message={t('noActiveCasesLabel')} /> :
               activeCases.map(c => <CaseCard key={c.id} caseItem={c} />)}
           </TabsContent>
 
           <TabsContent value="completed" className="space-y-3 mt-4">
-            {completedCases.length === 0 ? <EmptyState message="No completed cases." /> :
+            {completedCases.length === 0 ? <EmptyState message={t('noCompletedCases')} /> :
               completedCases.map(c => <CaseCard key={c.id} caseItem={c} />)}
           </TabsContent>
         </Tabs>
