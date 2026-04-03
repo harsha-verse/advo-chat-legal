@@ -173,9 +173,9 @@ const SubmitCase: React.FC = () => {
                   onChange={e => setFormData(p => ({ ...p, client_location_city: e.target.value }))} />
               </div>
               <div className="space-y-2">
-                <Label>State</Label>
+                <Label>{t('state')}</Label>
                 <Select value={formData.client_location_state} onValueChange={v => setFormData(p => ({ ...p, client_location_state: v }))}>
-                  <SelectTrigger><SelectValue placeholder="Select state" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t('selectState')} /></SelectTrigger>
                   <SelectContent>{INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
