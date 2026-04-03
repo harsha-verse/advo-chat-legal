@@ -20,6 +20,7 @@ const CASE_TYPES = [
 ];
 
 const SubmitCase: React.FC = () => {
+  const { t } = useTranslation();
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
