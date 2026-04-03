@@ -336,7 +336,7 @@ const LawyerDashboard: React.FC = () => {
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
                 <Briefcase className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                <p>No active cases.</p>
+                <p>{t('noActiveCases')}</p>
               </CardContent>
             </Card>
           ) : (
