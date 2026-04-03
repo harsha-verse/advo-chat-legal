@@ -114,8 +114,8 @@ const SubmitCase: React.FC = () => {
               <Scale className="h-6 w-6 text-primary" />
             </div>
           </div>
-          <CardTitle>Submit a Case Request</CardTitle>
-          <CardDescription>Describe your legal issue and a lawyer will review it</CardDescription>
+          <CardTitle>{t('submitCaseRequest')}</CardTitle>
+          <CardDescription>{t('describeLegalIssue')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
