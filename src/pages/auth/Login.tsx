@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Globe } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { LANGUAGE_OPTIONS } from '@/i18n';
+import { lovable } from '@/integrations/lovable/index';
 import logo from '@/assets/logo.png';
 
 const Login: React.FC = () => {
