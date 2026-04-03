@@ -32,23 +32,13 @@ import SelectLawyer from "./pages/SelectLawyer";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import "./i18n";
-
-let lang = "en";
-
-const text: Record<string, Record<string, string>> = {
-  en: { loading: "Loading..." },
-  hi: { loading: "लोड हो रहा है..." },
-  kn: { loading: "ಲೋಡ್ ಆಗುತ್ತಿದೆ..." }
-};
-
-function t(key: string) {
-  return text[lang]?.[key] ?? key;
-}
+import { useTranslation } from "react-i18next";
 
 const queryClient = new QueryClient();
 
 // Protected Route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
   const { user, isLoading } = useAuth();
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center">{t("loading")}</div>;
