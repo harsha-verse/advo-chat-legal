@@ -189,10 +189,10 @@ const LawyerDashboard: React.FC = () => {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Case Requests', count: pendingCases.length, icon: Clock, color: 'text-yellow-600' },
-          { label: 'Active Cases', count: activeCases.length, icon: Briefcase, color: 'text-blue-600' },
-          { label: 'Completed', count: completedCases.length, icon: CheckCircle, color: 'text-green-600' },
-          { label: 'Notifications', count: notifications.length, icon: Bell, color: 'text-purple-600' },
+          { label: t('caseRequests'), count: pendingCases.length, icon: Clock, color: 'text-yellow-600' },
+          { label: t('activeCases'), count: activeCases.length, icon: Briefcase, color: 'text-blue-600' },
+          { label: t('completedLabel'), count: completedCases.length, icon: CheckCircle, color: 'text-green-600' },
+          { label: t('notificationsLabel'), count: notifications.length, icon: Bell, color: 'text-purple-600' },
         ].map(card => (
           <Card key={card.label}>
             <CardContent className="p-4 flex items-center gap-3">
