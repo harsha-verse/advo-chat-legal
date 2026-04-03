@@ -616,6 +616,7 @@ const resources = {
       delete: "हटाएं",
       search: "खोजें",
       loading: "लोड हो रहा है...",
+      chatComingSoon: "चैट पेज जल्द आ रहा है...",
       submit: "सबमिट करें",
       back: "वापस",
       next: "अगला",
