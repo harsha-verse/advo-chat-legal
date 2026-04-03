@@ -142,14 +142,14 @@ const SubmitCase: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Priority</Label>
+                <Label>{t('priority')}</Label>
                 <Select value={formData.priority} onValueChange={v => setFormData(p => ({ ...p, priority: v }))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="urgent">Urgent</SelectItem>
+                    <SelectItem value="low">{t('low')}</SelectItem>
+                    <SelectItem value="medium">{t('medium')}</SelectItem>
+                    <SelectItem value="high">{t('high')}</SelectItem>
+                    <SelectItem value="urgent">{t('urgentLabel')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
