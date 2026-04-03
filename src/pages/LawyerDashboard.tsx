@@ -113,7 +113,7 @@ const LawyerDashboard: React.FC = () => {
         await refreshProfile();
       }
 
-      toast({ title: 'Document Uploaded', description: `${file.name} uploaded successfully.` });
+      toast({ title: t('documentUploaded2'), description: `${file.name} ${t('uploadedSuccessfully')}` });
       fetchDocuments();
     } catch (err: any) {
       toast({ title: 'Upload Failed', description: err.message, variant: 'destructive' });
