@@ -41,7 +41,7 @@ const Navigation: React.FC = () => {
   const navItems = profile?.user_type === 'lawyer' ? lawyerNavItems : userNavItems;
 
   // Add admin link if user is admin
-  const allItems = isAdmin ? [...navItems, { path: '/admin', icon: ShieldCheck, label: 'Admin' }] : navItems;
+  const allItems = isAdmin ? [...navItems, { path: '/admin', icon: ShieldCheck, label: t('admin') }] : navItems;
 
   return (
     <nav className="bg-card border-r h-full min-h-screen w-64 fixed left-0 top-16 z-40">
