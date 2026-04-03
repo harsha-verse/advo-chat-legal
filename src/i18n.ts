@@ -15,6 +15,7 @@ const resources = {
       delete: "Delete",
       search: "Search",
       loading: "Loading...",
+      chatComingSoon: "Chat page coming soon...",
       submit: "Submit",
       back: "Back",
       next: "Next",
