@@ -112,12 +112,12 @@ const MyCases: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">{isLawyer ? 'Case Dashboard' : 'My Cases'}</h1>
-          <p className="text-muted-foreground">{isLawyer ? 'Manage your case requests and active cases' : 'Track and manage your legal cases'}</p>
+          <h1 className="text-3xl font-bold text-foreground">{isLawyer ? t('caseDashboard') : t('myCasesTitle')}</h1>
+          <p className="text-muted-foreground">{isLawyer ? t('manageCaseRequests') : t('trackManageCases')}</p>
         </div>
         {!isLawyer && (
           <Button onClick={() => navigate('/submit-case')}>
-            <Plus className="h-4 w-4 mr-2" />Submit New Case
+            <Plus className="h-4 w-4 mr-2" />{t('submitNewCase')}
           </Button>
         )}
       </div>
