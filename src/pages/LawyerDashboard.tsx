@@ -116,7 +116,7 @@ const LawyerDashboard: React.FC = () => {
       toast({ title: t('documentUploaded2'), description: `${file.name} ${t('uploadedSuccessfully')}` });
       fetchDocuments();
     } catch (err: any) {
-      toast({ title: 'Upload Failed', description: err.message, variant: 'destructive' });
+      toast({ title: t('uploadFailed'), description: err.message, variant: 'destructive' });
     } finally {
       setUploading(null);
     }
