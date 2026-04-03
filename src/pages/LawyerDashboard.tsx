@@ -139,9 +139,9 @@ const LawyerDashboard: React.FC = () => {
       status: 'declined', updated_at: new Date().toISOString(),
     }).eq('id', caseId);
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast({ title: t('error'), description: error.message, variant: 'destructive' });
     } else {
-      toast({ title: 'Case Declined' });
+      toast({ title: t('caseDeclined') });
       fetchCases();
     }
   };
