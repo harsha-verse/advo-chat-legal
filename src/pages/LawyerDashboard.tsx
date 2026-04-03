@@ -243,8 +243,8 @@ const LawyerDashboard: React.FC = () => {
         <TabsContent value="verification" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2"><ShieldCheck className="h-5 w-5" /> Document Verification</CardTitle>
-              <CardDescription>Upload your credentials for verification</CardDescription>
+              <CardTitle className="text-lg flex items-center gap-2"><ShieldCheck className="h-5 w-5" /> {t('documentVerification')}</CardTitle>
+              <CardDescription>{t('uploadCredentials')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {VERIFICATION_DOCS.map(doc => {
