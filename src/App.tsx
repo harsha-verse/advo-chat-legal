@@ -33,6 +33,18 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import "./i18n";
 
+let lang = "en";
+
+const text: Record<string, Record<string, string>> = {
+  en: { loading: "Loading..." },
+  hi: { loading: "लोड हो रहा है..." },
+  kn: { loading: "ಲೋಡ್ ಆಗುತ್ತಿದೆ..." }
+};
+
+function t(key: string) {
+  return text[lang]?.[key] ?? key;
+}
+
 const queryClient = new QueryClient();
 
 // Protected Route component
