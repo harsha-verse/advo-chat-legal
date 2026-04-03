@@ -95,7 +95,7 @@ const SubmitCase: React.FC = () => {
         }
       }
     } catch (err: any) {
-      toast({ title: 'Error', description: err.message, variant: 'destructive' });
+      toast({ title: t('error'), description: err.message, variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
