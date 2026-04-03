@@ -31,8 +31,8 @@ const Navigation: React.FC = () => {
 
   const lawyerNavItems = [
     { path: '/lawyer-dashboard', icon: Home, label: t('dashboard') },
-    { path: '/my-cases', icon: Briefcase, label: 'Case Dashboard' },
-    { path: '/my-consultations', icon: MessageCircle, label: 'Consultations' },
+    { path: '/my-cases', icon: Briefcase, label: t('caseDashboard') },
+    { path: '/my-consultations', icon: MessageCircle, label: t('consultations') },
     { path: '/documents', icon: FileText, label: t('documents') },
     { path: '/chat', icon: MessageCircle, label: t('chat') },
     { path: '/profile', icon: User, label: t('profile') },
