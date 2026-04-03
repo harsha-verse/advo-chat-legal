@@ -365,7 +365,7 @@ const LawyerDashboard: React.FC = () => {
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
                 <Bell className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                <p>No new notifications.</p>
+                <p>{t('noNewNotifications')}</p>
               </CardContent>
             </Card>
           ) : (
