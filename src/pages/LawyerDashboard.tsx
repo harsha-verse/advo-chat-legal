@@ -231,12 +231,12 @@ const LawyerDashboard: React.FC = () => {
 
       <Tabs defaultValue={verificationStatus === 'verified' ? 'cases' : 'verification'} className="space-y-4">
         <TabsList className="flex-wrap">
-          <TabsTrigger value="verification">Verification</TabsTrigger>
-          <TabsTrigger value="cases">Case Requests ({pendingCases.length})</TabsTrigger>
-          <TabsTrigger value="active">Active ({activeCases.length})</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications ({notifications.length})</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="verification">{t('verification')}</TabsTrigger>
+          <TabsTrigger value="cases">{t('caseRequests')} ({pendingCases.length})</TabsTrigger>
+          <TabsTrigger value="active">{t('active')} ({activeCases.length})</TabsTrigger>
+          <TabsTrigger value="notifications">{t('notificationsLabel')} ({notifications.length})</TabsTrigger>
+          <TabsTrigger value="performance">{t('performance')}</TabsTrigger>
+          <TabsTrigger value="profile">{t('profile')}</TabsTrigger>
         </TabsList>
 
         {/* Verification Tab */}
