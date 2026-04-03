@@ -19,9 +19,9 @@ import PerformanceStats from '@/components/Lawyer/PerformanceStats';
 import ReviewsList from '@/components/Lawyer/ReviewsList';
 
 const VERIFICATION_DOCS = [
-  { type: 'bar_certificate', label: 'Bar Council Enrollment Certificate', icon: Scale },
-  { type: 'government_id', label: 'Government ID (Aadhaar / PAN)', icon: ShieldCheck },
-  { type: 'professional_photo', label: 'Professional Photo', icon: User },
+  { type: 'bar_certificate', labelKey: 'barCertificate', icon: Scale },
+  { type: 'government_id', labelKey: 'governmentIdDoc', icon: ShieldCheck },
+  { type: 'professional_photo', labelKey: 'professionalPhoto', icon: User },
 ];
 
 const STATUS_COLORS: Record<string, string> = {
