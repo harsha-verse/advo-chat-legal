@@ -149,15 +149,15 @@ const LawyerDashboard: React.FC = () => {
   const getDocStatus = (docType: string) => documents.find(d => d.document_type === docType);
 
   const statusBadge = (status: string) => {
-    const config: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; icon: any }> = {
-      pending: { label: 'Pending Verification', variant: 'outline', icon: Clock },
-      under_review: { label: 'Under Review', variant: 'secondary', icon: Clock },
-      verified: { label: 'Verified Lawyer', variant: 'default', icon: CheckCircle },
-      rejected: { label: 'Rejected', variant: 'destructive', icon: XCircle },
+    const config: Record<string, { labelKey: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; icon: any }> = {
+      pending: { labelKey: 'pendingVerification', variant: 'outline', icon: Clock },
+      under_review: { labelKey: 'underReviewLabel', variant: 'secondary', icon: Clock },
+      verified: { labelKey: 'verifiedLawyer', variant: 'default', icon: CheckCircle },
+      rejected: { labelKey: 'rejectedLabel', variant: 'destructive', icon: XCircle },
     };
     const c = config[status] || config.pending;
     const Icon = c.icon;
-    return <Badge variant={c.variant} className="text-sm"><Icon className="h-3 w-3 mr-1" />{c.label}</Badge>;
+    return <Badge variant={c.variant} className="text-sm"><Icon className="h-3 w-3 mr-1" />{t(c.labelKey)}</Badge>;
   };
 
   const verificationStatus = lawyerProfile?.verification_status || 'pending';
