@@ -171,15 +171,15 @@ const LawyerDashboard: React.FC = () => {
       <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg p-6">
         <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Lawyer Dashboard</h1>
-            <p className="text-muted-foreground">Welcome, {profile?.name || user?.email}</p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">{t('lawyerDashboard')}</h1>
+            <p className="text-muted-foreground">{t('welcomeName')}, {profile?.name || user?.email}</p>
           </div>
           <div className="flex items-center gap-3">
             <Button variant="outline" onClick={() => navigate('/lawyer-profile/edit')}>
-              <Edit className="h-4 w-4 mr-2" />Edit Profile
+              <Edit className="h-4 w-4 mr-2" />{t('editProfile')}
             </Button>
             <Button variant="outline" onClick={() => navigate('/my-cases')}>
-              <Briefcase className="h-4 w-4 mr-2" />All Cases
+              <Briefcase className="h-4 w-4 mr-2" />{t('allCases')}
             </Button>
             {statusBadge(verificationStatus)}
           </div>
