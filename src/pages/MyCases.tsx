@@ -84,7 +84,7 @@ const MyCases: React.FC = () => {
               <Badge className={`text-xs ${STATUS_COLORS[caseItem.status] || ''}`}>
                 {caseItem.status.replace(/_/g, ' ')}
               </Badge>
-              {caseItem.priority === 'urgent' && <Badge variant="destructive" className="text-xs">Urgent</Badge>}
+               {caseItem.priority === 'urgent' && <Badge variant="destructive" className="text-xs">{t('urgent')}</Badge>}
             </div>
             <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{caseItem.description}</p>
             <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
