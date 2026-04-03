@@ -418,7 +418,7 @@ const LawyerDashboard: React.FC = () => {
               </div>
               {lawyerProfile?.practice_areas && lawyerProfile.practice_areas.length > 0 && (
                 <div>
-                  <Label className="text-muted-foreground text-xs">Practice Areas</Label>
+                  <Label className="text-muted-foreground text-xs">{t('practiceAreas')}</Label>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {lawyerProfile.practice_areas.map(a => <Badge key={a} variant="outline">{a}</Badge>)}
                   </div>
