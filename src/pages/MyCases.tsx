@@ -68,9 +68,9 @@ const MyCases: React.FC = () => {
   const caseTypes = [...new Set(cases.map(c => c.case_type))];
 
   const summaryCards = [
-    { label: 'Case Requests', count: cases.filter(c => c.status === 'pending').length, icon: Clock, color: 'text-yellow-600' },
-    { label: 'Active Cases', count: cases.filter(c => ['accepted', 'in_progress', 'under_review', 'consultation_scheduled', 'waiting_for_client'].includes(c.status)).length, icon: Briefcase, color: 'text-blue-600' },
-    { label: 'Completed', count: cases.filter(c => c.status === 'closed').length, icon: CheckCircle, color: 'text-green-600' },
+    { label: t('caseRequests'), count: cases.filter(c => c.status === 'pending').length, icon: Clock, color: 'text-yellow-600' },
+    { label: t('activeCases'), count: cases.filter(c => ['accepted', 'in_progress', 'under_review', 'consultation_scheduled', 'waiting_for_client'].includes(c.status)).length, icon: Briefcase, color: 'text-blue-600' },
+    { label: t('completedLabel'), count: cases.filter(c => c.status === 'closed').length, icon: CheckCircle, color: 'text-green-600' },
   ];
 
   const CaseCard = ({ caseItem }: { caseItem: any }) => (
