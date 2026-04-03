@@ -296,7 +296,7 @@ const LawyerDashboard: React.FC = () => {
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
                 <Briefcase className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                <p>{verificationStatus !== 'verified' ? 'Complete verification to receive case requests.' : 'No pending case requests.'}</p>
+                <p>{verificationStatus !== 'verified' ? t('completeVerificationForCases') : t('noPendingCaseRequests')}</p>
               </CardContent>
             </Card>
           ) : (
