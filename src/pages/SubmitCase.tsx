@@ -77,13 +77,13 @@ const SubmitCase: React.FC = () => {
         navigate('/my-cases');
       } else {
         // Trigger smart matching
-        toast({ title: 'Case Submitted!', description: 'Finding the best lawyers for your case...' });
+        toast({ title: t('caseSubmitted'), description: t('findingBestLawyers') });
         try {
           const { data: matchData } = await supabase.functions.invoke('match-lawyers', {
             body: { case_id: caseId, action: 'match' },
           });
           if (matchData?.auto_assigned) {
-            toast({ title: 'Lawyer Auto-Assigned', description: 'An urgent case lawyer has been assigned.' });
+            toast({ title: t('lawyerAutoAssigned'), description: t('urgentLawyerAssigned') });
             navigate(`/case/${caseId}`);
           } else if (matchData?.matches?.length > 0) {
             navigate(`/case/${caseId}/select-lawyer`);
