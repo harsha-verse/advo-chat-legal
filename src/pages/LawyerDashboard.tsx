@@ -215,14 +215,14 @@ const LawyerDashboard: React.FC = () => {
             <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-medium text-foreground">
-                {verificationStatus === 'pending' && 'Complete Your Verification'}
-                {verificationStatus === 'under_review' && 'Verification In Progress'}
-                {verificationStatus === 'rejected' && 'Verification Rejected'}
+                {verificationStatus === 'pending' && t('completeVerification')}
+                {verificationStatus === 'under_review' && t('verificationInProgress')}
+                {verificationStatus === 'rejected' && t('verificationRejected')}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                {verificationStatus === 'pending' && 'Upload all required documents below to start the verification process.'}
-                {verificationStatus === 'under_review' && "Your documents are being reviewed. You'll be notified once approved."}
-                {verificationStatus === 'rejected' && 'Please re-upload your documents or contact support.'}
+                {verificationStatus === 'pending' && t('uploadDocsToVerify')}
+                {verificationStatus === 'under_review' && t('docsBeingReviewed')}
+                {verificationStatus === 'rejected' && t('reuploadDocs')}
               </p>
             </div>
           </CardContent>
