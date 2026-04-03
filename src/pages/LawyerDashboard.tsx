@@ -278,7 +278,7 @@ const LawyerDashboard: React.FC = () => {
                           onChange={e => { const file = e.target.files?.[0]; if (file) handleUpload(doc.type, file); }} />
                         <Button size="sm" variant="outline" disabled={uploading === doc.type} asChild>
                           <label htmlFor={`upload-${doc.type}`} className="cursor-pointer">
-                            <Upload className="h-3.5 w-3.5 mr-1" />{uploading === doc.type ? 'Uploading...' : 'Upload'}
+                            <Upload className="h-3.5 w-3.5 mr-1" />{uploading === doc.type ? t('uploading') : t('upload')}
                           </label>
                         </Button>
                       </div>
