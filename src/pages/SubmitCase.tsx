@@ -154,13 +154,13 @@ const SubmitCase: React.FC = () => {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Preferred Consultation</Label>
+                <Label>{t('preferredConsultation')}</Label>
                 <Select value={formData.preferred_consultation} onValueChange={v => setFormData(p => ({ ...p, preferred_consultation: v }))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="online">Online</SelectItem>
-                    <SelectItem value="phone">Phone</SelectItem>
-                    <SelectItem value="in_person">In Person</SelectItem>
+                    <SelectItem value="online">{t('online')}</SelectItem>
+                    <SelectItem value="phone">{t('phoneLabel')}</SelectItem>
+                    <SelectItem value="in_person">{t('inPerson')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
