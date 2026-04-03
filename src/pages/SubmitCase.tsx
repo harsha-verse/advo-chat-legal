@@ -68,12 +68,12 @@ const SubmitCase: React.FC = () => {
         // Direct lawyer request
         await supabase.from('notifications').insert({
           user_id: lawyerId,
-          title: 'New Case Request',
-          message: `New case request: "${formData.title}" (${formData.case_type})`,
+          title: t('newCaseRequest'),
+          message: `${t('newCaseRequest')}: "${formData.title}" (${formData.case_type})`,
           type: 'case_request',
           related_case_id: caseId,
         });
-        toast({ title: 'Case Submitted!', description: 'Your case has been sent to the lawyer.' });
+        toast({ title: t('caseSubmitted'), description: t('caseSentToLawyer') });
         navigate('/my-cases');
       } else {
         // Trigger smart matching
