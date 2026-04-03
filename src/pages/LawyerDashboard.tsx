@@ -404,17 +404,17 @@ const LawyerDashboard: React.FC = () => {
         {/* Profile Tab */}
         <TabsContent value="profile">
           <Card>
-            <CardHeader><CardTitle className="text-lg">Professional Profile</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-lg">{t('professionalProfile')}</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div><Label className="text-muted-foreground text-xs">Name</Label><p className="font-medium">{profile?.name}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Email</Label><p className="font-medium">{profile?.email}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Phone</Label><p className="font-medium">{profile?.phone || 'Not set'}</p></div>
-                <div><Label className="text-muted-foreground text-xs">State</Label><p className="font-medium">{profile?.state || 'Not set'}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Bar Council Number</Label><p className="font-medium">{lawyerProfile?.bar_council_number}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Role</Label><p className="font-medium capitalize">{lawyerProfile?.role_type?.replace('_', ' ')}</p></div>
-                <div><Label className="text-muted-foreground text-xs">Experience</Label><p className="font-medium">{lawyerProfile?.experience} years</p></div>
-                <div><Label className="text-muted-foreground text-xs">Consultation Fee</Label><p className="font-medium">₹{lawyerProfile?.consultation_fee}/hr</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('name')}</Label><p className="font-medium">{profile?.name}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('email')}</Label><p className="font-medium">{profile?.email}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('phone')}</Label><p className="font-medium">{profile?.phone || t('notSetLabel')}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('state')}</Label><p className="font-medium">{profile?.state || t('notSetLabel')}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('barCouncilNumber')}</Label><p className="font-medium">{lawyerProfile?.bar_council_number}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('role')}</Label><p className="font-medium capitalize">{lawyerProfile?.role_type?.replace('_', ' ')}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('experience')}</Label><p className="font-medium">{lawyerProfile?.experience} {t('years')}</p></div>
+                <div><Label className="text-muted-foreground text-xs">{t('consultationFeeLabel')}</Label><p className="font-medium">₹{lawyerProfile?.consultation_fee}/{t('perHour')}</p></div>
               </div>
               {lawyerProfile?.practice_areas && lawyerProfile.practice_areas.length > 0 && (
                 <div>
