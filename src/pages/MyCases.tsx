@@ -178,17 +178,17 @@ const MyCases: React.FC = () => {
           </TabsList>
 
           <TabsContent value="requests" className="space-y-3 mt-4">
-            {pendingCases.length === 0 ? <EmptyState message={isLawyer ? 'No pending case requests.' : 'No pending cases.'} /> :
+            {pendingCases.length === 0 ? <EmptyState message={isLawyer ? t('noPendingCaseRequestsLawyer') : t('noPendingCases')} /> :
               pendingCases.map(c => <CaseCard key={c.id} caseItem={c} />)}
           </TabsContent>
 
           <TabsContent value="active" className="space-y-3 mt-4">
-            {activeCases.length === 0 ? <EmptyState message="No active cases." /> :
+            {activeCases.length === 0 ? <EmptyState message={t('noActiveCasesLabel')} /> :
               activeCases.map(c => <CaseCard key={c.id} caseItem={c} />)}
           </TabsContent>
 
           <TabsContent value="completed" className="space-y-3 mt-4">
-            {completedCases.length === 0 ? <EmptyState message="No completed cases." /> :
+            {completedCases.length === 0 ? <EmptyState message={t('noCompletedCases')} /> :
               completedCases.map(c => <CaseCard key={c.id} caseItem={c} />)}
           </TabsContent>
         </Tabs>
