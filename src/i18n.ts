@@ -1128,6 +1128,7 @@ const resources = {
       delete: "ಅಳಿಸಿ",
       search: "ಹುಡುಕಿ",
       loading: "ಲೋಡ್ ಆಗುತ್ತಿದೆ...",
+      chatComingSoon: "ಚಾಟ್ ಪುಟ ಶೀಘ್ರದಲ್ಲಿ ಬರುತ್ತಿದೆ...",
       email: "ಇಮೇಲ್",
       password: "ಪಾಸ್‌ವರ್ಡ್",
       confirmPassword: "ಪಾಸ್‌ವರ್ಡ್ ದೃಢೀಕರಿಸಿ",
