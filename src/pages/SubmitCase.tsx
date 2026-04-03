@@ -120,8 +120,8 @@ const SubmitCase: React.FC = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label>Case Title *</Label>
-              <Input placeholder="e.g. Property dispute in Bangalore" value={formData.title}
+              <Label>{t('caseTitle')} *</Label>
+              <Input placeholder={t('caseTitlePlaceholder')} value={formData.title}
                 onChange={e => setFormData(p => ({ ...p, title: e.target.value }))} />
             </div>
 
