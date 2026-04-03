@@ -104,7 +104,7 @@ const SubmitCase: React.FC = () => {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-2" />Back
+        <ArrowLeft className="h-4 w-4 mr-2" />{t('back')}
       </Button>
 
       <Card>
