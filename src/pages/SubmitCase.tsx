@@ -168,8 +168,8 @@ const SubmitCase: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>City</Label>
-                <Input placeholder="Your city" value={formData.client_location_city}
+                <Label>{t('city')}</Label>
+                <Input placeholder={t('yourCity')} value={formData.client_location_city}
                   onChange={e => setFormData(p => ({ ...p, client_location_city: e.target.value }))} />
               </div>
               <div className="space-y-2">
