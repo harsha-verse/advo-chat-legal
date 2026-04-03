@@ -74,6 +74,11 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
+const ChatComingSoon: React.FC = () => {
+  const { t } = useTranslation();
+  return <div className="p-6">{t("chatComingSoon")}</div>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
