@@ -6,17 +6,17 @@ import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { Building, FileCheck, ClipboardList, Users, ShieldCheck, HelpCircle, ExternalLink, CheckCircle2 } from 'lucide-react';
 
-const msmeCards = [
-  { title: 'MSME Registration Guidance', description: 'Step-by-step guide to register your MSME on the Udyam portal.', icon: Building, items: ['Visit the Udyam Registration Portal (udyamregistration.gov.in)', 'Enter Aadhaar number and validate with OTP', 'Fill enterprise details: name, type, address', 'Select NIC codes for your business activity', 'Submit — no fees, no documents needed', 'Download your Udyam Registration Certificate'], badge: 'Free Registration' },
-  { title: 'GST Basics', description: 'Understand GST registration, filing, and compliance essentials for MSMEs.', icon: FileCheck, items: ['GST registration is mandatory if turnover exceeds ₹40 lakh (goods) or ₹20 lakh (services)', 'Composition scheme available for turnover up to ₹1.5 crore', 'File GSTR-1 by 11th of each month', 'File GSTR-3B by 20th of each month', 'Input Tax Credit (ITC) can be claimed on business purchases', 'Quarterly filing option available under QRMP scheme'], badge: 'Tax Compliance' },
-  { title: 'Vendor Agreement Templates', description: 'Ready-to-use vendor and supplier agreement templates for your business.', icon: ClipboardList, items: ['Standard Vendor Supply Agreement', 'Service Level Agreement (SLA)', 'Purchase Order Template', 'Raw Material Supply Contract', 'Annual Maintenance Contract (AMC)', 'Terms & Conditions for vendor onboarding'], badge: 'Templates', linkTo: '/templates' },
-  { title: 'Partnership Deed Templates', description: 'Legal partnership deed templates compliant with Indian Partnership Act.', icon: Users, items: ['General Partnership Deed', 'Limited Liability Partnership (LLP) Agreement', 'Profit Sharing Agreement', 'Silent Partner Agreement', 'Partnership Dissolution Deed', 'Amendment to existing Partnership Deed'], badge: 'Templates', linkTo: '/templates' },
-  { title: 'HR Policy Templates', description: 'Essential HR policies and employment documents for small businesses.', icon: Users, items: ['Employee Handbook Template', 'Leave Policy Document', 'Anti-Harassment Policy (POSH Act compliant)', 'Offer Letter & Appointment Letter', 'Employee Code of Conduct', 'Exit / Full & Final Settlement Format'], badge: 'HR & Compliance' },
-  { title: 'Compliance Checklist', description: 'Comprehensive compliance checklist to keep your MSME legally sound.', icon: ShieldCheck, items: ['Udyam Registration — valid & up to date', 'GST Registration & Regular Filing', 'Shop & Establishment Act License', 'FSSAI License (if food-related)', 'PF & ESI registration (if 10+ employees)', 'Professional Tax Registration', 'Trade License from local municipality', 'Fire Safety NOC (if applicable)', 'Pollution Control Board consent (manufacturing)', 'Annual ROC filing (for companies & LLPs)'], badge: 'Must-Do' },
-];
-
 const MSMESupport: React.FC = () => {
   const { t } = useTranslation();
+
+  const msmeCards = [
+    { title: t('msmeRegistrationGuidance'), description: t('msmeRegistrationDesc'), icon: Building, items: [t('msmeStep1'), t('msmeStep2'), t('msmeStep3'), t('msmeStep4'), t('msmeStep5'), t('msmeStep6')], badge: t('freeRegistration') },
+    { title: t('gstBasics'), description: t('gstBasicsDesc'), icon: FileCheck, items: [t('gstStep1'), t('gstStep2'), t('gstStep3'), t('gstStep4'), t('gstStep5'), t('gstStep6')], badge: t('taxCompliance') },
+    { title: t('vendorAgreements'), description: t('vendorAgreementsDesc'), icon: ClipboardList, items: [t('vendorItem1'), t('vendorItem2'), t('vendorItem3'), t('vendorItem4'), t('vendorItem5'), t('vendorItem6')], badge: t('templates'), linkTo: '/templates' },
+    { title: t('partnershipDeeds'), description: t('partnershipDeedsDesc'), icon: Users, items: [t('partnershipItem1'), t('partnershipItem2'), t('partnershipItem3'), t('partnershipItem4'), t('partnershipItem5'), t('partnershipItem6')], badge: t('templates'), linkTo: '/templates' },
+    { title: t('hrPolicies'), description: t('hrPoliciesDesc'), icon: Users, items: [t('hrItem1'), t('hrItem2'), t('hrItem3'), t('hrItem4'), t('hrItem5'), t('hrItem6')], badge: t('hrCompliance') },
+    { title: t('complianceChecklist'), description: t('complianceChecklistDesc'), icon: ShieldCheck, items: [t('complianceItem1'), t('complianceItem2'), t('complianceItem3'), t('complianceItem4'), t('complianceItem5'), t('complianceItem6'), t('complianceItem7'), t('complianceItem8'), t('complianceItem9'), t('complianceItem10')], badge: t('mustDo') },
+  ];
 
   return (
     <div className="p-6 space-y-6">
