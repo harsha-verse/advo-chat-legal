@@ -182,7 +182,7 @@ const SubmitCase: React.FC = () => {
             </div>
 
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'Submit Case Request'}
+              {isSubmitting ? t('submitting') : t('submitCaseRequest')}
             </Button>
           </form>
         </CardContent>
