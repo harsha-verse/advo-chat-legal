@@ -42,7 +42,7 @@ const SubmitCase: React.FC = () => {
     e.preventDefault();
     if (!user) return;
     if (!formData.title || !formData.case_type || !formData.description) {
-      toast({ title: 'Error', description: 'Please fill all required fields.', variant: 'destructive' });
+      toast({ title: t('error'), description: t('pleaseFillRequired'), variant: 'destructive' });
       return;
     }
 
