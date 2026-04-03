@@ -134,8 +134,8 @@ const SubmitCase: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Describe Your Legal Issue *</Label>
-              <Textarea placeholder="Provide details about your case..." value={formData.description}
+              <Label>{t('describeProblem')} *</Label>
+              <Textarea placeholder={t('provideDetails')} value={formData.description}
                 onChange={e => setFormData(p => ({ ...p, description: e.target.value }))}
                 className="min-h-[120px]" />
             </div>
