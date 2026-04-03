@@ -172,9 +172,9 @@ const MyCases: React.FC = () => {
       ) : (
         <Tabs defaultValue="requests">
           <TabsList>
-            <TabsTrigger value="requests">{isLawyer ? 'Case Requests' : 'Pending'} ({pendingCases.length})</TabsTrigger>
-            <TabsTrigger value="active">Active ({activeCases.length})</TabsTrigger>
-            <TabsTrigger value="completed">Completed ({completedCases.length})</TabsTrigger>
+            <TabsTrigger value="requests">{isLawyer ? t('caseRequests') : t('pending')} ({pendingCases.length})</TabsTrigger>
+            <TabsTrigger value="active">{t('active')} ({activeCases.length})</TabsTrigger>
+            <TabsTrigger value="completed">{t('completedLabel')} ({completedCases.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="requests" className="space-y-3 mt-4">
