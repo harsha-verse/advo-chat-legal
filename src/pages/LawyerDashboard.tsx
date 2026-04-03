@@ -319,9 +319,9 @@ const LawyerDashboard: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex flex-col gap-2 ml-4">
-                      <Button size="sm" onClick={() => handleAcceptCase(c.id)}><CheckCircle className="h-3.5 w-3.5 mr-1" />Accept</Button>
-                      <Button size="sm" variant="outline" onClick={() => handleDeclineCase(c.id)}><XCircle className="h-3.5 w-3.5 mr-1" />Decline</Button>
-                      <Button size="sm" variant="ghost" onClick={() => navigate(`/case/${c.id}`)}><ArrowRight className="h-3.5 w-3.5 mr-1" />Details</Button>
+                      <Button size="sm" onClick={() => handleAcceptCase(c.id)}><CheckCircle className="h-3.5 w-3.5 mr-1" />{t('accept')}</Button>
+                      <Button size="sm" variant="outline" onClick={() => handleDeclineCase(c.id)}><XCircle className="h-3.5 w-3.5 mr-1" />{t('decline')}</Button>
+                      <Button size="sm" variant="ghost" onClick={() => navigate(`/case/${c.id}`)}><ArrowRight className="h-3.5 w-3.5 mr-1" />{t('details')}</Button>
                     </div>
                   </div>
                 </CardContent>
