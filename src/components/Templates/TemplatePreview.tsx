@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,7 @@ interface TemplatePreviewProps {
 }
 
 const TemplatePreview: React.FC<TemplatePreviewProps> = ({ template, open, onOpenChange }) => {
+  const { t } = useTranslation();
   const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState('preview');
 
@@ -38,34 +40,21 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({ template, open, onOpe
     const lines = doc.splitTextToSize(content, 170);
     let y = 20;
     const pageHeight = doc.internal.pageSize.height;
-
     lines.forEach((line: string) => {
-      if (y > pageHeight - 20) {
-        doc.addPage();
-        y = 20;
-      }
+      if (y > pageHeight - 20) { doc.addPage(); y = 20; }
       doc.setFontSize(11);
       doc.text(line, 20, y);
       y += 6;
     });
-
     doc.save(`${template.title.replace(/\s+/g, '_')}.pdf`);
   };
 
   const downloadWord = async () => {
     const content = getProcessedContent();
     const paragraphs = content.split('\n').map(
-      (line) =>
-        new Paragraph({
-          children: [new TextRun({ text: line, size: 24 })],
-          spacing: { after: 120 },
-        })
+      (line) => new Paragraph({ children: [new TextRun({ text: line, size: 24 })], spacing: { after: 120 } })
     );
-
-    const doc = new Document({
-      sections: [{ properties: {}, children: paragraphs }],
-    });
-
+    const doc = new Document({ sections: [{ properties: {}, children: paragraphs }] });
     const blob = await Packer.toBlob(doc);
     saveAs(blob, `${template.title.replace(/\s+/g, '_')}.docx`);
   };
@@ -88,8 +77,8 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({ template, open, onOpe
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="preview">Preview</TabsTrigger>
-            <TabsTrigger value="edit">Fill Details</TabsTrigger>
+            <TabsTrigger value="preview">{t('previewTab')}</TabsTrigger>
+            <TabsTrigger value="edit">{t('fillDetailsTab')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="preview" className="mt-4">
@@ -103,13 +92,9 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({ template, open, onOpe
               {template.fields.map((field) => (
                 <div key={field.key} className="space-y-1.5">
                   <Label htmlFor={field.key}>{field.label}</Label>
-                  <Input
-                    id={field.key}
-                    type={field.type || 'text'}
-                    placeholder={field.placeholder}
+                  <Input id={field.key} type={field.type || 'text'} placeholder={field.placeholder}
                     value={fieldValues[field.key] || ''}
-                    onChange={(e) => setFieldValues((prev) => ({ ...prev, [field.key]: e.target.value }))}
-                  />
+                    onChange={(e) => setFieldValues((prev) => ({ ...prev, [field.key]: e.target.value }))} />
                 </div>
               ))}
             </div>
@@ -118,17 +103,15 @@ const TemplatePreview: React.FC<TemplatePreviewProps> = ({ template, open, onOpe
 
         <div className="bg-accent/50 border border-accent rounded-lg p-3 flex items-start gap-2 text-sm text-muted-foreground">
           <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0 text-destructive" />
-          <span>This template is provided for general informational purposes. For complex legal situations, consult a qualified lawyer.</span>
+          <span>{t('templateDisclaimer')}</span>
         </div>
 
         <DialogFooter className="flex-col sm:flex-row gap-2">
           <Button onClick={downloadPDF} className="flex-1">
-            <Download className="h-4 w-4 mr-2" />
-            Download PDF
+            <Download className="h-4 w-4 mr-2" />{t('downloadPDF')}
           </Button>
           <Button onClick={downloadWord} variant="outline" className="flex-1">
-            <Download className="h-4 w-4 mr-2" />
-            Download Word
+            <Download className="h-4 w-4 mr-2" />{t('downloadWord')}
           </Button>
         </DialogFooter>
       </DialogContent>
