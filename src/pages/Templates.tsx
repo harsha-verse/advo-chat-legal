@@ -110,13 +110,13 @@ const Templates: React.FC = () => {
             <FileText className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h3 className="font-semibold text-base mb-1">Need help with a legal document?</h3>
+            <h3 className="font-semibold text-base mb-1">{t('needHelpLegalDoc')}</h3>
             <p className="text-muted-foreground text-sm mb-3">
-              Our AI assistant can recommend the right template or connect you with a verified lawyer.
+              {t('aiRecommendTemplate')}
             </p>
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm">Chat with AI</Button>
-              <Button variant="outline" size="sm">Find a Lawyer</Button>
+              <Button variant="outline" size="sm">{t('chatWithAIBtn')}</Button>
+              <Button variant="outline" size="sm">{t('findLawyerBtn')}</Button>
             </div>
           </div>
         </CardContent>

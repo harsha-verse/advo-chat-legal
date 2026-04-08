@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -18,23 +19,24 @@ import {
   Send, Upload, Download, StickyNote, CheckCircle, Clock, AlertTriangle, X
 } from 'lucide-react';
 
-const STATUS_OPTIONS = [
-  { value: 'pending', label: 'Pending', color: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
-  { value: 'accepted', label: 'Accepted', color: 'bg-blue-100 text-blue-800 border-blue-200' },
-  { value: 'consultation_scheduled', label: 'Consultation Scheduled', color: 'bg-indigo-100 text-indigo-800 border-indigo-200' },
-  { value: 'under_review', label: 'Under Review', color: 'bg-purple-100 text-purple-800 border-purple-200' },
-  { value: 'in_progress', label: 'In Progress', color: 'bg-blue-100 text-blue-800 border-blue-200' },
-  { value: 'waiting_for_client', label: 'Waiting for Client', color: 'bg-orange-100 text-orange-800 border-orange-200' },
-  { value: 'closed', label: 'Closed', color: 'bg-green-100 text-green-800 border-green-200' },
-  { value: 'declined', label: 'Declined', color: 'bg-red-100 text-red-800 border-red-200' },
-];
-
 const CaseDetail: React.FC = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const STATUS_OPTIONS = [
+    { value: 'pending', label: t('pending'), color: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
+    { value: 'accepted', label: t('accepted'), color: 'bg-blue-100 text-blue-800 border-blue-200' },
+    { value: 'consultation_scheduled', label: t('scheduleConsultation'), color: 'bg-indigo-100 text-indigo-800 border-indigo-200' },
+    { value: 'under_review', label: t('underReview'), color: 'bg-purple-100 text-purple-800 border-purple-200' },
+    { value: 'in_progress', label: t('inProgressLabel'), color: 'bg-blue-100 text-blue-800 border-blue-200' },
+    { value: 'waiting_for_client', label: t('clientLabel'), color: 'bg-orange-100 text-orange-800 border-orange-200' },
+    { value: 'closed', label: t('closed'), color: 'bg-green-100 text-green-800 border-green-200' },
+    { value: 'declined', label: t('decline'), color: 'bg-red-100 text-red-800 border-red-200' },
+  ];
 
   const [caseData, setCaseData] = useState<any>(null);
   const [clientProfile, setClientProfile] = useState<any>(null);
@@ -75,10 +77,8 @@ const CaseDetail: React.FC = () => {
       supabase.from('case_notes').select('*').eq('case_id', id!).order('created_at', { ascending: false }),
       supabase.from('case_documents').select('*').eq('case_id', id!).order('created_at', { ascending: false }),
     ]);
-
     if (caseRes.data) {
       setCaseData(caseRes.data);
-      // Fetch client profile
       const { data: cp } = await supabase.from('profiles').select('*').eq('id', caseRes.data.client_id).single();
       if (cp) setClientProfile(cp);
     }
@@ -94,21 +94,19 @@ const CaseDetail: React.FC = () => {
     if (newStatus === 'accepted') updates.accepted_at = new Date().toISOString();
     if (newStatus === 'closed') updates.closed_at = new Date().toISOString();
     if (newStatus === 'accepted' && !caseData.lawyer_id) updates.lawyer_id = user!.id;
-
     const { error } = await supabase.from('cases').update(updates).eq('id', caseData.id);
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast({ title: t('error'), description: error.message, variant: 'destructive' });
     } else {
       setCaseData({ ...caseData, ...updates });
-      // Notify client
       await supabase.from('notifications').insert({
         user_id: caseData.client_id,
-        title: `Case ${newStatus === 'accepted' ? 'Accepted' : 'Updated'}`,
-        message: `Your case "${caseData.title}" status changed to ${newStatus}.`,
+        title: newStatus === 'accepted' ? t('caseAccepted') : t('caseUpdated'),
+        message: `${caseData.title} → ${newStatus}`,
         type: 'case_update',
         related_case_id: caseData.id,
       });
-      toast({ title: 'Status Updated' });
+      toast({ title: t('statusUpdated') });
     }
   };
 
@@ -116,8 +114,7 @@ const CaseDetail: React.FC = () => {
     if (!fileData && !newMessage.trim()) return;
     if (!caseData) return;
     const insert: any = {
-      case_id: caseData.id,
-      sender_id: user!.id,
+      case_id: caseData.id, sender_id: user!.id,
       message: fileData ? `📎 ${fileData.file_name}` : newMessage.trim(),
     };
     if (fileData) {
@@ -127,17 +124,15 @@ const CaseDetail: React.FC = () => {
     }
     const { error } = await supabase.from('case_messages').insert(insert);
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast({ title: t('error'), description: error.message, variant: 'destructive' });
     } else {
       if (!fileData) setNewMessage('');
       const recipientId = isLawyer ? caseData.client_id : caseData.lawyer_id;
       if (recipientId) {
         await supabase.from('notifications').insert({
-          user_id: recipientId,
-          title: 'New Message',
-          message: `New message in case "${caseData.title}"`,
-          type: 'message',
-          related_case_id: caseData.id,
+          user_id: recipientId, title: t('newMessageNotif'),
+          message: `${t('newMessageInCase')} "${caseData.title}"`,
+          type: 'message', related_case_id: caseData.id,
         });
       }
     }
@@ -152,11 +147,10 @@ const CaseDetail: React.FC = () => {
       const { data: urlData } = supabase.storage.from('case-documents').getPublicUrl(filePath);
       await sendMessage({ file_url: urlData.publicUrl, file_name: file.name, file_type: file.type });
     } catch (err: any) {
-      toast({ title: 'Upload Failed', description: err.message, variant: 'destructive' });
+      toast({ title: t('uploadFailed'), description: err.message, variant: 'destructive' });
     }
   };
 
-  // Mark messages as read
   useEffect(() => {
     if (!messages.length || !user || !caseData) return;
     const unread = messages.filter(m => m.sender_id !== user.id && !m.read_at);
@@ -169,16 +163,14 @@ const CaseDetail: React.FC = () => {
   const addNote = async () => {
     if (!newNote.trim() || !caseData) return;
     const { data, error } = await supabase.from('case_notes').insert({
-      case_id: caseData.id,
-      lawyer_id: user!.id,
-      content: newNote.trim(),
+      case_id: caseData.id, lawyer_id: user!.id, content: newNote.trim(),
     }).select().single();
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast({ title: t('error'), description: error.message, variant: 'destructive' });
     } else {
       setNotes(prev => [data, ...prev]);
       setNewNote('');
-      toast({ title: 'Note Added' });
+      toast({ title: t('noteAdded') });
     }
   };
 
@@ -189,22 +181,16 @@ const CaseDetail: React.FC = () => {
       const filePath = `${caseData.id}/${user.id}/${Date.now()}_${file.name}`;
       const { error: upErr } = await supabase.storage.from('case-documents').upload(filePath, file);
       if (upErr) throw upErr;
-
       const { data: urlData } = supabase.storage.from('case-documents').getPublicUrl(filePath);
-
       const { data, error } = await supabase.from('case_documents').insert({
-        case_id: caseData.id,
-        uploaded_by: user.id,
-        file_name: file.name,
-        file_url: urlData.publicUrl,
-        file_type: file.type,
+        case_id: caseData.id, uploaded_by: user.id, file_name: file.name,
+        file_url: urlData.publicUrl, file_type: file.type,
       }).select().single();
-
       if (error) throw error;
       setDocuments(prev => [data, ...prev]);
-      toast({ title: 'Document Uploaded' });
+      toast({ title: t('documentUploaded') });
     } catch (err: any) {
-      toast({ title: 'Upload Failed', description: err.message, variant: 'destructive' });
+      toast({ title: t('uploadFailed'), description: err.message, variant: 'destructive' });
     } finally {
       setUploading(false);
     }
@@ -220,8 +206,8 @@ const CaseDetail: React.FC = () => {
     return (
       <div className="p-6 text-center">
         <AlertTriangle className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
-        <p>Case not found.</p>
-        <Button variant="outline" className="mt-4" onClick={() => navigate(-1)}>Go Back</Button>
+        <p>{t('caseNotFound')}</p>
+        <Button variant="outline" className="mt-4" onClick={() => navigate(-1)}>{t('goBack')}</Button>
       </div>
     );
   }
@@ -230,7 +216,6 @@ const CaseDetail: React.FC = () => {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
@@ -261,42 +246,39 @@ const CaseDetail: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           <Tabs defaultValue="details">
             <TabsList>
-              <TabsTrigger value="details">Details</TabsTrigger>
-              <TabsTrigger value="messages">Messages ({messages.length})</TabsTrigger>
-              <TabsTrigger value="documents">Documents ({documents.length})</TabsTrigger>
-              {isLawyer && <TabsTrigger value="notes">Notes ({notes.length})</TabsTrigger>}
+              <TabsTrigger value="details">{t('detailsTab')}</TabsTrigger>
+              <TabsTrigger value="messages">{t('messagesTab')} ({messages.length})</TabsTrigger>
+              <TabsTrigger value="documents">{t('documentsTab')} ({documents.length})</TabsTrigger>
+              {isLawyer && <TabsTrigger value="notes">{t('notesTab')} ({notes.length})</TabsTrigger>}
             </TabsList>
 
-            {/* Details Tab */}
             <TabsContent value="details">
               <Card>
-                <CardHeader><CardTitle className="text-lg">Case Description</CardTitle></CardHeader>
+                <CardHeader><CardTitle className="text-lg">{t('caseDescription')}</CardTitle></CardHeader>
                 <CardContent>
                   <p className="text-foreground whitespace-pre-wrap">{caseData.description}</p>
                   <Separator className="my-4" />
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div><Label className="text-muted-foreground text-xs">Priority</Label><p className="font-medium capitalize">{caseData.priority}</p></div>
-                    <div><Label className="text-muted-foreground text-xs">Preferred Consultation</Label><p className="font-medium capitalize">{caseData.preferred_consultation}</p></div>
-                    {caseData.accepted_at && <div><Label className="text-muted-foreground text-xs">Accepted On</Label><p className="font-medium">{new Date(caseData.accepted_at).toLocaleDateString()}</p></div>}
-                    {caseData.closed_at && <div><Label className="text-muted-foreground text-xs">Closed On</Label><p className="font-medium">{new Date(caseData.closed_at).toLocaleDateString()}</p></div>}
+                    <div><Label className="text-muted-foreground text-xs">{t('priority')}</Label><p className="font-medium capitalize">{caseData.priority}</p></div>
+                    <div><Label className="text-muted-foreground text-xs">{t('preferredConsultation')}</Label><p className="font-medium capitalize">{caseData.preferred_consultation}</p></div>
+                    {caseData.accepted_at && <div><Label className="text-muted-foreground text-xs">{t('acceptedOn')}</Label><p className="font-medium">{new Date(caseData.accepted_at).toLocaleDateString()}</p></div>}
+                    {caseData.closed_at && <div><Label className="text-muted-foreground text-xs">{t('closedOn')}</Label><p className="font-medium">{new Date(caseData.closed_at).toLocaleDateString()}</p></div>}
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
-            {/* Messages Tab */}
             <TabsContent value="messages">
               <Card className="flex flex-col" style={{ height: '500px' }}>
-                <CardHeader className="pb-2"><CardTitle className="text-lg flex items-center gap-2"><MessageCircle className="h-5 w-5" />Communication</CardTitle></CardHeader>
+                <CardHeader className="pb-2"><CardTitle className="text-lg flex items-center gap-2"><MessageCircle className="h-5 w-5" />{t('communication')}</CardTitle></CardHeader>
                 <CardContent className="flex-1 flex flex-col overflow-hidden">
                   <ScrollArea className="flex-1 pr-4">
                     <div className="space-y-3 py-2">
                       {messages.length === 0 && (
-                        <p className="text-center text-muted-foreground text-sm py-8">No messages yet. Start the conversation.</p>
+                        <p className="text-center text-muted-foreground text-sm py-8">{t('noMessagesYet')}</p>
                       )}
                       {messages.map(msg => {
                         const isMe = msg.sender_id === user?.id;
@@ -329,13 +311,10 @@ const CaseDetail: React.FC = () => {
                       <Button size="icon" variant="ghost" asChild>
                         <label htmlFor="chat-file-upload" className="cursor-pointer"><Upload className="h-4 w-4" /></label>
                       </Button>
-                      <Input
-                        placeholder="Type a message..."
-                        value={newMessage}
+                      <Input placeholder={t('typeAMessage')} value={newMessage}
                         onChange={e => setNewMessage(e.target.value)}
                         onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-                        className="flex-1"
-                      />
+                        className="flex-1" />
                       <Button size="icon" onClick={() => sendMessage()} disabled={!newMessage.trim()}>
                         <Send className="h-4 w-4" />
                       </Button>
@@ -345,19 +324,18 @@ const CaseDetail: React.FC = () => {
               </Card>
             </TabsContent>
 
-            {/* Documents Tab */}
             <TabsContent value="documents">
               <Card>
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5" />Documents</CardTitle>
+                    <CardTitle className="text-lg flex items-center gap-2"><FileText className="h-5 w-5" />{t('documents')}</CardTitle>
                     {caseData.status !== 'closed' && (
                       <div>
                         <Input type="file" className="hidden" id="case-doc-upload"
                           onChange={e => { const f = e.target.files?.[0]; if (f) handleFileUpload(f); }} />
                         <Button size="sm" variant="outline" disabled={uploading} asChild>
                           <label htmlFor="case-doc-upload" className="cursor-pointer">
-                            <Upload className="h-3.5 w-3.5 mr-1" />{uploading ? 'Uploading...' : 'Upload'}
+                            <Upload className="h-3.5 w-3.5 mr-1" />{uploading ? t('uploading') : t('upload')}
                           </label>
                         </Button>
                       </div>
@@ -366,7 +344,7 @@ const CaseDetail: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   {documents.length === 0 ? (
-                    <p className="text-center text-muted-foreground text-sm py-8">No documents uploaded.</p>
+                    <p className="text-center text-muted-foreground text-sm py-8">{t('noDocumentsUploaded')}</p>
                   ) : (
                     <div className="space-y-2">
                       {documents.map(doc => (
@@ -389,23 +367,22 @@ const CaseDetail: React.FC = () => {
               </Card>
             </TabsContent>
 
-            {/* Notes Tab (Lawyer only) */}
             {isLawyer && (
               <TabsContent value="notes">
                 <Card>
-                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><StickyNote className="h-5 w-5" />Private Case Notes</CardTitle>
-                    <CardDescription>Only visible to you</CardDescription>
+                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><StickyNote className="h-5 w-5" />{t('privateCaseNotes')}</CardTitle>
+                    <CardDescription>{t('onlyVisibleToYou')}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex gap-2">
-                      <Textarea placeholder="Add a private note..." value={newNote} onChange={e => setNewNote(e.target.value)} className="min-h-[80px]" />
+                      <Textarea placeholder={t('addPrivateNote')} value={newNote} onChange={e => setNewNote(e.target.value)} className="min-h-[80px]" />
                     </div>
                     <Button size="sm" onClick={addNote} disabled={!newNote.trim()}>
-                      <StickyNote className="h-3.5 w-3.5 mr-1" />Add Note
+                      <StickyNote className="h-3.5 w-3.5 mr-1" />{t('addNote')}
                     </Button>
                     <Separator />
                     {notes.length === 0 ? (
-                      <p className="text-sm text-muted-foreground text-center py-4">No notes yet.</p>
+                      <p className="text-sm text-muted-foreground text-center py-4">{t('noNotesYet')}</p>
                     ) : (
                       <div className="space-y-3">
                         {notes.map(note => (
@@ -423,15 +400,13 @@ const CaseDetail: React.FC = () => {
           </Tabs>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-4">
-          {/* Client Info */}
           <Card>
-            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><User className="h-4 w-4" />Client Information</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm flex items-center gap-2"><User className="h-4 w-4" />{t('clientInformation')}</CardTitle></CardHeader>
             <CardContent className="space-y-3 text-sm">
-              <div><Label className="text-muted-foreground text-xs">Name</Label><p className="font-medium">{clientProfile?.name || 'Unknown'}</p></div>
-              <div><Label className="text-muted-foreground text-xs">Email</Label><p className="font-medium">{clientProfile?.email}</p></div>
-              {clientProfile?.phone && <div><Label className="text-muted-foreground text-xs">Phone</Label><p className="font-medium">{clientProfile.phone}</p></div>}
+              <div><Label className="text-muted-foreground text-xs">{t('name')}</Label><p className="font-medium">{clientProfile?.name || t('unknownLabel')}</p></div>
+              <div><Label className="text-muted-foreground text-xs">{t('email')}</Label><p className="font-medium">{clientProfile?.email}</p></div>
+              {clientProfile?.phone && <div><Label className="text-muted-foreground text-xs">{t('phone')}</Label><p className="font-medium">{clientProfile.phone}</p></div>}
               {(caseData.client_location_city || caseData.client_location_state) && (
                 <div className="flex items-center gap-1"><MapPin className="h-3 w-3 text-muted-foreground" />
                   <span>{[caseData.client_location_city, caseData.client_location_state].filter(Boolean).join(', ')}</span>
@@ -440,40 +415,38 @@ const CaseDetail: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Quick Actions */}
           {isLawyer && caseData.status === 'pending' && !caseData.lawyer_id && (
             <Card>
-              <CardHeader><CardTitle className="text-sm">Quick Actions</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-sm">{t('quickActions')}</CardTitle></CardHeader>
               <CardContent className="space-y-2">
                 <Button className="w-full" onClick={() => handleStatusChange('accepted')}>
-                  <CheckCircle className="h-4 w-4 mr-2" />Accept Case
+                  <CheckCircle className="h-4 w-4 mr-2" />{t('acceptCase')}
                 </Button>
                 <Button variant="destructive" className="w-full" onClick={() => handleStatusChange('declined')}>
-                  <X className="h-4 w-4 mr-2" />Decline Case
+                  <X className="h-4 w-4 mr-2" />{t('declineCase')}
                 </Button>
               </CardContent>
             </Card>
           )}
 
-          {/* Case Timeline */}
           <Card>
-            <CardHeader><CardTitle className="text-sm">Timeline</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-sm">{t('timeline')}</CardTitle></CardHeader>
             <CardContent>
               <div className="space-y-3 text-sm">
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-primary" />
-                  <span>Created: {new Date(caseData.created_at).toLocaleDateString()}</span>
+                  <span>{t('createdTimeline')}: {new Date(caseData.created_at).toLocaleDateString()}</span>
                 </div>
                 {caseData.accepted_at && (
                   <div className="flex items-center gap-2">
                     <div className="h-2 w-2 rounded-full bg-green-500" />
-                    <span>Accepted: {new Date(caseData.accepted_at).toLocaleDateString()}</span>
+                    <span>{t('acceptedTimeline')}: {new Date(caseData.accepted_at).toLocaleDateString()}</span>
                   </div>
                 )}
                 {caseData.closed_at && (
                   <div className="flex items-center gap-2">
                     <div className="h-2 w-2 rounded-full bg-muted-foreground" />
-                    <span>Closed: {new Date(caseData.closed_at).toLocaleDateString()}</span>
+                    <span>{t('closedTimeline')}: {new Date(caseData.closed_at).toLocaleDateString()}</span>
                   </div>
                 )}
               </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,6 +19,7 @@ import ReviewsList from '@/components/Lawyer/ReviewsList';
 import ReviewForm from '@/components/Lawyer/ReviewForm';
 
 const LawyerPublicProfile: React.FC = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -46,8 +48,6 @@ const LawyerPublicProfile: React.FC = () => {
     if (profRes.data) setProfileData(profRes.data);
     if (eduRes.data) setEducation(eduRes.data as any[]);
     if (csRes.data) setCaseStats(csRes.data as any[]);
-
-    // Fetch consultation & completed cases counts
     const [consRes, casesRes] = await Promise.all([
       supabase.from('consultations').select('id', { count: 'exact', head: true }).eq('lawyer_id', userId).eq('status', 'completed'),
       supabase.from('cases').select('id', { count: 'exact', head: true }).eq('lawyer_id', userId).eq('status', 'closed'),
@@ -60,17 +60,16 @@ const LawyerPublicProfile: React.FC = () => {
   const roleLabel = (r: string) => r?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   const totalCases = caseStats.reduce((sum, s) => sum + (s.cases_handled || 0), 0);
 
-  if (loading) return <div className="p-6 flex items-center justify-center min-h-[400px]"><p className="text-muted-foreground">Loading profile...</p></div>;
-  if (!lawyer || !profileData) return <div className="p-6 text-center"><p className="text-muted-foreground">Lawyer profile not found.</p><Button variant="outline" className="mt-4" onClick={() => navigate('/lawyers')}><ArrowLeft className="h-4 w-4 mr-2" />Back to Lawyers</Button></div>;
+  if (loading) return <div className="p-6 flex items-center justify-center min-h-[400px]"><p className="text-muted-foreground">{t('loadingProfileLabel')}</p></div>;
+  if (!lawyer || !profileData) return <div className="p-6 text-center"><p className="text-muted-foreground">{t('lawyerProfileNotFound')}</p><Button variant="outline" className="mt-4" onClick={() => navigate('/lawyers')}><ArrowLeft className="h-4 w-4 mr-2" />{t('backToLawyers')}</Button></div>;
 
   const isVerified = lawyer.verification_status === 'verified';
   const isClient = user && user.id !== id;
 
   return (
     <div className="p-6 space-y-6 max-w-4xl mx-auto">
-      <Button variant="ghost" size="sm" onClick={() => navigate('/lawyers')}><ArrowLeft className="h-4 w-4 mr-2" />Back to Lawyers</Button>
+      <Button variant="ghost" size="sm" onClick={() => navigate('/lawyers')}><ArrowLeft className="h-4 w-4 mr-2" />{t('backToLawyers')}</Button>
 
-      {/* Hero Card */}
       <Card>
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-6">
@@ -86,19 +85,16 @@ const LawyerPublicProfile: React.FC = () => {
               </div>
               <p className="text-muted-foreground font-medium">{roleLabel(lawyer.role_type)}</p>
               {lawyer.tagline && <p className="text-foreground italic">"{lawyer.tagline}"</p>}
-
-              {/* Trust Badges */}
               <TrustBadges isVerified={isVerified} rating={lawyer.rating || 0} totalReviews={lawyer.total_reviews || 0} experience={lawyer.experience || 0} totalCases={totalCases} />
-
               <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                 {profileData.city && <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{profileData.city}, {profileData.state}</span>}
-                <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{lawyer.experience || 0} years experience</span>
+                <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{lawyer.experience || 0} {t('yearsExperience')}</span>
                 {lawyer.law_firm && <span className="flex items-center gap-1"><Building className="h-3.5 w-3.5" />{lawyer.law_firm}</span>}
-                {lawyer.rating > 0 && <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />{lawyer.rating} ({lawyer.total_reviews} reviews)</span>}
+                {lawyer.rating > 0 && <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />{lawyer.rating} ({lawyer.total_reviews} {t('reviews')})</span>}
               </div>
               <div className="flex gap-2 pt-2">
-                <Button onClick={() => navigate(`/book-consultation?lawyer=${id}`)}><Calendar className="h-4 w-4 mr-2" />Book Consultation</Button>
-                <Button variant="outline" onClick={() => navigate(`/submit-case?lawyer=${id}`)}>Submit Case</Button>
+                <Button onClick={() => navigate(`/book-consultation?lawyer=${id}`)}><Calendar className="h-4 w-4 mr-2" />{t('bookConsultation')}</Button>
+                <Button variant="outline" onClick={() => navigate(`/submit-case?lawyer=${id}`)}>{t('submitCaseBtn')}</Button>
               </div>
             </div>
           </div>
@@ -106,42 +102,36 @@ const LawyerPublicProfile: React.FC = () => {
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           <Tabs defaultValue="about">
             <TabsList>
-              <TabsTrigger value="about">About</TabsTrigger>
-              <TabsTrigger value="reviews">Reviews ({lawyer.total_reviews || 0})</TabsTrigger>
+              <TabsTrigger value="about">{t('aboutTab')}</TabsTrigger>
+              <TabsTrigger value="reviews">{t('reviewsTabLabel')} ({lawyer.total_reviews || 0})</TabsTrigger>
             </TabsList>
 
             <TabsContent value="about" className="space-y-6 mt-4">
-              {/* Bio */}
               {lawyer.bio && (
                 <Card>
-                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Briefcase className="h-5 w-5" />About</CardTitle></CardHeader>
+                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Briefcase className="h-5 w-5" />{t('aboutTab')}</CardTitle></CardHeader>
                   <CardContent><p className="text-foreground leading-relaxed whitespace-pre-wrap">{lawyer.bio}</p></CardContent>
                 </Card>
               )}
-
-              {/* Practice Areas */}
               {lawyer.practice_areas?.length > 0 && (
                 <Card>
-                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Scale className="h-5 w-5" />Practice Areas</CardTitle></CardHeader>
+                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Scale className="h-5 w-5" />{t('practiceAreas')}</CardTitle></CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
                       {lawyer.practice_areas.map((a: string) => <Badge key={a} variant="secondary">{a}</Badge>)}
                     </div>
                     {lawyer.specialization && (
-                      <p className="text-sm text-muted-foreground mt-3">Primary Specialization: <span className="font-medium text-foreground">{lawyer.specialization}</span></p>
+                      <p className="text-sm text-muted-foreground mt-3">{t('primarySpecLabel')}: <span className="font-medium text-foreground">{lawyer.specialization}</span></p>
                     )}
                   </CardContent>
                 </Card>
               )}
-
-              {/* Education */}
               {education.length > 0 && (
                 <Card>
-                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><GraduationCap className="h-5 w-5" />Education & Qualifications</CardTitle></CardHeader>
+                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><GraduationCap className="h-5 w-5" />{t('educationQualifications')}</CardTitle></CardHeader>
                   <CardContent className="space-y-3">
                     {education.map((edu, i) => (
                       <div key={i} className="flex items-start gap-3">
@@ -158,11 +148,9 @@ const LawyerPublicProfile: React.FC = () => {
                   </CardContent>
                 </Card>
               )}
-
-              {/* Case Stats */}
               {caseStats.length > 0 && (
                 <Card>
-                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><BarChart3 className="h-5 w-5" />Cases Handled ({totalCases} total)</CardTitle></CardHeader>
+                  <CardHeader><CardTitle className="text-lg flex items-center gap-2"><BarChart3 className="h-5 w-5" />{t('casesHandledTitle')} ({totalCases} {t('totalSuffix')})</CardTitle></CardHeader>
                   <CardContent>
                     <div className="space-y-3">
                       {caseStats.map((stat, i) => (
@@ -189,7 +177,7 @@ const LawyerPublicProfile: React.FC = () => {
                     <ReviewForm lawyerId={id!} onSubmitted={() => setShowReviewForm(false)} />
                   ) : (
                     <Button variant="outline" onClick={() => setShowReviewForm(true)}>
-                      <Star className="h-4 w-4 mr-2" />Write a Review
+                      <Star className="h-4 w-4 mr-2" />{t('writeReview')}
                     </Button>
                   )}
                 </div>
@@ -199,25 +187,17 @@ const LawyerPublicProfile: React.FC = () => {
           </Tabs>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-6">
-          {/* Performance Stats */}
-          <PerformanceStats
-            rating={lawyer.rating || 0}
-            totalReviews={lawyer.total_reviews || 0}
-            casesHandled={totalCases}
-            casesCompleted={completedCasesCount}
-            consultationCount={consultationCount}
-          />
+          <PerformanceStats rating={lawyer.rating || 0} totalReviews={lawyer.total_reviews || 0}
+            casesHandled={totalCases} casesCompleted={completedCasesCount} consultationCount={consultationCount} />
 
-          {/* Consultation */}
           <Card>
-            <CardHeader><CardTitle className="text-lg">Consultation</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-lg">{t('consultationTitle')}</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               {lawyer.consultation_fee > 0 && (
                 <div className="text-center p-3 bg-primary/5 rounded-lg">
                   <p className="text-2xl font-bold text-primary">₹{lawyer.consultation_fee}</p>
-                  <p className="text-xs text-muted-foreground">per {lawyer.consultation_duration || 30} min session</p>
+                  <p className="text-xs text-muted-foreground">{t('perLabel')} {lawyer.consultation_duration || 30} {t('minSession')}</p>
                 </div>
               )}
               {lawyer.consultation_types?.length > 0 && (
@@ -231,10 +211,9 @@ const LawyerPublicProfile: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Availability */}
           {lawyer.available_days?.length > 0 && (
             <Card>
-              <CardHeader><CardTitle className="text-lg">Availability</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-lg">{t('availabilityTitle')}</CardTitle></CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex flex-wrap gap-1">
                   {lawyer.available_days.map((day: string) => <Badge key={day} variant="outline" className="text-xs">{day.slice(0, 3)}</Badge>)}
@@ -244,10 +223,9 @@ const LawyerPublicProfile: React.FC = () => {
             </Card>
           )}
 
-          {/* Languages */}
           {lawyer.languages_spoken?.length > 0 && (
             <Card>
-              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Globe className="h-5 w-5" />Languages</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-lg flex items-center gap-2"><Globe className="h-5 w-5" />{t('languages')}</CardTitle></CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {lawyer.languages_spoken.map((l: string) => <Badge key={l} variant="outline">{l}</Badge>)}
@@ -256,10 +234,9 @@ const LawyerPublicProfile: React.FC = () => {
             </Card>
           )}
 
-          {/* Jurisdictions */}
           {lawyer.court_jurisdictions?.length > 0 && (
             <Card>
-              <CardHeader><CardTitle className="text-lg">Court Jurisdictions</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-lg">{t('courtJurisdictionsTitle')}</CardTitle></CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {lawyer.court_jurisdictions.map((c: string) => <Badge key={c} variant="secondary">{c}</Badge>)}
@@ -268,13 +245,12 @@ const LawyerPublicProfile: React.FC = () => {
             </Card>
           )}
 
-          {/* Bar Council */}
           <Card>
-            <CardHeader><CardTitle className="text-lg">Professional Info</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-lg">{t('professionalInfoTitle')}</CardTitle></CardHeader>
             <CardContent className="space-y-2 text-sm">
-              <div className="flex justify-between"><span className="text-muted-foreground">Bar Council No.</span><span className="font-medium">{lawyer.bar_council_number}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">{t('barCouncilNo')}</span><span className="font-medium">{lawyer.bar_council_number}</span></div>
               <Separator />
-              <div className="flex justify-between"><span className="text-muted-foreground">Practicing Since</span><span className="font-medium">{lawyer.year_of_practice}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">{t('practicingSince')}</span><span className="font-medium">{lawyer.year_of_practice}</span></div>
             </CardContent>
           </Card>
         </div>

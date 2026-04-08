@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -17,12 +18,6 @@ import {
   ArrowLeft, CalendarIcon, Clock, Video, Phone, MapPin, User, Scale, CheckCircle
 } from 'lucide-react';
 
-const CONSULTATION_TYPES = [
-  { value: 'online', label: 'Online Video Consultation', icon: Video },
-  { value: 'phone', label: 'Phone Consultation', icon: Phone },
-  { value: 'in_person', label: 'In-Person Meeting', icon: MapPin },
-];
-
 const TIME_SLOTS = [
   '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
   '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
@@ -30,12 +25,19 @@ const TIME_SLOTS = [
 ];
 
 const BookConsultation: React.FC = () => {
+  const { t } = useTranslation();
   const { user, profile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const lawyerId = searchParams.get('lawyer');
   const caseId = searchParams.get('case');
+
+  const CONSULTATION_TYPES = [
+    { value: 'online', label: t('onlineVideoConsultation'), icon: Video },
+    { value: 'phone', label: t('phoneConsultation'), icon: Phone },
+    { value: 'in_person', label: t('inPersonMeeting'), icon: MapPin },
+  ];
 
   const [lawyer, setLawyer] = useState<any>(null);
   const [lawyerProfile, setLawyerProfile] = useState<any>(null);
@@ -71,19 +73,15 @@ const BookConsultation: React.FC = () => {
 
   const getAvailableTimeSlots = () => {
     if (!date || !lawyerProfile) return TIME_SLOTS;
-
     const dayName = format(date, 'EEEE');
     const availableDays = lawyerProfile.available_days || [];
     if (availableDays.length > 0 && !availableDays.includes(dayName)) return [];
-
     const startTime = lawyerProfile.available_start_time || '10:00';
     const endTime = lawyerProfile.available_end_time || '18:00';
     const dateStr = format(date, 'yyyy-MM-dd');
-
     const bookedTimes = existingConsultations
       .filter(c => c.scheduled_date === dateStr)
       .map(c => c.scheduled_time);
-
     return TIME_SLOTS.filter(slot => {
       if (slot < startTime || slot >= endTime) return false;
       if (bookedTimes.includes(slot)) return false;
@@ -93,16 +91,14 @@ const BookConsultation: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!user || !lawyerId || !date || !time) {
-      toast({ title: 'Error', description: 'Please select a date and time.', variant: 'destructive' });
+      toast({ title: t('error'), description: t('pleaseSelectDateTime'), variant: 'destructive' });
       return;
     }
-
     setIsSubmitting(true);
     try {
       const meetingLink = consultationType === 'online'
         ? `https://meet.google.com/lookup/${crypto.randomUUID().slice(0, 12)}`
         : undefined;
-
       const { error } = await supabase.from('consultations').insert({
         client_id: user.id,
         lawyer_id: lawyerId,
@@ -113,22 +109,18 @@ const BookConsultation: React.FC = () => {
         duration_minutes: lawyerProfile?.consultation_duration || 30,
         meeting_link: meetingLink,
       } as any);
-
       if (error) throw error;
-
-      // Notify lawyer
       await supabase.from('notifications').insert({
         user_id: lawyerId,
-        title: 'New Consultation Request',
-        message: `${profile?.name || 'A client'} requested a ${consultationType} consultation on ${format(date, 'PPP')} at ${time}.`,
+        title: t('newConsultationRequest'),
+        message: t('requestedConsultation', { type: consultationType, date: format(date, 'PPP'), time }),
         type: 'consultation_request',
         related_case_id: caseId || null,
       });
-
-      toast({ title: 'Consultation Requested!', description: 'The lawyer will review your request and respond.' });
+      toast({ title: t('consultationRequested'), description: t('lawyerWillReview') });
       navigate('/my-consultations');
     } catch (err: any) {
-      toast({ title: 'Error', description: err.message, variant: 'destructive' });
+      toast({ title: t('error'), description: err.message, variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
@@ -140,7 +132,7 @@ const BookConsultation: React.FC = () => {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
-        <ArrowLeft className="h-4 w-4 mr-2" />Back
+        <ArrowLeft className="h-4 w-4 mr-2" />{t('back')}
       </Button>
 
       <Card>
@@ -150,12 +142,11 @@ const BookConsultation: React.FC = () => {
               <CalendarIcon className="h-6 w-6 text-primary" />
             </div>
           </div>
-          <CardTitle>Book a Consultation</CardTitle>
-          <CardDescription>Schedule a meeting with your lawyer</CardDescription>
+          <CardTitle>{t('bookAConsultation')}</CardTitle>
+          <CardDescription>{t('scheduleMeetingLawyer')}</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Lawyer Info */}
           {lawyer && (
             <div className="flex items-center gap-4 p-4 rounded-lg bg-muted/50 border border-border">
               <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -163,17 +154,16 @@ const BookConsultation: React.FC = () => {
               </div>
               <div>
                 <p className="font-semibold text-foreground">{lawyer.name}</p>
-                <p className="text-sm text-muted-foreground capitalize">{lawyerProfile?.role_type?.replace('_', ' ')} • {lawyerProfile?.experience} years</p>
+                <p className="text-sm text-muted-foreground capitalize">{lawyerProfile?.role_type?.replace('_', ' ')} • {lawyerProfile?.experience} {t('years')}</p>
                 {lawyerProfile?.consultation_fee > 0 && (
-                  <p className="text-sm text-primary font-medium">₹{lawyerProfile.consultation_fee}/session</p>
+                  <p className="text-sm text-primary font-medium">₹{lawyerProfile.consultation_fee}/{t('perSession')}</p>
                 )}
               </div>
             </div>
           )}
 
-          {/* Consultation Type */}
           <div className="space-y-2">
-            <Label>Consultation Type</Label>
+            <Label>{t('consultationType')}</Label>
             <div className="grid grid-cols-3 gap-3">
               {CONSULTATION_TYPES.map(ct => {
                 const Icon = ct.icon;
@@ -199,48 +189,33 @@ const BookConsultation: React.FC = () => {
             </div>
           </div>
 
-          {/* Date Selection */}
           <div className="space-y-2">
-            <Label>Select Date</Label>
+            <Label>{t('selectDate')}</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className={cn('w-full justify-start text-left font-normal', !date && 'text-muted-foreground')}>
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, 'PPP') : 'Pick a date'}
+                  {date ? format(date, 'PPP') : t('pickADate')}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={d => { setDate(d); setTime(''); }}
-                  disabled={(d) => d < new Date() || d.getDay() === 0}
-                  initialFocus
-                  className={cn("p-3 pointer-events-auto")}
-                />
+                <Calendar mode="single" selected={date} onSelect={d => { setDate(d); setTime(''); }}
+                  disabled={(d) => d < new Date() || d.getDay() === 0} initialFocus className={cn("p-3 pointer-events-auto")} />
               </PopoverContent>
             </Popover>
           </div>
 
-          {/* Time Slots */}
           {date && (
             <div className="space-y-2">
-              <Label>Available Time Slots</Label>
+              <Label>{t('availableTimeSlots')}</Label>
               {isLawyerUnavailable ? (
-                <p className="text-sm text-destructive">Lawyer is not available on this date. Please select another date.</p>
+                <p className="text-sm text-destructive">{t('lawyerUnavailableDate')}</p>
               ) : (
                 <div className="grid grid-cols-4 gap-2">
                   {availableSlots.map(slot => (
-                    <Button
-                      key={slot}
-                      type="button"
-                      variant={time === slot ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setTime(slot)}
-                      className="text-xs"
-                    >
-                      <Clock className="h-3 w-3 mr-1" />
-                      {slot}
+                    <Button key={slot} type="button" variant={time === slot ? 'default' : 'outline'} size="sm"
+                      onClick={() => setTime(slot)} className="text-xs">
+                      <Clock className="h-3 w-3 mr-1" />{slot}
                     </Button>
                   ))}
                 </div>
@@ -248,33 +223,26 @@ const BookConsultation: React.FC = () => {
             </div>
           )}
 
-          {/* Notes */}
           <div className="space-y-2">
-            <Label>Additional Notes (Optional)</Label>
-            <Textarea
-              placeholder="Briefly describe what you'd like to discuss..."
-              value={notes}
-              onChange={e => setNotes(e.target.value)}
-              className="min-h-[80px]"
-            />
+            <Label>{t('additionalNotes')}</Label>
+            <Textarea placeholder={t('describeDiscuss')} value={notes} onChange={e => setNotes(e.target.value)} className="min-h-[80px]" />
           </div>
 
-          {/* Summary */}
           {date && time && (
             <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-2">
-              <p className="font-medium text-sm text-foreground">Consultation Summary</p>
+              <p className="font-medium text-sm text-foreground">{t('consultationSummary')}</p>
               <div className="grid grid-cols-2 gap-2 text-sm">
-                <span className="text-muted-foreground">Date:</span>
+                <span className="text-muted-foreground">{t('date')}:</span>
                 <span>{format(date, 'PPP')}</span>
-                <span className="text-muted-foreground">Time:</span>
+                <span className="text-muted-foreground">{t('time')}:</span>
                 <span>{time}</span>
-                <span className="text-muted-foreground">Type:</span>
+                <span className="text-muted-foreground">{t('type')}:</span>
                 <span className="capitalize">{consultationType.replace('_', ' ')}</span>
-                <span className="text-muted-foreground">Duration:</span>
-                <span>{lawyerProfile?.consultation_duration || 30} minutes</span>
+                <span className="text-muted-foreground">{t('duration')}:</span>
+                <span>{lawyerProfile?.consultation_duration || 30} {t('minutes')}</span>
                 {lawyerProfile?.consultation_fee > 0 && (
                   <>
-                    <span className="text-muted-foreground">Fee:</span>
+                    <span className="text-muted-foreground">{t('fee')}:</span>
                     <span>₹{lawyerProfile.consultation_fee}</span>
                   </>
                 )}
@@ -284,7 +252,7 @@ const BookConsultation: React.FC = () => {
 
           <Button className="w-full" onClick={handleSubmit} disabled={!date || !time || isSubmitting}>
             <CheckCircle className="h-4 w-4 mr-2" />
-            {isSubmitting ? 'Booking...' : 'Request Consultation'}
+            {isSubmitting ? t('bookingLabel') : t('requestConsultation')}
           </Button>
         </CardContent>
       </Card>
