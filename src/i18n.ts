@@ -1,5 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { te } from '@/translations/te';
+import { ml } from '@/translations/ml';
 
 const resources = {
   en: {
@@ -2697,72 +2699,8 @@ const resources = {
       consultALawyer: "வழக்கறிஞரை அணுகுங்கள்",
     }
   },
-  te: {
-    translation: {
-      welcome: "LAWLITE కి స్వాగతం",
-      login: "లాగిన్",
-      signup: "సైన్ అప్",
-      logout: "లాగౌట్",
-      save: "సేవ్ చేయి",
-      cancel: "రద్దు చేయి",
-      search: "వెతుకు",
-      email: "ఇమెయిల్",
-      password: "పాస్‌వర్డ్",
-      dashboard: "డాష్‌బోర్డ్",
-      lawyers: "న్యాయవాదులు",
-      documents: "పత్రాలు",
-      templates: "టెంప్లేట్‌లు",
-      consultants: "సలహాదారులు",
-      profile: "ప్రొఫైల్",
-      chat: "చాట్",
-      services: "సేవలు",
-      stateLegalSupport: "రాష్ట్ర న్యాయ సహాయం",
-      msmeSupport: "MSME సహాయం",
-      familyLaw: "కుటుంబ చట్టం",
-      criminalLaw: "నేర చట్టం",
-      civilLaw: "సివిల్ చట్టం",
-      quickActions: "త్వరిత చర్యలు",
-      findLawyers: "న్యాయవాదులను కనుగొనండి",
-      bookConsultation: "సంప్రదింపు బుక్ చేయండి",
-      chatbotInputPlaceholder: "మీ హక్కులు, చట్టాల గురించి అడగండి...",
-      voiceInputTooltip: "మీ ప్రశ్నను చెప్పండి",
-      playAudio: "🔊 ఆడియో ప్లే చేయి",
-      consultALawyer: "న్యాయవాదిని సంప్రదించండి",
-    }
-  },
-  ml: {
-    translation: {
-      welcome: "LAWLITE ലേക്ക് സ്വാഗതം",
-      login: "ലോഗിൻ",
-      signup: "സൈൻ അപ്പ്",
-      logout: "ലോഗൌട്ട്",
-      save: "സേവ് ചെയ്യുക",
-      cancel: "റദ്ദാക്കുക",
-      search: "തിരയുക",
-      email: "ഇമെയിൽ",
-      password: "പാസ്‌വേഡ്",
-      dashboard: "ഡാഷ്‌ബോർഡ്",
-      lawyers: "അഭിഭാഷകർ",
-      documents: "ഡോക്യുമെന്റുകൾ",
-      templates: "ടെംപ്ലേറ്റുകൾ",
-      consultants: "കൺസൾട്ടന്റുകൾ",
-      profile: "പ്രൊഫൈൽ",
-      chat: "ചാറ്റ്",
-      services: "സേവനങ്ങൾ",
-      stateLegalSupport: "സംസ്ഥാന നിയമ സഹായം",
-      msmeSupport: "MSME സഹായം",
-      familyLaw: "കുടുംബ നിയമം",
-      criminalLaw: "ക്രിമിനൽ നിയമം",
-      civilLaw: "സിവിൽ നിയമം",
-      quickActions: "ദ്രുത നടപടികൾ",
-      findLawyers: "അഭിഭാഷകരെ കണ്ടെത്തുക",
-      bookConsultation: "കൺസൾട്ടേഷൻ ബുക്ക് ചെയ്യുക",
-      chatbotInputPlaceholder: "നിങ്ങളുടെ അവകാശങ്ങൾ, നിയമങ്ങൾ പറ്റി ചോദിക്കൂ...",
-      voiceInputTooltip: "നിങ്ങളുടെ ചോദ്യം പറയൂ",
-      playAudio: "🔊 ഓഡിയോ പ്ലേ ചെയ്യുക",
-      consultALawyer: "അഭിഭാഷകനെ സമീപിക്കുക",
-    }
-  },
+  te: { translation: te },
+  ml: { translation: ml },
   mr: {
     translation: {
       welcome: "LAWLITE मध्ये आपले स्वागत आहे",
