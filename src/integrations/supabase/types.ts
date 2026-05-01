@@ -664,7 +664,33 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      lawyer_reviews_moderation: {
+        Row: {
+          admin_moderated: boolean | null
+          client_id: string | null
+          flag_reason: string | null
+          id: string | null
+          is_flagged: boolean | null
+          lawyer_id: string | null
+        }
+        Insert: {
+          admin_moderated?: boolean | null
+          client_id?: string | null
+          flag_reason?: string | null
+          id?: string | null
+          is_flagged?: boolean | null
+          lawyer_id?: string | null
+        }
+        Update: {
+          admin_moderated?: boolean | null
+          client_id?: string | null
+          flag_reason?: string | null
+          id?: string | null
+          is_flagged?: boolean | null
+          lawyer_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
