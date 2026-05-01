@@ -4,6 +4,11 @@ import { te } from '@/translations/te';
 import { ml } from '@/translations/ml';
 import { mr } from '@/translations/mr';
 import { gu } from '@/translations/gu';
+import { pa } from '@/translations/pa';
+import { bn } from '@/translations/bn';
+import { ur } from '@/translations/ur';
+import { od } from '@/translations/od';
+import { as } from '@/translations/as';
 
 const resources = {
   en: {
@@ -2763,131 +2768,11 @@ const resources = {
       consultALawyer: "વકીલનો સંપર્ક કરો",
     }
   },
-  pa: {
-    translation: {
-      welcome: "LAWLITE ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ",
-      login: "ਲੌਗਇਨ",
-      signup: "ਸਾਈਨ ਅੱਪ",
-      logout: "ਲੌਗਆਊਟ",
-      search: "ਖੋਜੋ",
-      email: "ਈਮੇਲ",
-      password: "ਪਾਸਵਰਡ",
-      dashboard: "ਡੈਸ਼ਬੋਰਡ",
-      lawyers: "ਵਕੀਲ",
-      documents: "ਦਸਤਾਵੇਜ਼",
-      templates: "ਟੈਂਪਲੇਟ",
-      consultants: "ਸਲਾਹਕਾਰ",
-      profile: "ਪ੍ਰੋਫਾਈਲ",
-      chat: "ਚੈਟ",
-      services: "ਸੇਵਾਵਾਂ",
-      quickActions: "ਤੁਰੰਤ ਕਾਰਵਾਈ",
-      findLawyers: "ਵਕੀਲ ਲੱਭੋ",
-      bookConsultation: "ਸਲਾਹ ਬੁੱਕ ਕਰੋ",
-      chatbotInputPlaceholder: "ਆਪਣੇ ਅਧਿਕਾਰਾਂ, ਕਾਨੂੰਨਾਂ ਬਾਰੇ ਪੁੱਛੋ...",
-      voiceInputTooltip: "ਆਪਣਾ ਸਵਾਲ ਬੋਲੋ",
-      consultALawyer: "ਵਕੀਲ ਨਾਲ ਸਲਾਹ ਕਰੋ",
-    }
-  },
-  bn: {
-    translation: {
-      welcome: "LAWLITE তে স্বাগতম",
-      login: "লগইন",
-      signup: "সাইন আপ",
-      logout: "লগআউট",
-      search: "অনুসন্ধান",
-      email: "ইমেইল",
-      password: "পাসওয়ার্ড",
-      dashboard: "ড্যাশবোর্ড",
-      lawyers: "আইনজীবী",
-      documents: "নথি",
-      templates: "টেমপ্লেট",
-      consultants: "পরামর্শদাতা",
-      profile: "প্রোফাইল",
-      chat: "চ্যাট",
-      services: "সেবাসমূহ",
-      quickActions: "দ্রুত পদক্ষেপ",
-      findLawyers: "আইনজীবী খুঁজুন",
-      bookConsultation: "পরামর্শ বুক করুন",
-      chatbotInputPlaceholder: "আপনার অধিকার, আইন সম্পর্কে জিজ্ঞাসা করুন...",
-      voiceInputTooltip: "আপনার প্রশ্ন বলুন",
-      consultALawyer: "আইনজীবীর সাথে পরামর্শ করুন",
-    }
-  },
-  ur: {
-    translation: {
-      welcome: "LAWLITE میں خوش آمدید",
-      login: "لاگ ان",
-      signup: "سائن اپ",
-      logout: "لاگ آؤٹ",
-      search: "تلاش",
-      email: "ای میل",
-      password: "پاس ورڈ",
-      dashboard: "ڈیش بورڈ",
-      lawyers: "وکلاء",
-      documents: "دستاویزات",
-      templates: "ٹیمپلیٹس",
-      consultants: "مشیران",
-      profile: "پروفائل",
-      chat: "چیٹ",
-      services: "خدمات",
-      quickActions: "فوری اقدامات",
-      findLawyers: "وکلاء تلاش کریں",
-      bookConsultation: "مشاورت بُک کریں",
-      chatbotInputPlaceholder: "اپنے حقوق، قوانین کے بارے میں پوچھیں...",
-      voiceInputTooltip: "اپنا سوال بولیں",
-      consultALawyer: "وکیل سے مشورہ کریں",
-    }
-  },
-  od: {
-    translation: {
-      welcome: "LAWLITE କୁ ସ୍ୱାଗତ",
-      login: "ଲଗଇନ",
-      signup: "ସାଇନ ଅପ",
-      logout: "ଲଗଆଉଟ",
-      search: "ଖୋଜ",
-      email: "ଇମେଲ",
-      password: "ପାସୱାର୍ଡ",
-      dashboard: "ଡ୍ୟାସବୋର୍ଡ",
-      lawyers: "ଓକିଲ",
-      documents: "ଦଲିଲ",
-      templates: "ଟେମ୍ପଲେଟ",
-      consultants: "ପରାମର୍ଶଦାତା",
-      profile: "ପ୍ରୋଫାଇଲ",
-      chat: "ଚାଟ",
-      services: "ସେବା",
-      quickActions: "ଦ୍ରୁତ କାର୍ଯ୍ୟ",
-      findLawyers: "ଓକିଲ ଖୋଜନ୍ତୁ",
-      bookConsultation: "ପରାମର୍ଶ ବୁକ୍ କରନ୍ତୁ",
-      chatbotInputPlaceholder: "ଆପଣଙ୍କ ଅଧିକାର, ଆଇନ ବିଷୟରେ ପଚାରନ୍ତୁ...",
-      voiceInputTooltip: "ଆପଣଙ୍କ ପ୍ରଶ୍ନ କୁହନ୍ତୁ",
-      consultALawyer: "ଓକିଲଙ୍କ ସହ ପରାମର୍ଶ କରନ୍ତୁ",
-    }
-  },
-  as: {
-    translation: {
-      welcome: "LAWLITE লৈ স্বাগতম",
-      login: "লগইন",
-      signup: "ছাইন আপ",
-      logout: "লগআউট",
-      search: "সন্ধান",
-      email: "ইমেইল",
-      password: "পাছৱৰ্ড",
-      dashboard: "ডেশ্বব'ৰ্ড",
-      lawyers: "অধিবক্তা",
-      documents: "নথি",
-      templates: "টেমপ্লেট",
-      consultants: "পৰামৰ্শদাতা",
-      profile: "প্ৰ'ফাইল",
-      chat: "চেট",
-      services: "সেৱা",
-      quickActions: "দ্ৰুত পদক্ষেপ",
-      findLawyers: "অধিবক্তা বিচাৰক",
-      bookConsultation: "পৰামৰ্শ বুক কৰক",
-      chatbotInputPlaceholder: "আপোনাৰ অধিকাৰ, আইন সম্পৰ্কে সোধক...",
-      voiceInputTooltip: "আপোনাৰ প্ৰশ্ন কওক",
-      consultALawyer: "অধিবক্তাৰ সৈতে পৰামৰ্শ কৰক",
-    }
-  },
+  pa: { translation: pa },
+  bn: { translation: bn },
+  ur: { translation: ur },
+  od: { translation: od },
+  as: { translation: as },
 };
 
 // Language metadata for display
