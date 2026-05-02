@@ -78,6 +78,39 @@ const ChatBot: React.FC = () => {
     });
   }, [currentLang, userState, t]);
 
+  // Load persisted chat history when user logs in
+  useEffect(() => {
+    if (!user?.id) return;
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from('chat_history')
+        .select('id, role, content, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true });
+      if (cancelled || error || !data || data.length === 0) return;
+      const restored: Message[] = data.map((r: any) => ({
+        id: r.id,
+        role: r.role as 'user' | 'assistant',
+        content: r.content,
+      }));
+      setMessages([{ id: '1', role: 'assistant', content: buildWelcome() }, ...restored]);
+      setShowSuggestions(false);
+    })();
+    return () => { cancelled = true; };
+  }, [user?.id]);
+
+  // Persist a single message to chat_history (skip welcome and streaming placeholder)
+  const persistMessage = async (msg: Message) => {
+    if (!user?.id) return;
+    if (msg.id === '1' || msg.id === 'streaming') return;
+    await supabase.from('chat_history').insert({
+      user_id: user.id,
+      role: msg.role,
+      content: msg.content,
+    });
+  };
+
   // Copy text
   const copyText = async (text: string, msgId: string) => {
     const clean = text.replace(/[#*_\[\]()>`~|]/g, '');
