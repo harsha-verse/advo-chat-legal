@@ -389,6 +389,7 @@ const ChatBot: React.FC = () => {
     const userMsg: Message = { id: Date.now().toString(), role: 'user', content: msgText };
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
+    persistMessage(userMsg);
     setInputMessage('');
     setShowSuggestions(false);
     setIsTyping(true);
