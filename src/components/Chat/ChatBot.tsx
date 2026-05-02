@@ -370,10 +370,12 @@ const ChatBot: React.FC = () => {
 
     setMessages((prev) => {
       const updated = prev.map((m) => m.id === 'streaming' ? { ...m, id: Date.now().toString() } : m);
-      // Auto-read the last assistant message if enabled
-      if (autoReadEnabled) {
-        const lastMsg = updated[updated.length - 1];
-        if (lastMsg?.role === 'assistant') {
+      const lastMsg = updated[updated.length - 1];
+      if (lastMsg?.role === 'assistant') {
+        // Persist assistant reply
+        persistMessage(lastMsg);
+        // Auto-read the last assistant message if enabled
+        if (autoReadEnabled) {
           setTimeout(() => speakText(lastMsg.content, lastMsg.id), 300);
         }
       }
