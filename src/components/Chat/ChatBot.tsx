@@ -13,6 +13,7 @@ import ChatActionCards from './ChatActionCards';
 import DiagnosisFlow from './DiagnosisFlow';
 import { SPEECH_LANG_MAP } from '@/i18n';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Message {
   id: string;
