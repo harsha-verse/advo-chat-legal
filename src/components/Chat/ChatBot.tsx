@@ -13,6 +13,7 @@ import ChatActionCards from './ChatActionCards';
 import DiagnosisFlow from './DiagnosisFlow';
 import { SPEECH_LANG_MAP } from '@/i18n';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Message {
   id: string;
@@ -33,7 +34,7 @@ const SUGGESTION_KEYS = [
 
 const ChatBot: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const userState = profile?.state;
@@ -76,6 +77,39 @@ const ChatBot: React.FC = () => {
       return [{ id: '1', role: 'assistant', content: buildWelcome() }, ...rest];
     });
   }, [currentLang, userState, t]);
+
+  // Load persisted chat history when user logs in
+  useEffect(() => {
+    if (!user?.id) return;
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase
+        .from('chat_history')
+        .select('id, role, content, created_at')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true });
+      if (cancelled || error || !data || data.length === 0) return;
+      const restored: Message[] = data.map((r: any) => ({
+        id: r.id,
+        role: r.role as 'user' | 'assistant',
+        content: r.content,
+      }));
+      setMessages([{ id: '1', role: 'assistant', content: buildWelcome() }, ...restored]);
+      setShowSuggestions(false);
+    })();
+    return () => { cancelled = true; };
+  }, [user?.id]);
+
+  // Persist a single message to chat_history (skip welcome and streaming placeholder)
+  const persistMessage = async (msg: Message) => {
+    if (!user?.id) return;
+    if (msg.id === '1' || msg.id === 'streaming') return;
+    await supabase.from('chat_history').insert({
+      user_id: user.id,
+      role: msg.role,
+      content: msg.content,
+    });
+  };
 
   // Copy text
   const copyText = async (text: string, msgId: string) => {
@@ -336,10 +370,12 @@ const ChatBot: React.FC = () => {
 
     setMessages((prev) => {
       const updated = prev.map((m) => m.id === 'streaming' ? { ...m, id: Date.now().toString() } : m);
-      // Auto-read the last assistant message if enabled
-      if (autoReadEnabled) {
-        const lastMsg = updated[updated.length - 1];
-        if (lastMsg?.role === 'assistant') {
+      const lastMsg = updated[updated.length - 1];
+      if (lastMsg?.role === 'assistant') {
+        // Persist assistant reply
+        persistMessage(lastMsg);
+        // Auto-read the last assistant message if enabled
+        if (autoReadEnabled) {
           setTimeout(() => speakText(lastMsg.content, lastMsg.id), 300);
         }
       }
@@ -353,6 +389,7 @@ const ChatBot: React.FC = () => {
     const userMsg: Message = { id: Date.now().toString(), role: 'user', content: msgText };
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
+    persistMessage(userMsg);
     setInputMessage('');
     setShowSuggestions(false);
     setIsTyping(true);
@@ -379,6 +416,7 @@ const ChatBot: React.FC = () => {
     };
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
+    persistMessage(userMsg);
     setShowSuggestions(false);
     setIsTyping(true);
 
