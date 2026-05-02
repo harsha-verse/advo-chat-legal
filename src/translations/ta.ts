@@ -353,6 +353,7 @@ export const ta = {
   smsNotificationsDesc: "உங்கள் தொலைபேசியில் உரைச் செய்திகளாக எச்சரிக்கைகளைப் பெறுங்கள்",
   consultationAlerts: "ஆலோசனை எச்சரிக்கைகள்",
   consultationAlertsDesc: "வரவிருக்கும் ஆலோசனைகளுக்கான நினைவூட்டல்கள்",
+  legalUpdates: "சட்ட மாற்றங்கள்",
   legalUpdatesDesc: "உங்கள் மாநிலத்தில் சட்ட மாற்றங்கள் பற்றிய செய்திகள்",
   platformAnnouncements: "தள அறிவிப்புகள்",
   platformAnnouncementsDesc: "LawLite அம்சங்களின் புதுப்பிப்புகள் மற்றும் செய்திகள்",
