@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { ta } from '@/translations/ta';
 import { te } from '@/translations/te';
 import { ml } from '@/translations/ml';
 import { mr } from '@/translations/mr';
