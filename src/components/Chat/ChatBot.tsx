@@ -416,6 +416,7 @@ const ChatBot: React.FC = () => {
     };
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
+    persistMessage(userMsg);
     setShowSuggestions(false);
     setIsTyping(true);
 
