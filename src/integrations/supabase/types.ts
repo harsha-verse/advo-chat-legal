@@ -176,62 +176,83 @@ export type Database = {
         Row: {
           accepted_at: string | null
           auto_assigned: boolean | null
+          case_number: string | null
+          case_stage: string | null
           case_type: string
           client_id: string
           client_location_city: string | null
           client_location_state: string | null
           closed_at: string | null
+          court_name: string | null
           created_at: string
           description: string
           id: string
           lawyer_id: string | null
           match_status: string | null
+          next_hearing_date: string | null
+          opponent_contact: string | null
+          opponent_name: string | null
           preferred_consultation: string | null
           priority: string | null
           response_deadline: string | null
           status: string
           title: string
           updated_at: string
+          workspace_client_id: string | null
         }
         Insert: {
           accepted_at?: string | null
           auto_assigned?: boolean | null
+          case_number?: string | null
+          case_stage?: string | null
           case_type: string
           client_id: string
           client_location_city?: string | null
           client_location_state?: string | null
           closed_at?: string | null
+          court_name?: string | null
           created_at?: string
           description: string
           id?: string
           lawyer_id?: string | null
           match_status?: string | null
+          next_hearing_date?: string | null
+          opponent_contact?: string | null
+          opponent_name?: string | null
           preferred_consultation?: string | null
           priority?: string | null
           response_deadline?: string | null
           status?: string
           title: string
           updated_at?: string
+          workspace_client_id?: string | null
         }
         Update: {
           accepted_at?: string | null
           auto_assigned?: boolean | null
+          case_number?: string | null
+          case_stage?: string | null
           case_type?: string
           client_id?: string
           client_location_city?: string | null
           client_location_state?: string | null
           closed_at?: string | null
+          court_name?: string | null
           created_at?: string
           description?: string
           id?: string
           lawyer_id?: string | null
           match_status?: string | null
+          next_hearing_date?: string | null
+          opponent_contact?: string | null
+          opponent_name?: string | null
           preferred_consultation?: string | null
           priority?: string | null
           response_deadline?: string | null
           status?: string
           title?: string
           updated_at?: string
+          workspace_client_id?: string | null
         }
         Relationships: []
       }
@@ -354,6 +375,51 @@ export type Database = {
           created_at?: string
           id?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      lawyer_clients: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string | null
+          id: string
+          id_proof_url: string | null
+          lawyer_id: string
+          linked_user_id: string | null
+          name: string
+          notes: string | null
+          payment_status: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          id_proof_url?: string | null
+          lawyer_id: string
+          linked_user_id?: string | null
+          name: string
+          notes?: string | null
+          payment_status?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          id_proof_url?: string | null
+          lawyer_id?: string
+          linked_user_id?: string | null
+          name?: string
+          notes?: string | null
+          payment_status?: string
+          phone?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -585,6 +651,30 @@ export type Database = {
           },
         ]
       }
+      lawyer_team_members: {
+        Row: {
+          created_at: string
+          id: string
+          lawyer_id: string
+          member_user_id: string
+          role: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lawyer_id: string
+          member_user_id: string
+          role?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lawyer_id?: string
+          member_user_id?: string
+          role?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
@@ -686,6 +776,183 @@ export type Database = {
         }
         Relationships: []
       }
+      workspace_audit_log: {
+        Row: {
+          action: string
+          actor_id: string
+          case_id: string | null
+          created_at: string
+          details: Json | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+          lawyer_id: string
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          case_id?: string | null
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          lawyer_id: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          case_id?: string | null
+          created_at?: string
+          details?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          lawyer_id?: string
+        }
+        Relationships: []
+      }
+      workspace_document_versions: {
+        Row: {
+          case_id: string
+          created_at: string
+          document_id: string | null
+          file_name: string
+          file_type: string | null
+          file_url: string
+          id: string
+          lawyer_id: string
+          tag: string | null
+          uploaded_by: string
+          version_number: number
+        }
+        Insert: {
+          case_id: string
+          created_at?: string
+          document_id?: string | null
+          file_name: string
+          file_type?: string | null
+          file_url: string
+          id?: string
+          lawyer_id: string
+          tag?: string | null
+          uploaded_by: string
+          version_number?: number
+        }
+        Update: {
+          case_id?: string
+          created_at?: string
+          document_id?: string | null
+          file_name?: string
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          lawyer_id?: string
+          tag?: string | null
+          uploaded_by?: string
+          version_number?: number
+        }
+        Relationships: []
+      }
+      workspace_hearings: {
+        Row: {
+          case_id: string
+          court_name: string | null
+          court_room: string | null
+          created_at: string
+          hearing_date: string
+          hearing_time: string | null
+          id: string
+          judge_name: string | null
+          lawyer_id: string
+          notes: string | null
+          outcome: string | null
+          purpose: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          case_id: string
+          court_name?: string | null
+          court_room?: string | null
+          created_at?: string
+          hearing_date: string
+          hearing_time?: string | null
+          id?: string
+          judge_name?: string | null
+          lawyer_id: string
+          notes?: string | null
+          outcome?: string | null
+          purpose?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          case_id?: string
+          court_name?: string | null
+          court_room?: string | null
+          created_at?: string
+          hearing_date?: string
+          hearing_time?: string | null
+          id?: string
+          judge_name?: string | null
+          lawyer_id?: string
+          notes?: string | null
+          outcome?: string | null
+          purpose?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      workspace_tasks: {
+        Row: {
+          assignee_id: string | null
+          case_id: string
+          checklist: Json | null
+          completed_at: string | null
+          created_at: string
+          deadline: string | null
+          description: string | null
+          id: string
+          lawyer_id: string
+          priority: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee_id?: string | null
+          case_id: string
+          checklist?: Json | null
+          completed_at?: string | null
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          id?: string
+          lawyer_id: string
+          priority?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee_id?: string | null
+          case_id?: string
+          checklist?: Json | null
+          completed_at?: string | null
+          created_at?: string
+          deadline?: string | null
+          description?: string | null
+          id?: string
+          lawyer_id?: string
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       lawyer_reviews_moderation: {
@@ -724,9 +991,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_lawyer_team_member: {
+        Args: { _lawyer_id: string; _user_id: string }
+        Returns: boolean
+      }
+      team_lawyer_ids: { Args: { _user_id: string }; Returns: string[] }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "moderator" | "user" | "junior"
       lawyer_role_type:
         | "junior_lawyer"
         | "advocate"
@@ -864,7 +1136,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "moderator", "user", "junior"],
       lawyer_role_type: [
         "junior_lawyer",
         "advocate",
