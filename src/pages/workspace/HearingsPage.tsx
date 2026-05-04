@@ -29,10 +29,10 @@ const HearingsPage: React.FC = () => {
   }, [user]);
 
   // Group by date
-  const grouped = hearings.reduce((acc: Record<string, any[]>, h) => {
-    (acc[h.hearing_date] ||= []).push(h);
-    return acc;
-  }, {});
+  const grouped: Record<string, any[]> = {};
+  for (const h of hearings) {
+    (grouped[h.hearing_date] ||= []).push(h);
+  }
 
   if (hearings.length === 0) {
     return <Card><CardContent className="py-12 text-center text-muted-foreground">
