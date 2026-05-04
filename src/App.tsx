@@ -31,6 +31,13 @@ import MyConsultations from "./pages/MyConsultations";
 import SelectLawyer from "./pages/SelectLawyer";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import WorkspaceLayout from "./pages/workspace/WorkspaceLayout";
+import CasesList from "./pages/workspace/CasesList";
+import CaseDetailWorkspace from "./pages/workspace/CaseDetailWorkspace";
+import ClientsPage from "./pages/workspace/ClientsPage";
+import TasksPage from "./pages/workspace/TasksPage";
+import HearingsPage from "./pages/workspace/HearingsPage";
+import AuditPage from "./pages/workspace/AuditPage";
 import "./i18n";
 import { useTranslation } from "react-i18next";
 
@@ -192,6 +199,22 @@ const App = () => (
               <ProtectedRoute><AdminDashboard /></ProtectedRoute>
             } />
             
+            <Route path="/admin" element={
+              <ProtectedRoute><AdminDashboard /></ProtectedRoute>
+            } />
+
+            {/* Lawyer-only Workspace */}
+            <Route path="/workspace" element={
+              <ProtectedRoute><WorkspaceLayout /></ProtectedRoute>
+            }>
+              <Route index element={<CasesList />} />
+              <Route path="cases/:id" element={<CaseDetailWorkspace />} />
+              <Route path="clients" element={<ClientsPage />} />
+              <Route path="tasks" element={<TasksPage />} />
+              <Route path="hearings" element={<HearingsPage />} />
+              <Route path="audit" element={<AuditPage />} />
+            </Route>
+
             {/* Catch all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>

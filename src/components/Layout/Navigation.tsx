@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
   Home, Users, FileText, File, MessageCircle, User,
-  Briefcase, Scale, MapPin, Building, Landmark, FilePlus, ShieldCheck
+  Briefcase, Scale, MapPin, Building, Landmark, FilePlus, ShieldCheck, LayoutGrid
 } from 'lucide-react';
 
 const Navigation: React.FC = () => {
@@ -31,6 +31,7 @@ const Navigation: React.FC = () => {
 
   const lawyerNavItems = [
     { path: '/lawyer-dashboard', icon: Home, label: t('dashboard') },
+    { path: '/workspace', icon: LayoutGrid, label: 'Workspace' },
     { path: '/my-cases', icon: Briefcase, label: t('caseDashboard') },
     { path: '/my-consultations', icon: MessageCircle, label: t('consultations') },
     { path: '/documents', icon: FileText, label: t('documents') },
