@@ -59,7 +59,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <main className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
@@ -152,7 +152,7 @@ const Login: React.FC = () => {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 };
 
