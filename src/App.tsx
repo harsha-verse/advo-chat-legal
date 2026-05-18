@@ -4,9 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
-import Header from "@/components/Layout/Header";
-import Navigation from "@/components/Layout/Navigation";
-import ChatBot from "@/components/Chat/ChatBot";
+import RoleRoute from "@/components/Layout/RoleRoute";
 import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import LawyerSignup from "./pages/auth/LawyerSignup";
@@ -39,52 +37,36 @@ import TasksPage from "./pages/workspace/TasksPage";
 import HearingsPage from "./pages/workspace/HearingsPage";
 import AuditPage from "./pages/workspace/AuditPage";
 import "./i18n";
-import { useTranslation } from "react-i18next";
 
 const queryClient = new QueryClient();
 
-// Protected Route component
-const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { t } = useTranslation();
-  const { user, isLoading } = useAuth();
-  if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center">{t("loading")}</div>;
-  }
-  
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <div className="flex">
-        <Navigation />
-        <main className="flex-1 ml-64 pt-16">
-          {children}
-        </main>
-      </div>
-      <ChatBot />
-    </div>
-  );
-};
-
-// Public Route component (for auth pages)
+// Public route guard (auth pages). Authenticated users are routed to their own portal.
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, profile } = useAuth();
-  
+  const { user, profile, isAdmin } = useAuth();
   if (user) {
-    const redirectPath = profile?.user_type === 'lawyer' ? '/lawyer-dashboard' : '/dashboard';
-    return <Navigate to={redirectPath} replace />;
+    const path = isAdmin
+      ? '/admin'
+      : profile?.user_type === 'lawyer'
+      ? '/lawyer-dashboard'
+      : '/dashboard';
+    return <Navigate to={path} replace />;
   }
-  
   return <>{children}</>;
 };
 
-const ChatComingSoon: React.FC = () => {
-  const { t } = useTranslation();
-  return <div className="p-6">{t("chatComingSoon")}</div>;
-};
+// Convenience wrappers
+const UserOnly: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <RoleRoute allow={['user']}>{children}</RoleRoute>
+);
+const LawyerOnly: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <RoleRoute allow={['lawyer']}>{children}</RoleRoute>
+);
+const AdminOnly: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <RoleRoute allow={['admin']}>{children}</RoleRoute>
+);
+const AnyAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <RoleRoute allow={['user', 'lawyer', 'admin']}>{children}</RoleRoute>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -94,119 +76,37 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Public routes */}
-            <Route path="/" element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            } />
-            <Route path="/login" element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            } />
-            <Route path="/signup" element={
-              <PublicRoute><Signup /></PublicRoute>
-            } />
-            <Route path="/lawyer-signup" element={
-              <PublicRoute><LawyerSignup /></PublicRoute>
-            } />
-            
-            {/* Protected routes */}
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/lawyers" element={
-              <ProtectedRoute>
-                <Lawyers />
-              </ProtectedRoute>
-            } />
-            <Route path="/templates" element={
-              <ProtectedRoute>
-                <Templates />
-              </ProtectedRoute>
-            } />
-            <Route path="/documents" element={
-              <ProtectedRoute>
-                <Documents />
-              </ProtectedRoute>
-            } />
-            <Route path="/consultants" element={
-              <ProtectedRoute>
-                <Consultants />
-              </ProtectedRoute>
-            } />
-            <Route path="/state-legal-support" element={
-              <ProtectedRoute>
-                <StateLegalSupport />
-              </ProtectedRoute>
-            } />
-            <Route path="/msme-support" element={
-              <ProtectedRoute>
-                <MSMESupport />
-              </ProtectedRoute>
-            } />
-            <Route path="/authority-finder" element={
-              <ProtectedRoute>
-                <AuthorityFinder />
-              </ProtectedRoute>
-            } />
-            <Route path="/generate-document" element={
-              <ProtectedRoute>
-                <DocumentGenerator />
-              </ProtectedRoute>
-            } />
-            <Route path="/chat" element={
-              <ProtectedRoute>
-                <ChatComingSoon />
-              </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/lawyer-dashboard" element={
-              <ProtectedRoute><LawyerDashboard /></ProtectedRoute>
-            } />
-            <Route path="/lawyer-profile/edit" element={
-              <ProtectedRoute><LawyerProfileEdit /></ProtectedRoute>
-            } />
-            <Route path="/lawyer/:id" element={
-              <ProtectedRoute><LawyerPublicProfile /></ProtectedRoute>
-            } />
-            <Route path="/my-cases" element={
-              <ProtectedRoute><MyCases /></ProtectedRoute>
-            } />
-            <Route path="/case/:id" element={
-              <ProtectedRoute><CaseDetail /></ProtectedRoute>
-            } />
-            <Route path="/submit-case" element={
-              <ProtectedRoute><SubmitCase /></ProtectedRoute>
-            } />
-            <Route path="/case/:caseId/select-lawyer" element={
-              <ProtectedRoute><SelectLawyer /></ProtectedRoute>
-            } />
-            <Route path="/book-consultation" element={
-              <ProtectedRoute><BookConsultation /></ProtectedRoute>
-            } />
-            <Route path="/my-consultations" element={
-              <ProtectedRoute><MyConsultations /></ProtectedRoute>
-            } />
-            <Route path="/admin" element={
-              <ProtectedRoute><AdminDashboard /></ProtectedRoute>
-            } />
-            
-            <Route path="/admin" element={
-              <ProtectedRoute><AdminDashboard /></ProtectedRoute>
-            } />
+            {/* Public */}
+            <Route path="/" element={<PublicRoute><Login /></PublicRoute>} />
+            <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+            <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
+            <Route path="/lawyer-signup" element={<PublicRoute><LawyerSignup /></PublicRoute>} />
 
-            {/* Lawyer-only Workspace */}
-            <Route path="/workspace" element={
-              <ProtectedRoute><WorkspaceLayout /></ProtectedRoute>
-            }>
+            {/* ===== USER / CLIENT interface (consumer-only) ===== */}
+            <Route path="/dashboard" element={<UserOnly><Dashboard /></UserOnly>} />
+            <Route path="/lawyers" element={<UserOnly><Lawyers /></UserOnly>} />
+            <Route path="/lawyer/:id" element={<UserOnly><LawyerPublicProfile /></UserOnly>} />
+            <Route path="/templates" element={<UserOnly><Templates /></UserOnly>} />
+            <Route path="/documents" element={<UserOnly><Documents /></UserOnly>} />
+            <Route path="/consultants" element={<UserOnly><Consultants /></UserOnly>} />
+            <Route path="/state-legal-support" element={<UserOnly><StateLegalSupport /></UserOnly>} />
+            <Route path="/msme-support" element={<UserOnly><MSMESupport /></UserOnly>} />
+            <Route path="/authority-finder" element={<UserOnly><AuthorityFinder /></UserOnly>} />
+            <Route path="/generate-document" element={<UserOnly><DocumentGenerator /></UserOnly>} />
+            <Route path="/my-cases" element={<UserOnly><MyCases /></UserOnly>} />
+            <Route path="/case/:id" element={<UserOnly><CaseDetail /></UserOnly>} />
+            <Route path="/submit-case" element={<UserOnly><SubmitCase /></UserOnly>} />
+            <Route path="/case/:caseId/select-lawyer" element={<UserOnly><SelectLawyer /></UserOnly>} />
+            <Route path="/book-consultation" element={<UserOnly><BookConsultation /></UserOnly>} />
+            <Route path="/my-consultations" element={<UserOnly><MyConsultations /></UserOnly>} />
+
+            {/* Shared: profile available to all authenticated roles */}
+            <Route path="/profile" element={<AnyAuth><Profile /></AnyAuth>} />
+
+            {/* ===== LAWYER / ADVOCATE interface (isolated) ===== */}
+            <Route path="/lawyer-dashboard" element={<LawyerOnly><LawyerDashboard /></LawyerOnly>} />
+            <Route path="/lawyer-profile/edit" element={<LawyerOnly><LawyerProfileEdit /></LawyerOnly>} />
+            <Route path="/workspace" element={<LawyerOnly><WorkspaceLayout /></LawyerOnly>}>
               <Route index element={<CasesList />} />
               <Route path="cases/:id" element={<CaseDetailWorkspace />} />
               <Route path="clients" element={<ClientsPage />} />
@@ -215,7 +115,10 @@ const App = () => (
               <Route path="audit" element={<AuditPage />} />
             </Route>
 
-            {/* Catch all route */}
+            {/* ===== ADMIN ===== */}
+            <Route path="/admin" element={<AdminOnly><AdminDashboard /></AdminOnly>} />
+
+            {/* 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
