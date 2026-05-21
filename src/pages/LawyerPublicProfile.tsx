@@ -291,6 +291,7 @@ const LawyerPublicProfile: React.FC = () => {
           </Card>
         </div>
       </div>
+      <MessageDialog open={msgOpen} onOpenChange={setMsgOpen} recipient={profileData ? { id: isDemo ? demoId! : id!, name: profileData.name, type: isDemo ? 'demo_lawyer' : 'lawyer' } : null} />
     </div>
   );
 };
