@@ -231,6 +231,7 @@ const Lawyers: React.FC = () => {
         </CardContent>
       </Card>
       {showChatBot && <ChatBot />}
+      <MessageDialog open={msgOpen} onOpenChange={setMsgOpen} recipient={msgTarget ? { id: msgTarget.user_id, name: msgTarget.name, type: msgTarget.is_demo ? 'demo_lawyer' : 'lawyer' } : null} />
     </div>
   );
 };
