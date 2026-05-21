@@ -160,7 +160,7 @@ const Lawyers: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredLawyers.map((lawyer) => (
-                <Card key={lawyer.user_id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/lawyer/${lawyer.user_id}`)}>
+                <Card key={lawyer.user_id} className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(profilePath(lawyer))}>
                   <CardHeader>
                     <div className="flex items-start space-x-4">
                       <Avatar className="h-16 w-16">
