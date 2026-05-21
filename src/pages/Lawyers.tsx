@@ -202,8 +202,8 @@ const Lawyers: React.FC = () => {
                         </div>
                       )}
                       <div className="flex space-x-2" onClick={e => e.stopPropagation()}>
-                        <Button className="flex-1" size="sm" onClick={() => navigate(`/lawyer/${lawyer.user_id}`)}><Calendar className="h-4 w-4 mr-2" />{t('bookConsultation')}</Button>
-                        <Button variant="outline" size="sm"><MessageCircle className="h-4 w-4" /></Button>
+                        <Button className="flex-1" size="sm" onClick={() => navigate(profilePath(lawyer))}><Calendar className="h-4 w-4 mr-2" />{t('bookConsultation')}</Button>
+                        <Button variant="outline" size="sm" onClick={() => openMessage(lawyer)} aria-label="Message lawyer"><MessageCircle className="h-4 w-4" /></Button>
                       </div>
                     </div>
                   </CardContent>
