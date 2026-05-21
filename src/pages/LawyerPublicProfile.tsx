@@ -17,6 +17,7 @@ import TrustBadges from '@/components/Lawyer/TrustBadges';
 import PerformanceStats from '@/components/Lawyer/PerformanceStats';
 import ReviewsList from '@/components/Lawyer/ReviewsList';
 import ReviewForm from '@/components/Lawyer/ReviewForm';
+import MessageDialog from '@/components/Messaging/MessageDialog';
 
 const LawyerPublicProfile: React.FC = () => {
   const { t } = useTranslation();
