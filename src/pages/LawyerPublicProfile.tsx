@@ -117,9 +117,14 @@ const LawyerPublicProfile: React.FC = () => {
                 {lawyer.law_firm && <span className="flex items-center gap-1"><Building className="h-3.5 w-3.5" />{lawyer.law_firm}</span>}
                 {lawyer.rating > 0 && <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />{lawyer.rating} ({lawyer.total_reviews} {t('reviews')})</span>}
               </div>
-              <div className="flex gap-2 pt-2">
-                <Button onClick={() => navigate(`/book-consultation?lawyer=${id}`)}><Calendar className="h-4 w-4 mr-2" />{t('bookConsultation')}</Button>
-                <Button variant="outline" onClick={() => navigate(`/submit-case?lawyer=${id}`)}>{t('submitCaseBtn')}</Button>
+              <div className="flex gap-2 pt-2 flex-wrap">
+                {isDemo ? (
+                  <Button onClick={() => setMsgOpen(true)}><Calendar className="h-4 w-4 mr-2" />Request Consultation</Button>
+                ) : (
+                  <Button onClick={() => navigate(`/book-consultation?lawyer=${id}`)}><Calendar className="h-4 w-4 mr-2" />{t('bookConsultation')}</Button>
+                )}
+                <Button variant="outline" onClick={() => setMsgOpen(true)}>Send Message</Button>
+                {!isDemo && <Button variant="outline" onClick={() => navigate(`/submit-case?lawyer=${id}`)}>{t('submitCaseBtn')}</Button>}
               </div>
             </div>
           </div>
