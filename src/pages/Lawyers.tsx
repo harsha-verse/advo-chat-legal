@@ -59,50 +59,66 @@ const Lawyers: React.FC = () => {
 
   const fetchLawyers = async () => {
     setLoading(true);
-    const { data: lawyerProfiles } = await supabase
-      .from('lawyer_profiles')
-      .select('*')
-      .eq('verification_status', 'verified')
-      .eq('profile_visible', true);
+    const [lpRes, demoRes] = await Promise.all([
+      supabase.from('lawyer_profiles').select('*').eq('verification_status', 'verified').eq('profile_visible', true),
+      supabase.from('demo_lawyers' as any).select('*').eq('is_active', true),
+    ]);
 
-    if (!lawyerProfiles || lawyerProfiles.length === 0) {
-      setLawyers([]);
-      setLoading(false);
-      return;
+    const lawyerProfiles = lpRes.data || [];
+    const demos = (demoRes.data as any[]) || [];
+
+    let real: LawyerResult[] = [];
+    if (lawyerProfiles.length) {
+      const userIds = lawyerProfiles.map(lp => lp.user_id);
+      const { data: profiles } = await supabase.from('profiles').select('*').in('id', userIds);
+      const profileMap = new Map((profiles || []).map(p => [p.id, p]));
+      real = lawyerProfiles.map(lp => {
+        const p = profileMap.get(lp.user_id);
+        return {
+          user_id: lp.user_id,
+          name: p?.name || 'Lawyer',
+          avatar_url: p?.avatar_url || null,
+          city: p?.city || null,
+          state: p?.state || null,
+          role_type: lp.role_type,
+          specialization: lp.specialization,
+          practice_areas: lp.practice_areas || [],
+          experience: lp.experience || 0,
+          rating: Number(lp.rating) || 0,
+          total_reviews: lp.total_reviews || 0,
+          consultation_fee: lp.consultation_fee || 0,
+          bio: lp.bio,
+          tagline: (lp as any).tagline,
+          languages_spoken: (lp as any).languages_spoken || [],
+        };
+      });
     }
 
-    const userIds = lawyerProfiles.map(lp => lp.user_id);
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('*')
-      .in('id', userIds);
+    const demoMapped: LawyerResult[] = demos.map(d => ({
+      is_demo: true,
+      user_id: d.id,
+      name: d.name,
+      avatar_url: d.avatar_url,
+      city: d.city,
+      state: d.state,
+      role_type: d.role_type,
+      specialization: d.specialization,
+      practice_areas: d.practice_areas || [],
+      experience: d.experience || 0,
+      rating: Number(d.rating) || 0,
+      total_reviews: d.total_reviews || 0,
+      consultation_fee: d.consultation_fee || 0,
+      bio: d.bio,
+      tagline: d.tagline,
+      languages_spoken: d.languages_spoken || [],
+    }));
 
-    const profileMap = new Map((profiles || []).map(p => [p.id, p]));
-
-    const merged: LawyerResult[] = lawyerProfiles.map(lp => {
-      const p = profileMap.get(lp.user_id);
-      return {
-        user_id: lp.user_id,
-        name: p?.name || 'Lawyer',
-        avatar_url: p?.avatar_url || null,
-        city: p?.city || null,
-        state: p?.state || null,
-        role_type: lp.role_type,
-        specialization: lp.specialization,
-        practice_areas: lp.practice_areas || [],
-        experience: lp.experience || 0,
-        rating: lp.rating || 0,
-        total_reviews: lp.total_reviews || 0,
-        consultation_fee: lp.consultation_fee || 0,
-        bio: lp.bio,
-        tagline: (lp as any).tagline,
-        languages_spoken: (lp as any).languages_spoken || [],
-      };
-    });
-
-    setLawyers(merged);
+    setLawyers([...real, ...demoMapped]);
     setLoading(false);
   };
+
+  const openMessage = (l: LawyerResult) => { setMsgTarget(l); setMsgOpen(true); };
+  const profilePath = (l: LawyerResult) => l.is_demo ? `/lawyer/demo:${l.user_id}` : `/lawyer/${l.user_id}`;
 
   const filteredLawyers = lawyers.filter(lawyer => {
     const q = searchQuery.toLowerCase();
