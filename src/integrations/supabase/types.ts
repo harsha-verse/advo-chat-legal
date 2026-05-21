@@ -280,6 +280,122 @@ export type Database = {
         }
         Relationships: []
       }
+      consultant_bookings: {
+        Row: {
+          client_id: string
+          consultant_id: string
+          consultation_type: string
+          created_at: string
+          duration_minutes: number
+          id: string
+          notes: string | null
+          scheduled_date: string
+          scheduled_time: string
+          status: string
+          topic: string | null
+        }
+        Insert: {
+          client_id: string
+          consultant_id: string
+          consultation_type?: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          notes?: string | null
+          scheduled_date: string
+          scheduled_time: string
+          status?: string
+          topic?: string | null
+        }
+        Update: {
+          client_id?: string
+          consultant_id?: string
+          consultation_type?: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          notes?: string | null
+          scheduled_date?: string
+          scheduled_time?: string
+          status?: string
+          topic?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultant_bookings_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultants: {
+        Row: {
+          avatar_url: string | null
+          city: string | null
+          consultation_fee: number
+          created_at: string
+          description: string | null
+          email: string | null
+          experience: number
+          expertise: string[] | null
+          id: string
+          is_active: boolean
+          languages: string[] | null
+          name: string
+          phone: string | null
+          qualification: string | null
+          rating: number
+          specialization: string
+          state: string | null
+          total_reviews: number
+          verified: boolean
+        }
+        Insert: {
+          avatar_url?: string | null
+          city?: string | null
+          consultation_fee?: number
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          experience?: number
+          expertise?: string[] | null
+          id?: string
+          is_active?: boolean
+          languages?: string[] | null
+          name: string
+          phone?: string | null
+          qualification?: string | null
+          rating?: number
+          specialization: string
+          state?: string | null
+          total_reviews?: number
+          verified?: boolean
+        }
+        Update: {
+          avatar_url?: string | null
+          city?: string | null
+          consultation_fee?: number
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          experience?: number
+          expertise?: string[] | null
+          id?: string
+          is_active?: boolean
+          languages?: string[] | null
+          name?: string
+          phone?: string | null
+          qualification?: string | null
+          rating?: number
+          specialization?: string
+          state?: string | null
+          total_reviews?: number
+          verified?: boolean
+        }
+        Relationships: []
+      }
       consultations: {
         Row: {
           case_id: string | null
@@ -353,6 +469,147 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      demo_lawyers: {
+        Row: {
+          available_days: string[] | null
+          available_end_time: string | null
+          available_start_time: string | null
+          avatar_url: string | null
+          bar_council_number: string
+          bio: string | null
+          case_stats: Json | null
+          city: string | null
+          consultation_duration: number
+          consultation_fee: number
+          consultation_types: string[] | null
+          court_jurisdictions: string[] | null
+          created_at: string
+          education: Json | null
+          email: string | null
+          experience: number
+          id: string
+          is_active: boolean
+          languages_spoken: string[] | null
+          law_firm: string | null
+          name: string
+          phone: string | null
+          practice_areas: string[] | null
+          rating: number
+          role_type: string
+          specialization: string | null
+          state: string | null
+          tagline: string | null
+          total_cases: number
+          total_reviews: number
+          year_of_practice: number
+        }
+        Insert: {
+          available_days?: string[] | null
+          available_end_time?: string | null
+          available_start_time?: string | null
+          avatar_url?: string | null
+          bar_council_number: string
+          bio?: string | null
+          case_stats?: Json | null
+          city?: string | null
+          consultation_duration?: number
+          consultation_fee?: number
+          consultation_types?: string[] | null
+          court_jurisdictions?: string[] | null
+          created_at?: string
+          education?: Json | null
+          email?: string | null
+          experience: number
+          id?: string
+          is_active?: boolean
+          languages_spoken?: string[] | null
+          law_firm?: string | null
+          name: string
+          phone?: string | null
+          practice_areas?: string[] | null
+          rating?: number
+          role_type?: string
+          specialization?: string | null
+          state?: string | null
+          tagline?: string | null
+          total_cases?: number
+          total_reviews?: number
+          year_of_practice: number
+        }
+        Update: {
+          available_days?: string[] | null
+          available_end_time?: string | null
+          available_start_time?: string | null
+          avatar_url?: string | null
+          bar_council_number?: string
+          bio?: string | null
+          case_stats?: Json | null
+          city?: string | null
+          consultation_duration?: number
+          consultation_fee?: number
+          consultation_types?: string[] | null
+          court_jurisdictions?: string[] | null
+          created_at?: string
+          education?: Json | null
+          email?: string | null
+          experience?: number
+          id?: string
+          is_active?: boolean
+          languages_spoken?: string[] | null
+          law_firm?: string | null
+          name?: string
+          phone?: string | null
+          practice_areas?: string[] | null
+          rating?: number
+          role_type?: string
+          specialization?: string | null
+          state?: string | null
+          tagline?: string | null
+          total_cases?: number
+          total_reviews?: number
+          year_of_practice?: number
+        }
+        Relationships: []
+      }
+      direct_messages: {
+        Row: {
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          id: string
+          message: string
+          recipient_id: string
+          recipient_type: string
+          sender_id: string
+          status: string
+          subject: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          recipient_id: string
+          recipient_type: string
+          sender_id: string
+          status?: string
+          subject?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          recipient_id?: string
+          recipient_type?: string
+          sender_id?: string
+          status?: string
+          subject?: string | null
+        }
+        Relationships: []
       }
       lawyer_case_stats: {
         Row: {

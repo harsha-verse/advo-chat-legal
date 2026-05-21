@@ -17,6 +17,7 @@ import TrustBadges from '@/components/Lawyer/TrustBadges';
 import PerformanceStats from '@/components/Lawyer/PerformanceStats';
 import ReviewsList from '@/components/Lawyer/ReviewsList';
 import ReviewForm from '@/components/Lawyer/ReviewForm';
+import MessageDialog from '@/components/Messaging/MessageDialog';
 
 const LawyerPublicProfile: React.FC = () => {
   const { t } = useTranslation();
@@ -31,10 +32,34 @@ const LawyerPublicProfile: React.FC = () => {
   const [completedCasesCount, setCompletedCasesCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [msgOpen, setMsgOpen] = useState(false);
+  const isDemo = !!id && id.startsWith('demo:');
+  const demoId = isDemo ? id!.slice(5) : null;
 
   useEffect(() => {
-    if (id) fetchLawyerProfile(id);
+    if (!id) return;
+    if (isDemo) fetchDemo(demoId!); else fetchLawyerProfile(id);
   }, [id]);
+
+  const fetchDemo = async (demoLawyerId: string) => {
+    setLoading(true);
+    const { data } = await supabase.from('demo_lawyers' as any).select('*').eq('id', demoLawyerId).maybeSingle();
+    if (data) {
+      const d: any = data;
+      setLawyer({
+        ...d,
+        verification_status: 'verified',
+        consultation_duration: 30,
+        rating: Number(d.rating) || 0,
+      });
+      setProfileData({ id: d.id, name: d.name, avatar_url: d.avatar_url, city: d.city, state: d.state, email: d.email });
+      setEducation((d.education as any[]) || []);
+      setCaseStats((d.case_stats as any[]) || []);
+      setCompletedCasesCount(d.total_cases || 0);
+      setConsultationCount(0);
+    }
+    setLoading(false);
+  };
 
   const fetchLawyerProfile = async (userId: string) => {
     setLoading(true);
@@ -92,9 +117,14 @@ const LawyerPublicProfile: React.FC = () => {
                 {lawyer.law_firm && <span className="flex items-center gap-1"><Building className="h-3.5 w-3.5" />{lawyer.law_firm}</span>}
                 {lawyer.rating > 0 && <span className="flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />{lawyer.rating} ({lawyer.total_reviews} {t('reviews')})</span>}
               </div>
-              <div className="flex gap-2 pt-2">
-                <Button onClick={() => navigate(`/book-consultation?lawyer=${id}`)}><Calendar className="h-4 w-4 mr-2" />{t('bookConsultation')}</Button>
-                <Button variant="outline" onClick={() => navigate(`/submit-case?lawyer=${id}`)}>{t('submitCaseBtn')}</Button>
+              <div className="flex gap-2 pt-2 flex-wrap">
+                {isDemo ? (
+                  <Button onClick={() => setMsgOpen(true)}><Calendar className="h-4 w-4 mr-2" />Request Consultation</Button>
+                ) : (
+                  <Button onClick={() => navigate(`/book-consultation?lawyer=${id}`)}><Calendar className="h-4 w-4 mr-2" />{t('bookConsultation')}</Button>
+                )}
+                <Button variant="outline" onClick={() => setMsgOpen(true)}>Send Message</Button>
+                {!isDemo && <Button variant="outline" onClick={() => navigate(`/submit-case?lawyer=${id}`)}>{t('submitCaseBtn')}</Button>}
               </div>
             </div>
           </div>
@@ -171,18 +201,24 @@ const LawyerPublicProfile: React.FC = () => {
             </TabsContent>
 
             <TabsContent value="reviews" className="space-y-6 mt-4">
-              {isClient && (
-                <div>
-                  {showReviewForm ? (
-                    <ReviewForm lawyerId={id!} onSubmitted={() => setShowReviewForm(false)} />
-                  ) : (
-                    <Button variant="outline" onClick={() => setShowReviewForm(true)}>
-                      <Star className="h-4 w-4 mr-2" />{t('writeReview')}
-                    </Button>
+              {isDemo ? (
+                <div className="text-sm text-muted-foreground p-4 border rounded-md bg-muted/30">Verified client reviews appear here once this lawyer activates their LawLite account.</div>
+              ) : (
+                <>
+                  {isClient && (
+                    <div>
+                      {showReviewForm ? (
+                        <ReviewForm lawyerId={id!} onSubmitted={() => setShowReviewForm(false)} />
+                      ) : (
+                        <Button variant="outline" onClick={() => setShowReviewForm(true)}>
+                          <Star className="h-4 w-4 mr-2" />{t('writeReview')}
+                        </Button>
+                      )}
+                    </div>
                   )}
-                </div>
+                  <ReviewsList lawyerId={id!} />
+                </>
               )}
-              <ReviewsList lawyerId={id!} />
             </TabsContent>
           </Tabs>
         </div>
@@ -255,6 +291,7 @@ const LawyerPublicProfile: React.FC = () => {
           </Card>
         </div>
       </div>
+      <MessageDialog open={msgOpen} onOpenChange={setMsgOpen} recipient={profileData ? { id: isDemo ? demoId! : id!, name: profileData.name, type: isDemo ? 'demo_lawyer' : 'lawyer' } : null} />
     </div>
   );
 };
