@@ -32,10 +32,34 @@ const LawyerPublicProfile: React.FC = () => {
   const [completedCasesCount, setCompletedCasesCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [msgOpen, setMsgOpen] = useState(false);
+  const isDemo = !!id && id.startsWith('demo:');
+  const demoId = isDemo ? id!.slice(5) : null;
 
   useEffect(() => {
-    if (id) fetchLawyerProfile(id);
+    if (!id) return;
+    if (isDemo) fetchDemo(demoId!); else fetchLawyerProfile(id);
   }, [id]);
+
+  const fetchDemo = async (demoLawyerId: string) => {
+    setLoading(true);
+    const { data } = await supabase.from('demo_lawyers' as any).select('*').eq('id', demoLawyerId).maybeSingle();
+    if (data) {
+      const d: any = data;
+      setLawyer({
+        ...d,
+        verification_status: 'verified',
+        consultation_duration: 30,
+        rating: Number(d.rating) || 0,
+      });
+      setProfileData({ id: d.id, name: d.name, avatar_url: d.avatar_url, city: d.city, state: d.state, email: d.email });
+      setEducation((d.education as any[]) || []);
+      setCaseStats((d.case_stats as any[]) || []);
+      setCompletedCasesCount(d.total_cases || 0);
+      setConsultationCount(0);
+    }
+    setLoading(false);
+  };
 
   const fetchLawyerProfile = async (userId: string) => {
     setLoading(true);
