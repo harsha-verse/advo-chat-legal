@@ -10,9 +10,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ChatBot from '@/components/Chat/ChatBot';
 import FeaturedLawyers from '@/components/Lawyer/FeaturedLawyers';
+import MessageDialog from '@/components/Messaging/MessageDialog';
 import { Search, Star, MapPin, Clock, CheckCircle, MessageCircle, Calendar, Scale, Users, Building, Shield, Laptop, Heart, Gavel, Globe } from 'lucide-react';
 
 interface LawyerResult {
+  is_demo?: boolean;
   user_id: string;
   name: string;
   avatar_url: string | null;
