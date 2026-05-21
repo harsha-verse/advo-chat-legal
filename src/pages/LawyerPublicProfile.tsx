@@ -201,18 +201,24 @@ const LawyerPublicProfile: React.FC = () => {
             </TabsContent>
 
             <TabsContent value="reviews" className="space-y-6 mt-4">
-              {isClient && (
-                <div>
-                  {showReviewForm ? (
-                    <ReviewForm lawyerId={id!} onSubmitted={() => setShowReviewForm(false)} />
-                  ) : (
-                    <Button variant="outline" onClick={() => setShowReviewForm(true)}>
-                      <Star className="h-4 w-4 mr-2" />{t('writeReview')}
-                    </Button>
+              {isDemo ? (
+                <div className="text-sm text-muted-foreground p-4 border rounded-md bg-muted/30">Verified client reviews appear here once this lawyer activates their LawLite account.</div>
+              ) : (
+                <>
+                  {isClient && (
+                    <div>
+                      {showReviewForm ? (
+                        <ReviewForm lawyerId={id!} onSubmitted={() => setShowReviewForm(false)} />
+                      ) : (
+                        <Button variant="outline" onClick={() => setShowReviewForm(true)}>
+                          <Star className="h-4 w-4 mr-2" />{t('writeReview')}
+                        </Button>
+                      )}
+                    </div>
                   )}
-                </div>
+                  <ReviewsList lawyerId={id!} />
+                </>
               )}
-              <ReviewsList lawyerId={id!} />
             </TabsContent>
           </Tabs>
         </div>
