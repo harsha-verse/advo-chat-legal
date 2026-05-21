@@ -40,6 +40,8 @@ const Lawyers: React.FC = () => {
   const [showChatBot, setShowChatBot] = useState(false);
   const [lawyers, setLawyers] = useState<LawyerResult[]>([]);
   const [loading, setLoading] = useState(true);
+  const [msgOpen, setMsgOpen] = useState(false);
+  const [msgTarget, setMsgTarget] = useState<LawyerResult | null>(null);
 
   const specializations = [
     { id: 'all', name: t('allLawyers'), icon: Scale },
