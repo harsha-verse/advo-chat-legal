@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { toast } from 'sonner';
 import { DOCUMENT_TYPES, type DocumentType } from '@/data/documentTypes';
+import { supabase } from '@/integrations/supabase/client';
 
 const GENERATE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-document`;
 
